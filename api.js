@@ -1,4 +1,4 @@
-const API = 'http://localhost:5000/api/v1';
+const API = 'https://web-production-569c.up.railway.app/';
 
 function getTokens() {
     return {
