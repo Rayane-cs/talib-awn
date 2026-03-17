@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>طالب عون · Talib-Awn — Students Work, Dreams Grow</title>
+<link rel="stylesheet" href="style.css">
+<style>
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 0 5%;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(245,242,238,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition-slow);
+}
+[data-theme="dark"] nav {
+  background: rgba(19,20,16,0.85);
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-mark {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #1565C0, #2196F3);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 16px;
+}
+.logo-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text);
+}
+.logo-text span { color: var(--sage-deep); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav-links a {
+  padding: 7px 14px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text2);
+  transition: all var(--transition);
+}
+.nav-links a:hover { background: var(--bg2); color: var(--text); }
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.menu-btn {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  cursor: pointer;
+}
+.menu-btn span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: all var(--transition);
+}
+
+.hero {
+  min-height: 100vh;
+  padding: 100px 5% 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--mint);
+  color: var(--sage-deep);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 22px;
+  border: 1px solid rgba(124,158,135,0.3);
+}
+[data-theme="dark"] .hero-eyebrow {
+  background: rgba(124,158,135,0.15);
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1565C0, #2196F3);
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 5vw, 58px);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+.hero h1 em {
+  font-style: normal;
+  color: var(--sage-deep);
+  position: relative;
+}
+.hero h1 em::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gold);
+  border-radius: 2px;
+}
+.hero-desc {
+  font-size: 17px;
+  color: var(--text2);
+  line-height: 1.7;
+  margin-bottom: 36px;
+  max-width: 480px;
+}
+.hero-cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+.hero-stats {
+  display: flex;
+  gap: 32px;
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text);
+}
+.stat-label {
+  font-size: 12px;
+  color: var(--text3);
+  font-weight: 500;
+}
+
+.hero-visual {
+  position: relative;
+}
+.hero-card-stack {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+.floating-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+  animation: float 4s ease-in-out infinite;
+}
+.floating-card:nth-child(2) { animation-delay: -1.3s; }
+.floating-card:nth-child(3) { animation-delay: -2.6s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.main-vis-card {
+  background: linear-gradient(135deg, var(--sage-deep), var(--sage));
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  color: #fff;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.main-vis-card::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+}
+.main-vis-card::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: -20px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+}
+.vis-card-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.vis-card-sub {
+  opacity: 0.8;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+.vis-card-amount {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 800;
+}
+.vis-card-amount small {
+  font-size: 18px;
+  opacity: 0.7;
+}
+.side-cards-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.side-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.side-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+.side-card-icon.green { background: var(--mint); }
+.side-card-icon.gold { background: rgba(196,163,90,0.15); }
+[data-theme="dark"] .side-card-icon.green { background: rgba(124,158,135,0.2); }
+.side-card-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text);
+}
+.side-card-label {
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.floating-notification {
+  position: absolute;
+  right: -20px;
+  top: 30px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 200px;
+  animation: float 3.5s ease-in-out infinite;
+}
+.notif-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1565C0, #2196F3);
+  flex-shrink: 0;
+}
+.notif-text {
+  font-size: 12px;
+  line-height: 1.4;
+}
+.notif-text strong {
+  display: block;
+  font-size: 13px;
+  color: var(--text);
+}
+
+section { padding: 96px 5%; }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+.section-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 16px;
+  line-height: 1.15;
+}
+.section-desc {
+  font-size: 16px;
+  color: var(--text2);
+  max-width: 520px;
+  line-height: 1.7;
+}
+
+.how-it-works { background: var(--bg2); }
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 56px;
+}
+.step-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  position: relative;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.step-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.step-num {
+  font-family: var(--font-display);
+  font-size: 52px;
+  font-weight: 800;
+  color: var(--border2);
+  line-height: 1;
+  margin-bottom: 16px;
+  transition: color var(--transition);
+}
+.step-card:hover .step-num { color: var(--sage-light); }
+.step-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+[data-theme="dark"] .step-icon { background: rgba(124,158,135,0.2); }
+.step-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.step-desc { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+.who-its-for { }
+.who-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 40px;
+  background: var(--bg2);
+  padding: 6px;
+  border-radius: var(--radius-full);
+  width: fit-content;
+}
+.who-tab {
+  padding: 9px 22px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text2);
+  transition: all var(--transition);
+  cursor: pointer;
+}
+.who-tab.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+.who-panel { display: none; }
+.who-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.who-feature {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all var(--transition);
+}
+.who-feature:hover {
+  border-color: var(--sage-light);
+  box-shadow: var(--shadow-sm);
+}
+.who-feat-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+[data-theme="dark"] .who-feat-icon { background: rgba(124,158,135,0.18); }
+.who-feat-body h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+.who-feat-body p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+.categories-section { background: var(--bg2); }
+.cats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+}
+.cat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.cat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(135deg, #1565C0, #2196F3);
+  transform: scaleX(0);
+  transition: transform var(--transition);
+}
+.cat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.cat-card:hover::after { transform: scaleX(1); }
+.cat-emoji { font-size: 32px; margin-bottom: 12px; display: block; }
+.cat-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.cat-count { font-size: 12px; color: var(--text3); }
+
+.trust-section { }
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 48px;
+}
+.trust-card {
+  padding: 28px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: all var(--transition);
+}
+.trust-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+.trust-icon { font-size: 28px; margin-bottom: 14px; display: block; }
+.trust-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  margin-bottom: 8px;
+}
+.trust-desc { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+.payment-section { background: var(--bg2); }
+.payment-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+}
+.payment-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 14px;
+  transition: all var(--transition);
+}
+.payment-chip:hover {
+  border-color: var(--sage);
+  box-shadow: var(--shadow-sm);
+}
+.payment-chip .chip-icon { font-size: 22px; }
+
+.cta-section {
+  background: linear-gradient(135deg, var(--sage-deep), #2d5c40);
+  color: #fff;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-section::before {
+  content: 'طالب عون';
+  position: absolute;
+  font-family: var(--font-display);
+  font-size: 180px;
+  font-weight: 800;
+  opacity: 0.04;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.cta-section .section-label { color: var(--sage-light); }
+.cta-section h2 {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4vw, 48px);
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+.cta-section p { opacity: 0.8; font-size: 16px; margin-bottom: 36px; }
+.cta-btns {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.btn-white {
+  background: #fff;
+  color: var(--sage-deep);
+  font-weight: 700;
+}
+.btn-white:hover { background: #f0f0f0; transform: translateY(-1px); }
+.btn-outline-white {
+  background: transparent;
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.4);
+}
+.btn-outline-white:hover { background: rgba(255,255,255,0.1); }
+
+footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 48px 5% 28px;
+}
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+.footer-brand p {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-top: 12px;
+  max-width: 280px;
+}
+.footer-col h5 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+  margin-bottom: 14px;
+}
+.footer-col a {
+  display: block;
+  font-size: 14px;
+  color: var(--text2);
+  padding: 4px 0;
+  transition: color var(--transition);
+}
+.footer-col a:hover { color: var(--sage-deep); }
+.footer-bottom {
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: gap;
+  font-size: 13px;
+  color: var(--text3);
+}
+
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 68px;
+  left: 0; right: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 5%;
+  z-index: 99;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--shadow);
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  transition: background var(--transition);
+}
+.mobile-menu a:hover { background: var(--bg2); }
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; padding: 90px 5% 60px; gap: 48px; }
+  .hero-visual { order: -1; }
+  .floating-notification { right: 0; }
+  .steps-grid { grid-template-columns: 1fr; }
+  .who-panel.active { grid-template-columns: 1fr; }
+  .cats-grid { grid-template-columns: repeat(2, 1fr); }
+  .trust-grid { grid-template-columns: 1fr; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .nav-links { display: none; }
+  .menu-btn { display: flex; }
+}
+@media (max-width: 560px) {
+  .cats-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-top { grid-template-columns: 1fr; }
+  .hero-stats { gap: 20px; }
+  .side-cards-row { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-logo">
+    <div class="logo-mark">ط</div>
+    <span class="logo-text">Talib<span>-Awn</span></span>
+  </div>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#who">For who</a>
+    <a href="#categories">Services</a>
+    <a href="#trust">Why us</a>
+  </div>
+  <div class="nav-right">
+    <button class="theme-toggle tooltip" data-tip="Toggle theme" onclick="toggleTheme()" aria-label="Toggle dark mode"></button>
+    <a href="login.php" class="btn btn-ghost btn-sm hide-mobile">Sign in</a>
+    <a href="register.php" class="btn btn-primary btn-sm">Get started</a>
+    <div class="menu-btn hide-desktop" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#how" onclick="toggleMenu()">How it works</a>
+  <a href="#who" onclick="toggleMenu()">For who</a>
+  <a href="#categories" onclick="toggleMenu()">Services</a>
+  <a href="login.php">Sign in</a>
+  <a href="register.php" class="btn btn-primary" style="margin-top:8px;">Get started →</a>
+</div>
+
+<main>
+  <div class="hero section-inner">
+    <div class="hero-content slide-up">
+      <div class="hero-eyebrow">Made for Algerian students 🇩🇿</div>
+      <h1>Study hard.<br><em>Earn smart.</em><br>Grow together.</h1>
+      <p class="hero-desc">Talib-Awn connects university students with part-time jobs and mini services — so you can earn money without sacrificing your studies.</p>
+      <div class="hero-cta">
+        <a href="register.php?role=student" class="btn btn-primary btn-lg">I'm a student →</a>
+        <a href="register.php?role=employer" class="btn btn-outline btn-lg">I want to hire</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num">2,400+</span>
+          <span class="stat-label">Active students</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">830+</span>
+          <span class="stat-label">Job offers</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">4.8★</span>
+          <span class="stat-label">Avg. rating</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual fade-in">
+      <div class="hero-card-stack">
+        <div class="floating-notification" style="position:absolute;top:-20px;right:-10px;z-index:2;">
+          <div class="notif-dot"></div>
+          <div class="notif-text">
+            <strong>Application accepted!</strong>
+            Graphic design task · 3,500 DZD
+          </div>
+        </div>
+        <div class="main-vis-card" style="position:relative;z-index:1;margin-top:40px;">
+          <div class="vis-card-title">Your earnings this month</div>
+          <div class="vis-card-sub">3 tasks completed · 1 part-time job</div>
+          <div class="vis-card-amount"><small>DZD </small>18,500</div>
+        </div>
+        <div class="side-cards-row">
+          <div class="side-card">
+            <div class="side-card-icon green">💼</div>
+            <div class="side-card-num">12</div>
+            <div class="side-card-label">Open jobs near you</div>
+          </div>
+          <div class="side-card">
+            <div class="side-card-icon gold">⭐</div>
+            <div class="side-card-num">4.9</div>
+            <div class="side-card-label">Your rating score</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="how" class="how-it-works">
+    <div class="section-inner">
+      <div class="section-label">The process</div>
+      <h2 class="section-title">Simple steps, real results</h2>
+      <p class="section-desc">Getting started takes less than 5 minutes. No complicated setup, just create your profile and start.</p>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-icon">🎓</div>
+          <div class="step-title">Create your profile</div>
+          <p class="step-desc">Upload your student card — our AI reads it automatically and fills your info. Verify your email and you're in.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-icon">🔍</div>
+          <div class="step-title">Browse or offer</div>
+          <p class="step-desc">Search part-time jobs that fit your schedule, or post your own mini-service like design, coding, or writing.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-icon">💰</div>
+          <div class="step-title">Work and get paid</div>
+          <p class="step-desc">Complete the work, get rated, and withdraw your earnings directly to your Edahabia or CCP account.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="who" class="who-its-for">
+    <div class="section-inner">
+      <div class="section-label">Built for both sides</div>
+      <h2 class="section-title">Who uses Talib-Awn?</h2>
+      <div class="who-tabs" style="margin-top:32px;">
+        <div class="who-tab active" onclick="switchTab('student', this)">🎓 Students</div>
+        <div class="who-tab" onclick="switchTab('employer', this)">🧑‍💼 Employers</div>
+      </div>
+      <div class="who-panel active" id="tab-student">
+        <div class="who-feature"><div class="who-feat-icon">🕐</div><div class="who-feat-body"><h4>Flexible hours</h4><p>Find jobs that work around your class schedule, not against it.</p></div></div>
+        <div class="who-feature"><div class="who-feat-icon">🛍️</div><div class="who-feat-body"><h4>Sell your skills</h4><p>Offer mini services like design, dev, translation or tutoring.</p></div></div>
+        <div class="who-feature"><div class="who-feat-icon">⭐</div><div class="who-feat-body"><h4>Build a reputation</h4><p>Get real reviews that help you land better opportunities over time.</p></div></div>
+        <div class="who-feature"><div class="who-feat-icon">🏦</div><div class="who-feat-body"><h4>Get paid locally</h4><p>Withdraw to Edahabia, CCP — no foreign bank needed.</p></div></div>
+      </div>
+      <div class="who-panel" id="tab-employer">
+        <div class="who-feature"><div class="who-feat-icon">💡</div><div class="who-feat-body"><h4>Fresh talent</h4><p>Access motivated university students hungry for real-world experience.</p></div></div>
+        <div class="who-feature"><div class="who-feat-icon">⚡</div><div class="who-feat-body"><h4>Fast hiring</h4><p>Post a job, receive applications, and hire in the same day.</p></div></div>
+        <div class="who-feature"><div class="who-feat-icon">🔒</div><div class="who-feat-body"><h4>Safe payments</h4><p>Money is held by the platform and released only when work is done.</p></div></div>
+        <div class="who-feature"><div class="who-feat-icon">💳</div><div class="who-feat-body"><h4>Local payment methods</h4><p>Fund your account with BaridiMob, Edahabia, or CCP easily.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="categories" class="categories-section">
+    <div class="section-inner">
+      <div class="section-label">Service categories</div>
+      <h2 class="section-title">What can students do for you?</h2>
+      <div class="cats-grid">
+        <div class="cat-card"><span class="cat-emoji">🎨</span><div class="cat-name">Design & Art</div><div class="cat-count">Logo, poster, UI/UX</div></div>
+        <div class="cat-card"><span class="cat-emoji">💻</span><div class="cat-name">Programming</div><div class="cat-count">Apps, websites, scripts</div></div>
+        <div class="cat-card"><span class="cat-emoji">✍️</span><div class="cat-name">Writing</div><div class="cat-count">Articles, reports, editing</div></div>
+        <div class="cat-card"><span class="cat-emoji">📊</span><div class="cat-name">Data & Research</div><div class="cat-count">Analysis, surveys, Excel</div></div>
+        <div class="cat-card"><span class="cat-emoji">🗣️</span><div class="cat-name">Translation</div><div class="cat-count">Arabic, French, English</div></div>
+        <div class="cat-card"><span class="cat-emoji">📱</span><div class="cat-name">Social Media</div><div class="cat-count">Content, management</div></div>
+        <div class="cat-card"><span class="cat-emoji">📚</span><div class="cat-name">Tutoring</div><div class="cat-count">University subjects</div></div>
+        <div class="cat-card"><span class="cat-emoji">🎬</span><div class="cat-name">Video & Audio</div><div class="cat-count">Editing, voiceover</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="trust" class="trust-section">
+    <div class="section-inner">
+      <div class="section-label">Why trust us</div>
+      <h2 class="section-title">Built on security and fairness</h2>
+      <div class="trust-grid">
+        <div class="trust-card"><span class="trust-icon">🤖</span><h3 class="trust-title">AI Student Verification</h3><p class="trust-desc">Every student uploads their university card. Our AI verifies it automatically — only real students get access as student accounts.</p></div>
+        <div class="trust-card"><span class="trust-icon">🔐</span><h3 class="trust-title">Secure Escrow Payments</h3><p class="trust-desc">Money is held safely by the platform until the job is done. Neither side can lose. Employers pay, students earn — protected.</p></div>
+        <div class="trust-card"><span class="trust-icon">⭐</span><h3 class="trust-title">Honest Reviews</h3><p class="trust-desc">Only people who actually worked together can leave reviews. No fake ratings, no spam — just real feedback that means something.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="payment-section">
+    <div class="section-inner">
+      <div class="section-label">Algeria-first payments</div>
+      <h2 class="section-title">Pay and get paid the Algerian way</h2>
+      <p class="section-desc" style="margin-bottom:0;">We support all major local payment methods — no foreign accounts, no complications.</p>
+      <div class="payment-grid">
+        <div class="payment-chip"><span class="chip-icon">📮</span> BaridiMob</div>
+        <div class="payment-chip"><span class="chip-icon">💳</span> Edahabia</div>
+        <div class="payment-chip"><span class="chip-icon">🏦</span> CCP / ECCP</div>
+        <div class="payment-chip"><span class="chip-icon">⚡</span> Chargily</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="section-inner" style="text-align:center;position:relative;z-index:1;">
+      <div class="section-label">Ready to start?</div>
+      <h2>Your first opportunity is waiting</h2>
+      <p>Join thousands of students already earning on Talib-Awn. No fees to start, no complicated setup.</p>
+      <div class="cta-btns">
+        <a href="register.php?role=student" class="btn btn-white btn-lg">Join as a student</a>
+        <a href="register.php?role=employer" class="btn btn-outline-white btn-lg">Post a job</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <div class="logo-mark">ط</div>
+          <span class="logo-text">Talib<span>-Awn</span></span>
+        </div>
+        <p>The platform that connects Algerian university students with part-time work and mini tasks — so they can learn, earn, and grow.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Platform</h5>
+        <a href="#">Browse jobs</a>
+        <a href="#">Browse services</a>
+        <a href="#">Post a job</a>
+        <a href="#">Pricing</a>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <a href="#">About us</a>
+        <a href="#">How it works</a>
+        <a href="#">Blog</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <a href="#">Terms of service</a>
+        <a href="#">Privacy policy</a>
+        <a href="#">Community rules</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Talib-Awn · طالب عون · Made with ❤️ in Algeria 🇩🇿</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:12px;">Theme</span>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"></button>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('theme', html.dataset.theme);
+}
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+function switchTab(role, el) {
+  document.querySelectorAll('.who-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.who-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + role).classList.add('active');
+}
+(function() {
+  const saved = localStorage.getItem('theme');
+  if (saved) document.documentElement.dataset.theme = saved;
+  else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.dataset.theme = 'dark';
+  }
+})();
+
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.style.boxShadow = window.scrollY > 10 ? 'var(--shadow)' : 'none';
+});
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.step-card, .who-feature, .cat-card, .trust-card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.4,0,0.2,1)';
+  observer.observe(el);
+});
+</script>
+
+<script src="chat-widget.js"></script>
+</body>
+</html>

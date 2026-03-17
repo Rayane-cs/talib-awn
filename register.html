@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account · University Club Chlef</title>
+<link rel="stylesheet" href="auth.css">
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="brand-side">
+    <div class="brand-logo">
+      <img src="https://images.cdn-files-a.com/uploads/1598328/800_5bd38322bcdfd.jpg" alt="Club logo">
+      <div class="brand-logo-text">
+        University Club Chlef
+        <span>University of Chlef, Algeria</span>
+      </div>
+    </div>
+    <div class="brand-headline">
+      <div class="brand-eyebrow">Join us today</div>
+      <h1>Be part of<br>something <em>great.</em></h1>
+      <p>Create your account and join a passionate community of students, professors, and researchers at the University of Chlef.</p>
+      <div class="brand-stats">
+        <div><div class="b-stat-num">200+</div><div class="b-stat-label">Members</div></div>
+        <div><div class="b-stat-num">12</div><div class="b-stat-label">Domains</div></div>
+        <div><div class="b-stat-num">Free</div><div class="b-stat-label">Always</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-side">
+    <div class="form-box">
+
+      <div class="step-indicator" id="steps">
+        <div class="step-dot active" id="dot1">1</div>
+        <div class="step-line" id="line1"></div>
+        <div class="step-dot pending" id="dot2">2</div>
+      </div>
+
+      <div id="alertBox" class="alert"></div>
+
+      <div id="formStep">
+        <div class="form-header">
+          <h2>Create account</h2>
+          <p>Fill in your details — we'll email you a quick code to verify.</p>
+        </div>
+
+        <div class="role-tabs">
+          <button class="role-tab active" onclick="setRole('client', this)">🎓 Member</button>
+          <button class="role-tab" onclick="setRole('Admin', this)">🛡️ Admin</button>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>First name</label>
+            <input type="text" id="firstname" placeholder="Ahmed">
+          </div>
+          <div class="form-group">
+            <label>Last name</label>
+            <input type="text" id="lastname" placeholder="Benali">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Email address</label>
+          <input type="email" id="email" placeholder="you@univ-chlef.dz">
+        </div>
+
+        <div class="form-group">
+          <label>Phone number</label>
+          <input type="tel" id="phone" placeholder="+213 6XX XXX XXX">
+        </div>
+
+        <div class="form-group" id="gradeGroup">
+          <label>Grade / Status</label>
+          <select id="grade">
+            <option value="">Select your grade</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="domainGroup">
+          <label>Domain / Field</label>
+          <select id="domain">
+            <option value="">Select your domain</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="Min. 6 characters">
+          <button type="button" class="password-toggle" onclick="togglePwd('password', this)">👁️</button>
+        </div>
+
+        <div class="form-group">
+          <label>Confirm password</label>
+          <input type="password" id="confirm" placeholder="Repeat your password">
+          <button type="button" class="password-toggle" onclick="togglePwd('confirm', this)">👁️</button>
+        </div>
+
+        <button class="btn-submit" id="registerBtn" onclick="doPreRegister()">
+          <div class="spinner"></div>
+          <span class="btn-label">Send verification code →</span>
+        </button>
+
+        <div class="form-footer">Already have an account? <a href="login.html">Sign in</a></div>
+      </div>
+
+      <div id="otpStep" style="display:none;">
+        <div class="form-header">
+          <h2>Check your email</h2>
+          <p>We sent a 6-digit code to <strong id="emailDisplay" style="color:var(--green);"></strong></p>
+        </div>
+
+        <div style="text-align:center;margin-bottom:8px;">
+          <div class="timer-badge" id="timerBadge">⏳ Code expires in <span id="countdown">2:00</span></div>
+        </div>
+
+        <div class="otp-inputs" id="otpInputs">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        </div>
+
+        <button class="btn-submit" id="verifyBtn" onclick="doVerifyOtp()">
+          <div class="spinner"></div>
+          <span class="btn-label">Verify & create account →</span>
+        </button>
+
+        <div style="text-align:center;margin-top:20px;">
+          <button class="resend-btn" id="resendBtn" onclick="resendOtp()" disabled>Resend code</button>
+        </div>
+
+        <div class="form-footer"><a href="#" onclick="goBack()">← Change details</a></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="api.js"></script>
+<script>
+let currentRole = 'client';
+let pendingEmail = '';
+let countdownInterval = null;
+let resendTimer = null;
+
+(function() {
+    loadSelectOptions();
+})();
+
+async function loadSelectOptions() {
+    try {
+        const [gRes, dRes] = await Promise.all([
+            apiFetch('/client/grades'),
+            apiFetch('/client/domains'),
+        ]);
+        if (gRes.ok) {
+            const sel = document.getElementById('grade');
+            gRes.data.grades.forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g; opt.textContent = g;
+                sel.appendChild(opt);
+            });
+        }
+        if (dRes.ok) {
+            const sel = document.getElementById('domain');
+            dRes.data.domains.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d; opt.textContent = d.charAt(0).toUpperCase() + d.slice(1);
+                sel.appendChild(opt);
+            });
+        }
+    } catch {}
+}
+
+function setRole(role, el) {
+    currentRole = role;
+    document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    const showClientFields = role === 'client';
+    document.getElementById('gradeGroup').style.display  = showClientFields ? 'block' : 'none';
+    document.getElementById('domainGroup').style.display = showClientFields ? 'block' : 'none';
+    hideAlert('alertBox');
+}
+
+function togglePwd(id, btn) {
+    const inp = document.getElementById(id);
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+    else { inp.type = 'password'; btn.textContent = '👁️'; }
+}
+
+async function doPreRegister() {
+    const firstname = document.getElementById('firstname').value.trim();
+    const lastname  = document.getElementById('lastname').value.trim();
+    const email     = document.getElementById('email').value.trim();
+    const phone     = document.getElementById('phone').value.trim();
+    const password  = document.getElementById('password').value;
+    const confirm   = document.getElementById('confirm').value;
+    const grade     = document.getElementById('grade').value;
+    const domain    = document.getElementById('domain').value;
+
+    if (!firstname || !lastname || !email || !phone || !password) {
+        showAlert('alertBox', 'Please fill in all required fields.');
+        return;
+    }
+    if (password.length < 6) {
+        showAlert('alertBox', 'Password must be at least 6 characters.');
+        return;
+    }
+    if (password !== confirm) {
+        showAlert('alertBox', 'Passwords do not match.');
+        return;
+    }
+    if (currentRole === 'client' && (!grade || !domain)) {
+        showAlert('alertBox', 'Please select your grade and domain.');
+        return;
+    }
+
+    setLoading('registerBtn', true);
+    hideAlert('alertBox');
+
+    const body = { firstname, lastname, email, phone, password };
+    if (currentRole === 'client') { body.grade = grade; body.domain = domain; }
+
+    const endpoint = currentRole === 'Admin' ? '/admin/pre-register' : '/client/pre-register';
+    const { ok, data } = await apiFetch(endpoint, {
+        method: 'POST',
+        body: JSON.stringify(body),
+    });
+
+    setLoading('registerBtn', false);
+
+    if (!ok) {
+        showAlert('alertBox', data.error || 'Registration failed. Please try again.');
+        return;
+    }
+
+    pendingEmail = email;
+    switchToOtp();
+}
+
+function switchToOtp() {
+    document.getElementById('formStep').style.display = 'none';
+    document.getElementById('otpStep').style.display  = 'block';
+    document.getElementById('emailDisplay').textContent = pendingEmail;
+    document.getElementById('dot1').className = 'step-dot done';
+    document.getElementById('dot1').textContent = '✓';
+    document.getElementById('line1').className = 'step-line done';
+    document.getElementById('dot2').className = 'step-dot active';
+    hideAlert('alertBox');
+    setupOtpInputs();
+    startCountdown();
+}
+
+function goBack() {
+    clearInterval(countdownInterval);
+    clearTimeout(resendTimer);
+    document.getElementById('formStep').style.display = 'block';
+    document.getElementById('otpStep').style.display  = 'none';
+    document.getElementById('dot1').className = 'step-dot active';
+    document.getElementById('dot1').textContent = '1';
+    document.getElementById('line1').className = 'step-line';
+    document.getElementById('dot2').className = 'step-dot pending';
+    hideAlert('alertBox');
+}
+
+function setupOtpInputs() {
+    const inputs = document.querySelectorAll('#otpInputs input');
+    inputs.forEach((inp, i) => {
+        inp.value = '';
+        inp.className = '';
+        inp.addEventListener('input', () => {
+            inp.value = inp.value.replace(/\D/g, '').slice(-1);
+            if (inp.value) { inp.classList.add('filled'); if (i < 5) inputs[i+1].focus(); }
+            else inp.classList.remove('filled');
+        });
+        inp.addEventListener('keydown', e => {
+            if (e.key === 'Backspace' && !inp.value && i > 0) inputs[i-1].focus();
+        });
+        inp.addEventListener('paste', e => {
+            e.preventDefault();
+            const txt = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+            inputs.forEach((el, j) => {
+                el.value = txt[j] || '';
+                if (el.value) el.classList.add('filled'); else el.classList.remove('filled');
+            });
+        });
+    });
+    inputs[0].focus();
+}
+
+function getOtpValue() {
+    return [...document.querySelectorAll('#otpInputs input')].map(i => i.value).join('');
+}
+
+function startCountdown() {
+    let secs = 120;
+    const badge  = document.getElementById('timerBadge');
+    const count  = document.getElementById('countdown');
+    const resend = document.getElementById('resendBtn');
+    resend.disabled = true;
+    badge.className = 'timer-badge';
+
+    clearInterval(countdownInterval);
+    countdownInterval = setInterval(() => {
+        secs--;
+        const m = Math.floor(secs / 60);
+        const s = String(secs % 60).padStart(2, '0');
+        count.textContent = `${m}:${s}`;
+        if (secs <= 0) {
+            clearInterval(countdownInterval);
+            badge.className = 'timer-badge expired';
+            badge.innerHTML = '⛔ Code expired';
+            resend.disabled = false;
+        }
+    }, 1000);
+}
+
+async function resendOtp() {
+    hideAlert('alertBox');
+    const btn = document.getElementById('resendBtn');
+    btn.disabled = true;
+
+    const body = { email: pendingEmail };
+    const firstname = document.getElementById('firstname').value.trim();
+    const lastname  = document.getElementById('lastname').value.trim();
+    const phone     = document.getElementById('phone').value.trim();
+    const password  = document.getElementById('password').value;
+    const grade     = document.getElementById('grade').value;
+    const domain    = document.getElementById('domain').value;
+    Object.assign(body, { firstname, lastname, phone, password });
+    if (currentRole === 'client') { body.grade = grade; body.domain = domain; }
+
+    const endpoint = currentRole === 'Admin' ? '/admin/pre-register' : '/client/pre-register';
+    const { ok, data } = await apiFetch(endpoint, {
+        method: 'POST',
+        body: JSON.stringify(body),
+    });
+
+    if (!ok) {
+        showAlert('alertBox', data.error || 'Could not resend code.');
+        btn.disabled = false;
+        return;
+    }
+
+    setupOtpInputs();
+    startCountdown();
+    showAlert('alertBox', 'New code sent! Check your email.', 'success');
+}
+
+async function doVerifyOtp() {
+    const otp = getOtpValue();
+    if (otp.length < 6) {
+        showAlert('alertBox', 'Please enter the complete 6-digit code.');
+        return;
+    }
+
+    setLoading('verifyBtn', true);
+    hideAlert('alertBox');
+
+    const endpoint = currentRole === 'Admin' ? '/admin/verify-otp' : '/client/verify-otp';
+    const { ok, data } = await apiFetch(endpoint, {
+        method: 'POST',
+        body: JSON.stringify({ email: pendingEmail, otp }),
+    });
+
+    setLoading('verifyBtn', false);
+
+    if (!ok) {
+        showAlert('alertBox', data.error || 'Invalid code. Please try again.');
+        return;
+    }
+
+    clearInterval(countdownInterval);
+    showAlert('alertBox', 'Account created! Redirecting to login…', 'success');
+    setTimeout(() => window.location.href = 'login.html', 1800);
+}
+</script>
+</body>
+</html>
