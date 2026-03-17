@@ -19,7 +19,7 @@ def create_app():
     }
     app.config['JWT_SECRET_KEY'] = os.getenv(
         'JWT_SECRET_KEY',
-        'talib-awn-secret-change-in-production'
+        'talib-awn-super-secret-2026'
     )
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
 
@@ -33,10 +33,8 @@ def create_app():
         print('[routes] routes.py loaded successfully.')
     except ImportError:
         print('[routes] WARNING: routes.py not found.')
-        print('[routes] Place routes.py in the same folder as app.py and restart.')
 
         from flask import Blueprint
-
         fallback = Blueprint('fallback', __name__)
 
         @fallback.route('/api/v1/<path:any>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
@@ -55,6 +53,7 @@ def create_app():
     return app
 
 
+# Required for gunicorn: Procfile should say -> web: gunicorn app:app
 app = create_app()
 
 if __name__ == '__main__':
