@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redirecting… · Talib-Awn</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;display:flex;align-items:center;justify-content:center;
+       background:#eef2ff;font-family:'DM Sans',system-ui,sans-serif}
+  .wrap{display:flex;flex-direction:column;align-items:center;gap:20px;color:#7a8aaa;font-size:15px}
+  .logo{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#0d1b3e,#1a6ef5);
+        display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;
+        color:#fff;font-family:'Syne',sans-serif;box-shadow:0 4px 20px rgba(26,110,245,.3)}
+  .spin{width:32px;height:32px;border:3px solid rgba(26,110,245,.2);border-top-color:#1a6ef5;
+        border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="logo">ط</div>
+    <div class="spin"></div>
+    <span>Loading your dashboard…</span>
+  </div>
+  <script type="module">
+    import { supabase, redirectByRole } from './supabase.js';
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; }
+    else {
+      const { data } = await supabase.from('users').select('role').eq('auth_id', session.user.id).single();
+      redirectByRole(data?.role);
+    }
+  </script>
+</body>
+</html>

@@ -1,259 +1,94 @@
-Talib-Awn — Full Local Setup Guide
-=====================================
-Follow every step in order. About 10 minutes total.
+═══════════════════════════════════════════════════════════════
+  Talib-Awn · طالب عون  —  Setup Guide (Pure Supabase)
+═══════════════════════════════════════════════════════════════
 
+NO Python / Flask needed. Everything runs directly from your
+browser using the Supabase JS SDK.
 
-FILE STRUCTURE
---------------
-Put ALL files in ONE folder, for example:  C:\talib-awn\  or  ~/talib-awn/
+─── YOUR SUPABASE PROJECT ──────────────────────────────────────
+Project ID  : lzvopmmasfvwtepcrpkw
+Region      : EU West 1 (Ireland)
+URL         : https://lzvopmmasfvwtepcrpkw.supabase.co
+Dashboard   : https://supabase.com/dashboard/project/lzvopmmasfvwtepcrpkw
 
-  talib-awn/
-  ├── app.py                   Flask entry point
-  ├── routes.py                All API endpoints
-  ├── models.py                Database models
-  ├── parsers.py               University news scraper
-  ├── requirements.txt         Python packages list
-  │
-  ├── style.css                Shared styles (blue brand palette)
-  ├── auth.css                 Auth page styles
-  ├── api.js                   Shared fetch + token helpers
-  ├── chat-widget.js           Floating chat bubble (drops into any page)
-  │
-  ├── index.html               Landing page (public)
-  ├── login.html               Sign in
-  ├── register.html            Create account + OTP
-  ├── forgot-password.html     Reset password (3-step)
-  ├── dashboard.html           Smart redirect by role
-  ├── student-dashboard.html   Member home
-  ├── employer-dashboard.html  Employer home
-  ├── admin-panel.html         Admin home
-  └── chat.html                Full messages page
+─── HOW TO RUN LOCALLY ─────────────────────────────────────────
+1. Copy ALL these files into ONE folder (your project root):
+   • supabase.js          ← Supabase client + all helpers
+   • index.html           ← Landing page
+   • login.html           ← Sign in
+   • register.html        ← Sign up (with Gemini card scan)
+   • forgot-password.html ← Password reset
+   • dashboard.html       ← Smart role-based redirect
+   • student-dashboard.html
+   • employer-dashboard.html
+   • admin-panel.html
+   • chat.html
+   • chat-widget.js
+   • style.css
+   • auth.css
 
-  Optional:
-  └── logo.png                 Drop your Talib-Awn logo PNG here
+2. Open with VS Code Live Server (right-click index.html →
+   "Open with Live Server") — or any local HTTP server.
+   Do NOT open HTML files directly (file:// breaks CORS).
 
+─── DELETE FROM YOUR PROJECT FOLDER ────────────────────────────
+   app.py         ← Flask (no longer needed)
+   routes.py      ← Flask (no longer needed)
+   models.py      ← Flask (no longer needed)
+   parsers.py     ← Flask (no longer needed)
+   requirements.txt ← Flask (no longer needed)
+   api.js         ← Replaced by supabase.js
 
-STEP 1 — Install requirements
-------------------------------
-Python 3.10+  →  https://www.python.org/downloads/
-MySQL 8.0+    →  https://dev.mysql.com/downloads/installer/
+─── ONE MANDATORY SUPABASE DASHBOARD STEP ──────────────────────
+Go to: https://supabase.com/dashboard/project/lzvopmmasfvwtepcrpkw/auth/templates
 
-Verify:
-  python --version     should say 3.10 or higher
+Click "Confirm signup" and change the email body from:
+  <a href="{{ .ConfirmationURL }}">Confirm your email</a>
+To:
+  <p>Your verification code: <strong>{{ .Token }}</strong></p>
+  <p>It expires in 2 minutes. Do not share it.</p>
 
+This makes Supabase send a 6-digit OTP code instead of a
+magic link, which is what register.html expects.
 
-STEP 2 — Create the MySQL database (one time only)
----------------------------------------------------
-Open a terminal and run:
+─── GEMINI API KEY (for student card scanning) ─────────────────
+In register.html, find this line (~line 209):
+  const GEMINI_KEY = 'YOUR_GEMINI_API_KEY_HERE';
+Replace with your key from: https://aistudio.google.com/app/apikey
 
-  mysql -u root -p
+─── CREATE YOUR FIRST ADMIN ────────────────────────────────────
+1. Open register.html in browser
+2. Choose "Student" (any role — you'll change it manually)
+3. Complete signup with your email
+4. In Supabase Dashboard → Table Editor → users
+   Find your row → change role from 'client' to 'Admin'
+5. Sign in at login.html — you'll land on admin-panel.html
 
-Press Enter if you have no password.
-Inside the MySQL shell:
+─── HOW AUTH WORKS (no Flask) ──────────────────────────────────
+SIGN UP:
+  register.html → supabase.auth.signUp() → Supabase sends OTP
+  User enters OTP → supabase.auth.verifyOtp()
+  DB trigger (handle_new_user) → creates public.users row
+  User redirected to login.html
 
-  CREATE DATABASE club_chlef CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-  EXIT;
+LOGIN:
+  login.html → supabase.auth.signInWithPassword()
+  → reads role from public.users → redirects to correct dashboard
 
-Tables are created automatically when the app starts.
+PASSWORD RESET:
+  forgot-password.html → supabase.auth.resetPasswordForEmail()
+  → OTP sent → verified → supabase.auth.updateUser(password)
 
+─── DATABASE TABLES ────────────────────────────────────────────
+  users              - All users (students, employers, admins)
+  projects           - Services posted by users
+  project_likes      - Likes on services
+  project_comments   - Comments on services
+  events             - Platform events
+  event_registrations - Who joined which event
+  announcements      - Admin announcements
+  user_follows       - Follow relationships
 
-STEP 3 — Change DB credentials if needed
------------------------------------------
-Open app.py and find:
-  'mysql+pymysql://root:@localhost/club_chlef'
-
-Format: mysql+pymysql://USERNAME:PASSWORD@HOST/DATABASE
-
-  root, no password  →  mysql+pymysql://root:@localhost/club_chlef
-  root, pw = 123     →  mysql+pymysql://root:123@localhost/club_chlef
-
-
-STEP 4 — Install Python packages
-----------------------------------
-  cd path/to/talib-awn
-  pip install -r requirements.txt
-
-
-STEP 5 — Start the backend
------------------------------
-  python app.py
-
-You should see:
-  [db] Tables checked / created.
-   * Running on http://0.0.0.0:5000
-
-Leave this terminal open the whole time.
-
-
-STEP 6 — Open the frontend
-----------------------------
-Double-click login.html, or open it in Chrome/Firefox.
-The browser URL will look like:  file:///C:/talib-awn/login.html
-
-
-STEP 7 — Add your logo (optional)
-------------------------------------
-Save the Talib-Awn logo PNG as  logo.png  in the same folder.
-It will show automatically in all nav bars and sidebars.
-If logo.png is missing, the letter "ط" shows as fallback.
-
-
-STEP 8 — Create the first Admin account
------------------------------------------
-Method A — Register page (easiest):
-  1. Open register.html
-  2. Click the "Admin" tab
-  3. Fill in details, get OTP email, verify it
-  4. Login → lands on admin-panel.html
-
-Method B — Direct API (if email not working yet):
-
-  On Mac/Linux:
-    curl -X POST http://localhost:5000/api/v1/admin/register \
-      -H "Content-Type: application/json" \
-      -d '{"firstname":"Admin","lastname":"Awn","email":"admin@talib.dz","phone":"0550000001","password":"admin123"}'
-
-  On Windows PowerShell:
-    Invoke-WebRequest -Uri "http://localhost:5000/api/v1/admin/register" `
-      -Method POST -ContentType "application/json" `
-      -Body '{"firstname":"Admin","lastname":"Awn","email":"admin@talib.dz","phone":"0550000001","password":"admin123"}'
-
-
-STEP 9 — Quick API health check
----------------------------------
-Open these in your browser while the server is running:
-
-  http://localhost:5000/api/v1/client/grades     returns list of grades
-  http://localhost:5000/api/v1/client/domains    returns list of domains
-  http://localhost:5000/api/v1/stats             returns project/event counts
-
-
-CHAT SYSTEM
------------
-Two modes:
-
-1. FLOATING WIDGET (available on every dashboard)
-   - Blue chat button, bottom-right corner of the screen
-   - Shows unread message count
-   - Click to open a mini chat panel with recent conversations
-   - "Full view →" opens chat.html
-   - Powered by: chat-widget.js (already injected into all dashboards)
-
-2. FULL CHAT PAGE (chat.html)
-   - Two-panel layout: conversation list + message view
-   - Message bubbles with timestamps and read receipts (checkmarks)
-   - Job context bar: link a job to the conversation
-   - Send Offer button: sends a structured job offer card in the chat
-   - Receiver can Accept or Decline the offer directly in chat
-   - Quick reply buttons for common phrases
-   - Typing indicator animation
-   - Mobile responsive (conversation list slides away)
-   - Attach file button (UI only, wire to your storage backend)
-
-Note: Chat currently uses in-memory demo data. To save messages permanently,
-add a Message model to models.py and POST/GET endpoints to routes.py,
-then replace the sendMessage() call in chat.html to use apiFetch().
-
-
-BRAND COLORS (defined in style.css)
--------------------------------------
---blue:        #2196F3    main brand blue
---blue-mid:    #1976D2    medium blue
---blue-deep:   #1565C0    dark blue, used in gradients
---blue-light:  #64B5F6    light blue, hover and read receipts
---blue-pale:   #E3F2FD    very light blue, backgrounds
---navy:        #0D1B2A    dark navy (logo background color)
---gold:        #FFC107    accent gold for ratings and badges
-
-All are CSS variables — change them in style.css to update everywhere at once.
-
-
-NAVIGATION MAP
---------------
-index.html             Landing page (no login needed)
-login.html             Sign in as Member or Admin
-register.html          Create account with email OTP verification
-forgot-password.html   Reset password in 3 steps
-dashboard.html         Auto-redirect: Members to student-dashboard, Admins to admin-panel
-student-dashboard.html Member home with jobs, services, wallet, reviews
-admin-panel.html       Admin: users, reports, stats, events, announcements
-chat.html              Full messaging interface
-
-
-API REFERENCE
--------------
-Base URL: http://localhost:5000/api/v1
-
-No token needed:
-  POST  /client/pre-register       Step 1 registration (sends OTP)
-  POST  /client/verify-otp         Step 2 (creates account)
-  POST  /client/login              Login → returns access + refresh tokens
-  POST  /client/forgot-password    Step 1 reset
-  POST  /client/verify-reset-otp   Step 2 reset
-  POST  /client/reset-password     Step 3 reset
-  GET   /client/grades             Valid grades list
-  GET   /client/domains            Valid domains list
-  GET   /stats                     Public project/event count
-  (same endpoints exist under /admin/ prefix for admin accounts)
-
-Protected (send Authorization: Bearer <token>):
-  GET   /me                        Your profile
-  PUT   /me                        Update profile
-  GET   /token/refresh             Refresh access token
-  GET   /events                    All events
-  POST  /events/<id>/join          Join event
-  DELETE /events/<id>/quit         Leave event
-  GET   /projects                  All projects
-  POST  /projects/<id>/like        Toggle like
-  GET   /projects/<id>/comments    Get comments
-  POST  /projects/<id>/comments    Add comment
-  DELETE /projects/<id>/comments/<id>   Delete comment
-  POST  /users/<id>/follow         Follow/unfollow user
-  POST  /search                    Search members by name
-  POST  /info                      Get user profile + projects by ID
-  GET   /users/<id>/followers      User's followers
-  GET   /users/<id>/following      User's following list
-  GET   /getinfo                   University news list
-  GET   /getsuperinfo/<id>         Article + optional ?lang=fr translation
-
-Admin only:
-  GET   /admin/fetch-all           All members
-  POST  /admin/invite              Send invite email
-  POST  /admin/ban                 Ban user
-  POST  /admin/unban               Unban user
-  POST  /events                    Create event (auto-emails all members)
-  PUT   /events/<id>               Edit event
-  DELETE /events/<id>              Delete event
-  POST  /announcements             Create announcement
-  PUT   /announcements/<id>        Edit announcement
-  DELETE /announcements/<id>       Delete announcement
-
-
-TROUBLESHOOTING
----------------
-"Can't connect to MySQL"
-  MySQL is not running.
-  Windows: open Services app and start MySQL
-  Linux/Mac: sudo service mysql start
-
-"Access denied for user root"
-  Wrong password. Fix the connection string in app.py (Step 3).
-
-"No module named flask"
-  Run: python -m pip install -r requirements.txt
-
-"Address in use" on port 5000
-  Change 5000 to 5001 in app.py AND in api.js line 1.
-
-OTP not arriving
-  Add a print to routes.py inside _pre_register() after the otp= line:
-    print(f"[DEV] OTP for {email}: {otp}")
-  Then check your terminal window.
-
-Chat widget not showing
-  Make sure chat-widget.js is in the same folder as the HTML files.
-  Open browser DevTools console and check for 404 errors.
-
-CORS error in browser console
-  Backend is not running, or running on a different port.
-  Check python app.py is active. Make sure api.js line 1 matches.
+All tables have Row Level Security enabled. ✅
+All RLS policies are performance-optimized. ✅
+Zero security warnings from Supabase advisor. ✅

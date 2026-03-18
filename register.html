@@ -1,384 +1,549 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create Account · University Club Chlef</title>
-<link rel="stylesheet" href="auth.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account · Talib-Awn طالب عون</title>
+  <link rel="stylesheet" href="auth.css">
+  <style>
+    .user-type-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 8px
+    }
+
+    .utc {
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 18px;
+      cursor: pointer;
+      transition: all .2s;
+      text-align: center;
+      background: #f8faff;
+      position: relative;
+      overflow: hidden
+    }
+
+    .utc::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--blue-pale);
+      opacity: 0;
+      transition: opacity .2s
+    }
+
+    .utc:hover {
+      border-color: var(--blue-light)
+    }
+
+    .utc:hover::before {
+      opacity: 1
+    }
+
+    .utc.selected {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(26, 110, 245, .12)
+    }
+
+    .utc.selected::before {
+      opacity: 1
+    }
+
+    .utc-icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+      display: block;
+      position: relative;
+      z-index: 1
+    }
+
+    .utc-title {
+      font-family: var(--font-head);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+      position: relative;
+      z-index: 1
+    }
+
+    .utc-sub {
+      font-size: 12px;
+      color: var(--text3);
+      line-height: 1.4;
+      position: relative;
+      z-index: 1
+    }
+
+    .utc.selected .utc-title {
+      color: var(--blue)
+    }
+
+    .check-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      font-size: 12px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1
+    }
+
+    .utc.selected .check-badge {
+      display: flex
+    }
+  </style>
 </head>
+
 <body>
-<div class="page-wrap">
-
-  <div class="brand-side">
-    <div class="brand-logo">
-      <img src="https://images.cdn-files-a.com/uploads/1598328/800_5bd38322bcdfd.jpg" alt="Club logo">
-      <div class="brand-logo-text">
-        University Club Chlef
-        <span>University of Chlef, Algeria</span>
+  <div class="page-wrap">
+    <div class="brand-side">
+      <div class="brand-logo">
+        <img src="logo-07.svg" class="brand-logo-icon" alt="Talib-Awn" style="background:transparent;box-shadow:none;">
+        <div class="brand-logo-text">
+          <span class="brand-logo-name">Talib-Awn</span>
+          <span class="brand-logo-arabic">طالب عون</span>
+        </div>
+      </div>
+      <div class="brand-headline">
+        <div class="brand-eyebrow">Join today — it's free</div>
+        <h1>Find work that<br>fits your <em>schedule.</em></h1>
+        <p>Create your account in minutes. Students upload their card — Gemini AI fills everything automatically.</p>
       </div>
     </div>
-    <div class="brand-headline">
-      <div class="brand-eyebrow">Join us today</div>
-      <h1>Be part of<br>something <em>great.</em></h1>
-      <p>Create your account and join a passionate community of students, professors, and researchers at the University of Chlef.</p>
-      <div class="brand-stats">
-        <div><div class="b-stat-num">200+</div><div class="b-stat-label">Members</div></div>
-        <div><div class="b-stat-num">12</div><div class="b-stat-label">Domains</div></div>
-        <div><div class="b-stat-num">Free</div><div class="b-stat-label">Always</div></div>
+
+    <div class="form-side">
+      <div class="form-box">
+
+        <!-- STEP INDICATOR -->
+        <div class="step-indicator" id="stepIndicator">
+          <div class="step-dot active" id="dot1">1</div>
+          <span class="step-label active" id="lbl1">Account type</span>
+          <div class="step-line" id="line1"></div>
+          <div class="step-dot pending" id="dot2">2</div>
+          <span class="step-label pending" id="lbl2">Your details</span>
+          <div class="step-line" id="line2"></div>
+          <div class="step-dot pending" id="dot3">3</div>
+          <span class="step-label pending" id="lbl3">Verify email</span>
+        </div>
+
+        <div id="alertBox" class="alert"></div>
+
+        <!-- ── STEP 1: Choose type ── -->
+        <div id="step1">
+          <div class="form-header">
+            <h2>Who are you?</h2>
+            <p>This determines what you can do on the platform.</p>
+          </div>
+          <div class="user-type-grid">
+            <div class="utc" id="cardStudent" onclick="selectType('student')">
+              <div class="check-badge">✓</div>
+              <span class="utc-icon">🎓</span>
+              <div class="utc-title">Student</div>
+              <div class="utc-sub">Find part-time jobs & offer mini services</div>
+            </div>
+            <div class="utc" id="cardEmployer" onclick="selectType('employer')">
+              <div class="check-badge">✓</div>
+              <span class="utc-icon">🧑‍💼</span>
+              <div class="utc-title">Employer</div>
+              <div class="utc-sub">Post jobs & hire talented students</div>
+            </div>
+          </div>
+          <div style="margin-top:24px;">
+            <button class="btn-submit" id="step1Btn" onclick="goStep2()" disabled>
+              <span class="btn-label">Continue →</span>
+            </button>
+          </div>
+          <div class="form-footer">Already have an account? <a href="login.html">Sign in</a></div>
+        </div>
+
+        <!-- ── STEP 2A: Student ── -->
+        <div id="step2Student" style="display:none">
+          <div class="form-header">
+            <h2>Upload your student card</h2>
+            <p>Gemini AI will read it and fill in your info automatically.</p>
+          </div>
+          <div class="card-upload-area" id="uploadArea">
+            <input type="file" id="cardFile" accept="image/*" onchange="handleCard(event)">
+            <span class="card-upload-icon">🪪</span>
+            <div class="card-upload-text">Drop your student card here</div>
+            <div class="card-upload-sub">or click to browse · JPG, PNG, WEBP</div>
+          </div>
+          <div class="card-preview" id="cardPreview"><img id="cardImg" src="" alt=""></div>
+          <div class="scan-status" id="scanStatus">
+            <div class="scan-spinner"></div><span class="scan-text">Scanning with Gemini AI…</span>
+          </div>
+          <div class="prefill-notice" id="prefillNotice">✅ Card scanned — fields pre-filled below.</div>
+
+          <div id="studentFields" style="display:none">
+            <div class="form-row">
+              <div class="form-group"><label>First name *</label><input type="text" id="s_fn" placeholder="Ahmed"></div>
+              <div class="form-group"><label>Last name *</label><input type="text" id="s_ln" placeholder="Benali"></div>
+            </div>
+            <div class="form-group"><label>University</label><input type="text" id="s_uni"
+                placeholder="University of Chlef"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Field of study</label><input type="text" id="s_field"
+                  placeholder="Computer Science"></div>
+              <div class="form-group"><label>Student ID</label><input type="text" id="s_sid" placeholder="2023XXXXX">
+              </div>
+            </div>
+            <div class="form-group"><label>Email address *</label><input type="email" id="s_email"
+                placeholder="you@univ.dz"></div>
+            <div class="form-group"><label>Phone number</label><input type="tel" id="s_phone"
+                placeholder="+213 6XX XXX XXX"></div>
+            <div class="form-group">
+              <label>Password *</label>
+              <input type="password" id="s_pw" placeholder="Min. 6 characters">
+              <button type="button" class="password-toggle" onclick="togglePwd('s_pw',this)">👁️</button>
+            </div>
+            <div class="form-group">
+              <label>Confirm password *</label>
+              <input type="password" id="s_pw2" placeholder="Repeat password">
+              <button type="button" class="password-toggle" onclick="togglePwd('s_pw2',this)">👁️</button>
+            </div>
+            <button class="btn-submit" id="sRegBtn" onclick="doStudentRegister()">
+              <div class="spinner"></div><span class="btn-label">Send verification code →</span>
+            </button>
+          </div>
+          <div style="margin-top:12px;"><button class="btn-secondary" onclick="goStep1()">← Back</button></div>
+        </div>
+
+        <!-- ── STEP 2B: Employer ── -->
+        <div id="step2Employer" style="display:none">
+          <div class="form-header">
+            <h2>Create your account</h2>
+            <p>Fill in your details to get started.</p>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>First name *</label><input type="text" id="e_fn" placeholder="Sara"></div>
+            <div class="form-group"><label>Last name *</label><input type="text" id="e_ln" placeholder="Meziane"></div>
+          </div>
+          <div class="form-group"><label>Company / Business name</label><input type="text" id="e_company"
+              placeholder="Acme SARL (optional)"></div>
+          <div class="form-group"><label>Email address *</label><input type="email" id="e_email"
+              placeholder="you@company.dz"></div>
+          <div class="form-group"><label>Phone number</label><input type="tel" id="e_phone"
+              placeholder="+213 6XX XXX XXX"></div>
+          <div class="form-group">
+            <label>Password *</label>
+            <input type="password" id="e_pw" placeholder="Min. 6 characters">
+            <button type="button" class="password-toggle" onclick="togglePwd('e_pw',this)">👁️</button>
+          </div>
+          <div class="form-group">
+            <label>Confirm password *</label>
+            <input type="password" id="e_pw2" placeholder="Repeat password">
+            <button type="button" class="password-toggle" onclick="togglePwd('e_pw2',this)">👁️</button>
+          </div>
+          <button class="btn-submit" id="eRegBtn" onclick="doEmployerRegister()">
+            <div class="spinner"></div><span class="btn-label">Send verification code →</span>
+          </button>
+          <div style="margin-top:12px;"><button class="btn-secondary" onclick="goStep1()">← Back</button></div>
+        </div>
+
+        <!-- ── STEP 3: OTP ── -->
+        <div id="step3" style="display:none">
+          <div class="form-header">
+            <h2>Check your email</h2>
+            <p>We sent an 8-digit code to <strong id="emailDisplay" style="color:var(--blue)"></strong></p>
+          </div>
+          <div style="text-align:center;margin-bottom:8px;">
+            <div class="timer-badge" id="timerBadge">⏳ Expires in <span id="countdown">2:00</span></div>
+          </div>
+          <div class="otp-inputs" id="otpInputs">
+            <input type="text" maxlength="1" inputmode="numeric">
+            <input type="text" maxlength="1" inputmode="numeric">
+            <input type="text" maxlength="1" inputmode="numeric">
+            <input type="text" maxlength="1" inputmode="numeric">
+            <input type="text" maxlength="1" inputmode="numeric">
+            <input type="text" maxlength="1" inputmode="numeric">
+            <input type="text" maxlength="1" inputmode="numeric">
+            <input type="text" maxlength="1" inputmode="numeric">
+          </div>
+          <button class="btn-submit" id="verifyBtn" onclick="doVerify()">
+            <div class="spinner"></div><span class="btn-label">Verify & create account →</span>
+          </button>
+          <div style="text-align:center;margin-top:18px;">
+            <button class="resend-btn" id="resendBtn" onclick="resend()" disabled>Resend code</button>
+          </div>
+          <div class="form-footer"><a href="#" onclick="goBack()">← Change details</a></div>
+        </div>
+
       </div>
     </div>
   </div>
 
-  <div class="form-side">
-    <div class="form-box">
+  <script type="module">
+    import { supabase, signUpWithOtp, verifyEmailOtp, showAlert, setLoading } from './supabase.js';
 
-      <div class="step-indicator" id="steps">
-        <div class="step-dot active" id="dot1">1</div>
-        <div class="step-line" id="line1"></div>
-        <div class="step-dot pending" id="dot2">2</div>
-      </div>
+    // ── state ──────────────────────────────────────────────────────────────────
+    let selectedType = null;
+    let pendingEmail = '';
+    let pendingMeta = {};
+    let countdownInterval = null;
 
-      <div id="alertBox" class="alert"></div>
+    const GEMINI_KEY = 'YOUR_GEMINI_API_KEY_HERE';
+    const GEMINI_MODEL = 'gemini-1.5-flash';
 
-      <div id="formStep">
-        <div class="form-header">
-          <h2>Create account</h2>
-          <p>Fill in your details — we'll email you a quick code to verify.</p>
-        </div>
+    // ── step navigation ────────────────────────────────────────────────────────
+    window.selectType = (t) => {
+      selectedType = t;
+      document.getElementById('cardStudent').classList.toggle('selected', t === 'student');
+      document.getElementById('cardEmployer').classList.toggle('selected', t === 'employer');
+      document.getElementById('step1Btn').disabled = false;
+    };
 
-        <div class="role-tabs">
-          <button class="role-tab active" onclick="setRole('client', this)">🎓 Member</button>
-          <button class="role-tab" onclick="setRole('Admin', this)">🛡️ Admin</button>
-        </div>
+    window.goStep1 = () => {
+      hide('step2Student'); hide('step2Employer'); hide('step3');
+      show('step1'); setStep(1); clearAlert();
+    };
 
-        <div class="form-row">
-          <div class="form-group">
-            <label>First name</label>
-            <input type="text" id="firstname" placeholder="Ahmed">
-          </div>
-          <div class="form-group">
-            <label>Last name</label>
-            <input type="text" id="lastname" placeholder="Benali">
-          </div>
-        </div>
+    window.goStep2 = () => {
+      if (!selectedType) return;
+      hide('step1');
+      if (selectedType === 'student') show('step2Student');
+      else show('step2Employer');
+      setStep(2); clearAlert();
+    };
 
-        <div class="form-group">
-          <label>Email address</label>
-          <input type="email" id="email" placeholder="you@univ-chlef.dz">
-        </div>
+    window.goBack = () => {
+      clearInterval(countdownInterval);
+      hide('step3');
+      if (selectedType === 'student') show('step2Student');
+      else show('step2Employer');
+      setStep(2); clearAlert();
+    };
 
-        <div class="form-group">
-          <label>Phone number</label>
-          <input type="tel" id="phone" placeholder="+213 6XX XXX XXX">
-        </div>
+    function setStep(n) {
+      for (let i = 1; i <= 3; i++) {
+        const dot = document.getElementById('dot' + i);
+        const lbl = document.getElementById('lbl' + i);
+        if (i < n) { dot.className = 'step-dot done'; dot.textContent = '✓'; lbl.className = 'step-label done'; }
+        else if (i === n) { dot.className = 'step-dot active'; dot.textContent = i; lbl.className = 'step-label active'; }
+        else { dot.className = 'step-dot pending'; dot.textContent = i; lbl.className = 'step-label pending'; }
+        if (i < 3) { const l = document.getElementById('line' + i); if (l) l.className = i < n ? 'step-line done' : 'step-line'; }
+      }
+    }
 
-        <div class="form-group" id="gradeGroup">
-          <label>Grade / Status</label>
-          <select id="grade">
-            <option value="">Select your grade</option>
-          </select>
-        </div>
+    function show(id) { document.getElementById(id).style.display = ''; }
+    function hide(id) { document.getElementById(id).style.display = 'none'; }
+    function clearAlert() { document.getElementById('alertBox').classList.remove('show'); }
 
-        <div class="form-group" id="domainGroup">
-          <label>Domain / Field</label>
-          <select id="domain">
-            <option value="">Select your domain</option>
-          </select>
-        </div>
+    window.togglePwd = (id, btn) => {
+      const i = document.getElementById(id);
+      i.type = i.type === 'password' ? 'text' : 'password';
+      btn.textContent = i.type === 'password' ? '👁️' : '🙈';
+    };
 
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" id="password" placeholder="Min. 6 characters">
-          <button type="button" class="password-toggle" onclick="togglePwd('password', this)">👁️</button>
-        </div>
-
-        <div class="form-group">
-          <label>Confirm password</label>
-          <input type="password" id="confirm" placeholder="Repeat your password">
-          <button type="button" class="password-toggle" onclick="togglePwd('confirm', this)">👁️</button>
-        </div>
-
-        <button class="btn-submit" id="registerBtn" onclick="doPreRegister()">
-          <div class="spinner"></div>
-          <span class="btn-label">Send verification code →</span>
-        </button>
-
-        <div class="form-footer">Already have an account? <a href="login.html">Sign in</a></div>
-      </div>
-
-      <div id="otpStep" style="display:none;">
-        <div class="form-header">
-          <h2>Check your email</h2>
-          <p>We sent a 6-digit code to <strong id="emailDisplay" style="color:var(--green);"></strong></p>
-        </div>
-
-        <div style="text-align:center;margin-bottom:8px;">
-          <div class="timer-badge" id="timerBadge">⏳ Code expires in <span id="countdown">2:00</span></div>
-        </div>
-
-        <div class="otp-inputs" id="otpInputs">
-          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
-        </div>
-
-        <button class="btn-submit" id="verifyBtn" onclick="doVerifyOtp()">
-          <div class="spinner"></div>
-          <span class="btn-label">Verify & create account →</span>
-        </button>
-
-        <div style="text-align:center;margin-top:20px;">
-          <button class="resend-btn" id="resendBtn" onclick="resendOtp()" disabled>Resend code</button>
-        </div>
-
-        <div class="form-footer"><a href="#" onclick="goBack()">← Change details</a></div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<script src="api.js"></script>
-<script>
-let currentRole = 'client';
-let pendingEmail = '';
-let countdownInterval = null;
-let resendTimer = null;
-
-(function() {
-    loadSelectOptions();
-})();
-
-async function loadSelectOptions() {
-    try {
-        const [gRes, dRes] = await Promise.all([
-            apiFetch('/client/grades'),
-            apiFetch('/client/domains'),
-        ]);
-        if (gRes.ok) {
-            const sel = document.getElementById('grade');
-            gRes.data.grades.forEach(g => {
-                const opt = document.createElement('option');
-                opt.value = g; opt.textContent = g;
-                sel.appendChild(opt);
-            });
+    // ── Gemini card scan ────────────────────────────────────────────────────────
+    window.handleCard = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (ev) => {
+        const base64 = ev.target.result.split(',')[1];
+        document.getElementById('cardImg').src = ev.target.result;
+        document.getElementById('cardPreview').classList.add('show');
+        document.getElementById('scanStatus').classList.add('show');
+        document.getElementById('prefillNotice').classList.remove('show');
+        document.getElementById('studentFields').style.display = 'none';
+        clearAlert();
+        try {
+          const resp = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_KEY}`,
+            {
+              method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+                contents: [{
+                  parts: [
+                    { text: 'Extract all text from this student card. Return ONLY a JSON object with keys: institution, id_number, full_name_latin, full_name_arabic, field_of_study, specialty. No markdown, no explanation.' },
+                    { inline_data: { mime_type: file.type, data: base64 } }
+                  ]
+                }],
+                generationConfig: { temperature: 0.1, maxOutputTokens: 400 }
+              })
+            }
+          );
+          const d = await resp.json();
+          const raw = d.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          const clean = raw.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
+          const info = JSON.parse(clean);
+          prefill(info);
+        } catch {
+          showAlert('alertBox', 'Could not read card automatically — please fill in your details manually.');
+        } finally {
+          document.getElementById('scanStatus').classList.remove('show');
+          document.getElementById('studentFields').style.display = 'block';
         }
-        if (dRes.ok) {
-            const sel = document.getElementById('domain');
-            dRes.data.domains.forEach(d => {
-                const opt = document.createElement('option');
-                opt.value = d; opt.textContent = d.charAt(0).toUpperCase() + d.slice(1);
-                sel.appendChild(opt);
-            });
+      };
+      reader.readAsDataURL(file);
+    };
+
+    function prefill(info) {
+      const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '';
+      if (info.full_name_latin) {
+        const parts = info.full_name_latin.trim().split(/\s+/);
+        document.getElementById('s_ln').value = cap(parts[0]);
+        document.getElementById('s_fn').value = parts.slice(1).map(cap).join(' ');
+        document.getElementById('s_ln').classList.add('prefilled');
+        document.getElementById('s_fn').classList.add('prefilled');
+      }
+      if (info.institution) { document.getElementById('s_uni').value = info.institution; document.getElementById('s_uni').classList.add('prefilled'); }
+      if (info.field_of_study) { document.getElementById('s_field').value = info.field_of_study; document.getElementById('s_field').classList.add('prefilled'); }
+      if (info.id_number) { document.getElementById('s_sid').value = info.id_number; document.getElementById('s_sid').classList.add('prefilled'); }
+      document.getElementById('prefillNotice').classList.add('show');
+    }
+
+    // ── registration ────────────────────────────────────────────────────────────
+    window.doStudentRegister = async () => {
+      const fn = document.getElementById('s_fn').value.trim();
+      const ln = document.getElementById('s_ln').value.trim();
+      const email = document.getElementById('s_email').value.trim();
+      const phone = document.getElementById('s_phone').value.trim();
+      const pw = document.getElementById('s_pw').value;
+      const pw2 = document.getElementById('s_pw2').value;
+      const uni = document.getElementById('s_uni').value.trim();
+      const field = document.getElementById('s_field').value.trim();
+      const sid = document.getElementById('s_sid').value.trim();
+
+      if (!fn || !ln || !email || !pw) { showAlert('alertBox', 'Please fill in all required fields.'); return; }
+      if (pw.length < 6) { showAlert('alertBox', 'Password must be at least 6 characters.'); return; }
+      if (pw !== pw2) { showAlert('alertBox', 'Passwords do not match.'); return; }
+
+      pendingEmail = email;
+      pendingMeta = {
+        firstname: fn, lastname: ln, phone, role: 'client', grade: 'Student',
+        domain: field ? field.toLowerCase().slice(0, 80) : 'autre',
+        institution: uni, field_of_study: field, student_id_number: sid
+      };
+
+      await sendOtp('sRegBtn');
+    };
+
+    window.doEmployerRegister = async () => {
+      const fn = document.getElementById('e_fn').value.trim();
+      const ln = document.getElementById('e_ln').value.trim();
+      const email = document.getElementById('e_email').value.trim();
+      const phone = document.getElementById('e_phone').value.trim();
+      const pw = document.getElementById('e_pw').value;
+      const pw2 = document.getElementById('e_pw2').value;
+      const company = document.getElementById('e_company').value.trim();
+
+      if (!fn || !ln || !email || !pw) { showAlert('alertBox', 'Please fill in all required fields.'); return; }
+      if (pw.length < 6) { showAlert('alertBox', 'Password must be at least 6 characters.'); return; }
+      if (pw !== pw2) { showAlert('alertBox', 'Passwords do not match.'); return; }
+
+      pendingEmail = email;
+      pendingMeta = {
+        firstname: fn, lastname: ln, phone, role: 'client', grade: 'Company manager',
+        domain: 'autre', company_name: company
+      };
+
+      await sendOtp('eRegBtn');
+    };
+
+    async function sendOtp(btnId) {
+      setLoading(btnId, true); clearAlert();
+      const pw = selectedType === 'student'
+        ? document.getElementById('s_pw').value
+        : document.getElementById('e_pw').value;
+
+      const { error } = await signUpWithOtp({
+        email: pendingEmail,
+        password: pw,
+        metadata: pendingMeta,
+      });
+
+      setLoading(btnId, false);
+      if (error) { showAlert('alertBox', error.message); return; }
+
+      hide('step2Student'); hide('step2Employer');
+      show('step3');
+      setStep(3);
+      document.getElementById('emailDisplay').textContent = pendingEmail;
+      setupOtp(); startCountdown();
+    }
+
+    // ── OTP verification ────────────────────────────────────────────────────────
+    function setupOtp() {
+      const inputs = document.querySelectorAll('#otpInputs input');
+      inputs.forEach((inp, i) => {
+        inp.value = ''; inp.className = '';
+        inp.oninput = () => {
+          inp.value = inp.value.replace(/\D/g, '').slice(-1);
+          if (inp.value) { inp.classList.add('filled'); if (i < 7) inputs[i + 1].focus(); }
+          else inp.classList.remove('filled');
+        };
+        inp.onkeydown = e => { if (e.key === 'Backspace' && !inp.value && i > 0) inputs[i - 1].focus(); };
+        inp.onpaste = e => {
+          e.preventDefault();
+          const t = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+          inputs.forEach((el, j) => { el.value = t[j] || ''; el.classList.toggle('filled', !!el.value); });
+        };
+      });
+      inputs[0].focus();
+    }
+
+    function getOtp() {
+      return [...document.querySelectorAll('#otpInputs input')].map(i => i.value).join('');
+    }
+
+    function startCountdown() {
+      let s = 120;
+      const badge = document.getElementById('timerBadge');
+      const count = document.getElementById('countdown');
+      const resend = document.getElementById('resendBtn');
+      resend.disabled = true;
+      badge.className = 'timer-badge';
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        s--;
+        count.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+        if (s <= 0) {
+          clearInterval(countdownInterval);
+          badge.className = 'timer-badge expired';
+          badge.innerHTML = '⛔ Code expired';
+          resend.disabled = false;
         }
-    } catch {}
-}
-
-function setRole(role, el) {
-    currentRole = role;
-    document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-    const showClientFields = role === 'client';
-    document.getElementById('gradeGroup').style.display  = showClientFields ? 'block' : 'none';
-    document.getElementById('domainGroup').style.display = showClientFields ? 'block' : 'none';
-    hideAlert('alertBox');
-}
-
-function togglePwd(id, btn) {
-    const inp = document.getElementById(id);
-    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
-    else { inp.type = 'password'; btn.textContent = '👁️'; }
-}
-
-async function doPreRegister() {
-    const firstname = document.getElementById('firstname').value.trim();
-    const lastname  = document.getElementById('lastname').value.trim();
-    const email     = document.getElementById('email').value.trim();
-    const phone     = document.getElementById('phone').value.trim();
-    const password  = document.getElementById('password').value;
-    const confirm   = document.getElementById('confirm').value;
-    const grade     = document.getElementById('grade').value;
-    const domain    = document.getElementById('domain').value;
-
-    if (!firstname || !lastname || !email || !phone || !password) {
-        showAlert('alertBox', 'Please fill in all required fields.');
-        return;
-    }
-    if (password.length < 6) {
-        showAlert('alertBox', 'Password must be at least 6 characters.');
-        return;
-    }
-    if (password !== confirm) {
-        showAlert('alertBox', 'Passwords do not match.');
-        return;
-    }
-    if (currentRole === 'client' && (!grade || !domain)) {
-        showAlert('alertBox', 'Please select your grade and domain.');
-        return;
+      }, 1000);
     }
 
-    setLoading('registerBtn', true);
-    hideAlert('alertBox');
+    window.resend = async () => {
+      document.getElementById('resendBtn').disabled = true;
+      clearAlert();
+      const pw = selectedType === 'student'
+        ? document.getElementById('s_pw').value
+        : document.getElementById('e_pw').value;
+      await signUpWithOtp({ email: pendingEmail, password: pw, metadata: pendingMeta });
+      setupOtp(); startCountdown();
+      showAlert('alertBox', 'New code sent!', 'success');
+    };
 
-    const body = { firstname, lastname, email, phone, password };
-    if (currentRole === 'client') { body.grade = grade; body.domain = domain; }
+    window.doVerify = async () => {
+      const otp = getOtp();
+      if (otp.length < 8) { showAlert('alertBox', 'Enter all 8 digits.'); return; }
 
-    const endpoint = currentRole === 'Admin' ? '/admin/pre-register' : '/client/pre-register';
-    const { ok, data } = await apiFetch(endpoint, {
-        method: 'POST',
-        body: JSON.stringify(body),
-    });
+      setLoading('verifyBtn', true); clearAlert();
 
-    setLoading('registerBtn', false);
+      const { data, error } = await verifyEmailOtp({ email: pendingEmail, token: otp });
 
-    if (!ok) {
-        showAlert('alertBox', data.error || 'Registration failed. Please try again.');
-        return;
-    }
+      setLoading('verifyBtn', false);
 
-    pendingEmail = email;
-    switchToOtp();
-}
+      if (error) { showAlert('alertBox', error.message.includes('expired') ? 'Code expired — request a new one.' : 'Invalid code.'); return; }
 
-function switchToOtp() {
-    document.getElementById('formStep').style.display = 'none';
-    document.getElementById('otpStep').style.display  = 'block';
-    document.getElementById('emailDisplay').textContent = pendingEmail;
-    document.getElementById('dot1').className = 'step-dot done';
-    document.getElementById('dot1').textContent = '✓';
-    document.getElementById('line1').className = 'step-line done';
-    document.getElementById('dot2').className = 'step-dot active';
-    hideAlert('alertBox');
-    setupOtpInputs();
-    startCountdown();
-}
-
-function goBack() {
-    clearInterval(countdownInterval);
-    clearTimeout(resendTimer);
-    document.getElementById('formStep').style.display = 'block';
-    document.getElementById('otpStep').style.display  = 'none';
-    document.getElementById('dot1').className = 'step-dot active';
-    document.getElementById('dot1').textContent = '1';
-    document.getElementById('line1').className = 'step-line';
-    document.getElementById('dot2').className = 'step-dot pending';
-    hideAlert('alertBox');
-}
-
-function setupOtpInputs() {
-    const inputs = document.querySelectorAll('#otpInputs input');
-    inputs.forEach((inp, i) => {
-        inp.value = '';
-        inp.className = '';
-        inp.addEventListener('input', () => {
-            inp.value = inp.value.replace(/\D/g, '').slice(-1);
-            if (inp.value) { inp.classList.add('filled'); if (i < 5) inputs[i+1].focus(); }
-            else inp.classList.remove('filled');
-        });
-        inp.addEventListener('keydown', e => {
-            if (e.key === 'Backspace' && !inp.value && i > 0) inputs[i-1].focus();
-        });
-        inp.addEventListener('paste', e => {
-            e.preventDefault();
-            const txt = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
-            inputs.forEach((el, j) => {
-                el.value = txt[j] || '';
-                if (el.value) el.classList.add('filled'); else el.classList.remove('filled');
-            });
-        });
-    });
-    inputs[0].focus();
-}
-
-function getOtpValue() {
-    return [...document.querySelectorAll('#otpInputs input')].map(i => i.value).join('');
-}
-
-function startCountdown() {
-    let secs = 120;
-    const badge  = document.getElementById('timerBadge');
-    const count  = document.getElementById('countdown');
-    const resend = document.getElementById('resendBtn');
-    resend.disabled = true;
-    badge.className = 'timer-badge';
-
-    clearInterval(countdownInterval);
-    countdownInterval = setInterval(() => {
-        secs--;
-        const m = Math.floor(secs / 60);
-        const s = String(secs % 60).padStart(2, '0');
-        count.textContent = `${m}:${s}`;
-        if (secs <= 0) {
-            clearInterval(countdownInterval);
-            badge.className = 'timer-badge expired';
-            badge.innerHTML = '⛔ Code expired';
-            resend.disabled = false;
-        }
-    }, 1000);
-}
-
-async function resendOtp() {
-    hideAlert('alertBox');
-    const btn = document.getElementById('resendBtn');
-    btn.disabled = true;
-
-    const body = { email: pendingEmail };
-    const firstname = document.getElementById('firstname').value.trim();
-    const lastname  = document.getElementById('lastname').value.trim();
-    const phone     = document.getElementById('phone').value.trim();
-    const password  = document.getElementById('password').value;
-    const grade     = document.getElementById('grade').value;
-    const domain    = document.getElementById('domain').value;
-    Object.assign(body, { firstname, lastname, phone, password });
-    if (currentRole === 'client') { body.grade = grade; body.domain = domain; }
-
-    const endpoint = currentRole === 'Admin' ? '/admin/pre-register' : '/client/pre-register';
-    const { ok, data } = await apiFetch(endpoint, {
-        method: 'POST',
-        body: JSON.stringify(body),
-    });
-
-    if (!ok) {
-        showAlert('alertBox', data.error || 'Could not resend code.');
-        btn.disabled = false;
-        return;
-    }
-
-    setupOtpInputs();
-    startCountdown();
-    showAlert('alertBox', 'New code sent! Check your email.', 'success');
-}
-
-async function doVerifyOtp() {
-    const otp = getOtpValue();
-    if (otp.length < 6) {
-        showAlert('alertBox', 'Please enter the complete 6-digit code.');
-        return;
-    }
-
-    setLoading('verifyBtn', true);
-    hideAlert('alertBox');
-
-    const endpoint = currentRole === 'Admin' ? '/admin/verify-otp' : '/client/verify-otp';
-    const { ok, data } = await apiFetch(endpoint, {
-        method: 'POST',
-        body: JSON.stringify({ email: pendingEmail, otp }),
-    });
-
-    setLoading('verifyBtn', false);
-
-    if (!ok) {
-        showAlert('alertBox', data.error || 'Invalid code. Please try again.');
-        return;
-    }
-
-    clearInterval(countdownInterval);
-    showAlert('alertBox', 'Account created! Redirecting to login…', 'success');
-    setTimeout(() => window.location.href = 'login.html', 1800);
-}
-</script>
+      clearInterval(countdownInterval);
+      showAlert('alertBox', '🎉 Account created! Redirecting…', 'success');
+      setTimeout(() => window.location.href = 'login.html', 1800);
+    };
+  </script>
 </body>
+
 </html>

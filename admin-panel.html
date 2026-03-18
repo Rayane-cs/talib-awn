@@ -1,609 +1,1438 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel · Talib-Awn</title>
-<link rel="stylesheet" href="style.css">
-<style>
-.layout { display: flex; min-height: 100vh; }
-.sidebar {
-  width: 240px; flex-shrink: 0;
-  background: #1A1C17; border-right: 1px solid rgba(255,255,255,0.07);
-  display: flex; flex-direction: column;
-  position: fixed; top: 0; bottom: 0; left: 0;
-  z-index: 50; overflow-y: auto;
-  transition: transform var(--transition);
-}
-.sidebar-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.07); display: flex; align-items: center; gap: 10px; }
-.logo-mark { width: 34px; height: 34px; background: #dc3545; border-radius: 9px; display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-display); font-weight: 800; font-size: 15px; }
-.logo-text { font-family: var(--font-display); font-weight: 700; font-size: 16px; color: #fff; }
-.logo-text span { color: #dc3545; }
-.admin-badge { margin-left: auto; background: rgba(220,53,69,0.2); color: #ff6b6b; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; }
-.sidebar-profile { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.07); display: flex; align-items: center; gap: 10px; }
-.profile-info .name { font-weight: 600; font-size: 14px; color: #F0EDE6; }
-.profile-info .role { font-size: 12px; color: rgba(255,255,255,0.4); }
-nav.sidebar-nav { padding: 12px; flex: 1; display: flex; flex-direction: column; gap: 2px; }
-.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.55); cursor: pointer; transition: all var(--transition); }
-.nav-item:hover { background: rgba(255,255,255,0.07); color: #F0EDE6; }
-.nav-item.active { background: rgba(220,53,69,0.15); color: #ff6b6b; font-weight: 600; }
-.nav-icon { width: 18px; text-align: center; font-size: 16px; }
-.nav-badge { margin-left: auto; background: #dc3545; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 999px; }
-.nav-section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.25); padding: 12px 12px 4px; }
-.sidebar-footer { padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.07); display: flex; flex-direction: column; gap: 2px; }
-.main-content { flex: 1; margin-left: 240px; min-height: 100vh; transition: margin var(--transition); }
-.topbar { position: sticky; top: 0; z-index: 40; background: rgba(245,242,238,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 28px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
-[data-theme="dark"] .topbar { background: rgba(19,20,16,0.92); }
-.topbar-left { display: flex; align-items: center; gap: 16px; }
-.topbar-title { font-family: var(--font-display); font-weight: 700; font-size: 17px; }
-.topbar-right { display: flex; align-items: center; gap: 10px; }
-.hamburger { display: none; width: 36px; height: 36px; align-items: center; justify-content: center; flex-direction: column; gap: 5px; cursor: pointer; border-radius: var(--radius-sm); }
-.hamburger span { display: block; width: 20px; height: 2px; background: var(--text); border-radius: 2px; }
-.page { display: none; padding: 28px; animation: fadeIn 0.3s ease; }
-.page.active { display: block; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel · Talib-Awn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --red: #dc3545;
+      --navy: #0d1b3e;
+      --blue: #1a6ef5;
+      --blue-pale: #e8f0fe;
+      --gold: #f5a623;
+      --fh: 'Syne', sans-serif;
+      --fb: 'DM Sans', sans-serif;
+      --fm: 'DM Mono', monospace
+    }
 
-.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 8px; transition: all var(--transition); }
-.stat-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
-.stat-card-header { display: flex; align-items: center; justify-content: space-between; }
-.stat-card-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-.stat-card-icon.red { background: rgba(220,53,69,0.12); }
-.stat-card-icon.green { background: var(--mint); }
-.stat-card-icon.gold { background: rgba(196,163,90,0.15); }
-.stat-card-icon.blue { background: rgba(80,120,200,0.12); }
-[data-theme="dark"] .stat-card-icon.green { background: rgba(124,158,135,0.18); }
-[data-theme="dark"] .stat-card-icon.blue { background: rgba(80,120,200,0.2); }
-.stat-card-change { font-size: 12px; font-weight: 600; }
-.stat-card-num { font-family: var(--font-display); font-size: 26px; font-weight: 800; color: var(--text); line-height: 1; }
-.stat-card-label { font-size: 12px; color: var(--text3); }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-.section-header h3 { font-family: var(--font-display); font-weight: 700; font-size: 16px; }
-.content-grid { display: grid; grid-template-columns: 1fr 300px; gap: 20px; }
+    body {
+      font-family: var(--fb);
+      -webkit-font-smoothing: antialiased
+    }
 
-.data-table { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-.table-header { display: grid; padding: 12px 18px; background: var(--bg2); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); border-bottom: 1px solid var(--border); }
-.table-row { display: grid; padding: 14px 18px; border-bottom: 1px solid var(--border); align-items: center; transition: background var(--transition); font-size: 14px; }
-.table-row:last-child { border-bottom: none; }
-.table-row:hover { background: var(--bg2); }
-.user-cell { display: flex; align-items: center; gap: 10px; }
-.user-cell .name { font-weight: 600; font-size: 14px; }
-.user-cell .sub { font-size: 12px; color: var(--text3); }
+    a {
+      text-decoration: none;
+      color: inherit
+    }
 
-.search-bar { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1.5px solid var(--border2); border-radius: var(--radius-full); padding: 10px 18px; margin-bottom: 16px; }
-.search-bar:focus-within { border-color: #dc3545; box-shadow: 0 0 0 3px rgba(220,53,69,0.1); }
-.search-bar input { border: none; background: transparent; outline: none; flex: 1; font-size: 14px; color: var(--text); padding: 0; }
-.filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-.filter-btn { padding: 6px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; border: 1.5px solid var(--border2); background: var(--surface); color: var(--text2); cursor: pointer; transition: all var(--transition); }
-.filter-btn.active, .filter-btn:hover { background: #dc3545; color: #fff; border-color: #dc3545; }
+    button {
+      font-family: var(--fb);
+      cursor: pointer
+    }
 
-.report-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 12px; transition: all var(--transition); }
-.report-card:hover { box-shadow: var(--shadow-sm); }
-.report-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; gap: 12px; }
-.report-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
-.report-meta { font-size: 12px; color: var(--text3); }
-.report-actions { display: flex; gap: 8px; flex-shrink: 0; }
-.report-body { font-size: 14px; color: var(--text2); line-height: 1.5; background: var(--bg2); border-radius: var(--radius-sm); padding: 10px 14px; }
+    .layout {
+      display: flex;
+      min-height: 100vh
+    }
 
-.notifs-list { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-.notif-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--border); transition: background var(--transition); }
-.notif-item:last-child { border-bottom: none; }
-.notif-item:hover { background: var(--bg2); }
-.notif-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-.notif-icon.red { background: rgba(220,53,69,0.12); }
-.notif-icon.green { background: var(--mint); }
-.notif-icon.gold { background: rgba(196,163,90,0.15); }
-[data-theme="dark"] .notif-icon.green { background: rgba(124,158,135,0.18); }
-.notif-body { flex: 1; }
-.notif-body strong { font-size: 13px; display: block; margin-bottom: 2px; }
-.notif-body p { font-size: 12px; color: var(--text2); margin-bottom: 4px; }
-.notif-time { font-size: 11px; color: var(--text3); }
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: #1a1c17;
+      border-right: 1px solid rgba(255, 255, 255, .07);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 50;
+      transition: transform .3s;
+      overflow-y: auto
+    }
 
-.warning-modal-btn { cursor: pointer; }
+    .sb-hdr {
+      padding: 18px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, .07);
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
 
-.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 45; }
-.overlay.show { display: block; }
+    .logo-mark {
+      width: 34px;
+      height: 34px;
+      background: var(--red);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: var(--fh);
+      font-weight: 800;
+      font-size: 16px
+    }
 
-.metric-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 20px; }
+    .logo-text {
+      font-family: var(--fh);
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff
+    }
 
-.platform-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
-.platform-card h4 { font-family: var(--font-display); font-weight: 700; margin-bottom: 16px; }
-.p-metric { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
-.p-metric:last-child { border-bottom: none; }
-.p-metric-label { color: var(--text2); }
-.p-metric-val { font-weight: 700; font-family: var(--font-display); }
+    .logo-text span {
+      color: var(--red)
+    }
 
-@media (max-width: 1100px) { .stats-row { grid-template-columns: repeat(2,1fr); } .content-grid { grid-template-columns: 1fr; } }
-@media (max-width: 768px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); box-shadow: var(--shadow-lg); } .main-content { margin-left: 0; } .hamburger { display: flex; } .page { padding: 16px; } .topbar { padding: 0 16px; } }
-@media (max-width: 540px) { .stats-row { grid-template-columns: 1fr 1fr; } }
-</style>
+    .admin-chip {
+      margin-left: auto;
+      background: rgba(220, 53, 69, .2);
+      color: #ff6b6b;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 100px;
+      font-family: var(--fm)
+    }
+
+    .sb-profile {
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, .07);
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .avatar {
+      border-radius: 50%;
+      background: rgba(220, 53, 69, .2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #ff6b6b;
+      font-size: 14px;
+      flex-shrink: 0;
+      overflow: hidden
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%
+    }
+
+    .av-sm {
+      width: 32px;
+      height: 32px;
+      font-size: 12px
+    }
+
+    .av-md {
+      width: 42px;
+      height: 42px;
+      font-size: 15px
+    }
+
+    .sb-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: #f0ede6
+    }
+
+    .sb-role {
+      font-size: 12px;
+      color: rgba(255, 255, 255, .4)
+    }
+
+    .sb-nav {
+      padding: 10px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px
+    }
+
+    .nav-sec {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: rgba(255, 255, 255, .25);
+      padding: 10px 10px 4px
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, .55);
+      cursor: pointer;
+      transition: all .15s
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, .07);
+      color: #f0ede6
+    }
+
+    .nav-item.active {
+      background: rgba(220, 53, 69, .15);
+      color: #ff6b6b;
+      font-weight: 600
+    }
+
+    .nav-icon {
+      width: 18px;
+      text-align: center;
+      font-size: 15px
+    }
+
+    .sb-foot {
+      padding: 10px;
+      border-top: 1px solid rgba(255, 255, 255, .07);
+      display: flex;
+      flex-direction: column;
+      gap: 2px
+    }
+
+    .main {
+      flex: 1;
+      margin-left: 240px;
+      min-height: 100vh;
+      background: var(--bg, #f5f2ee)
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(245, 242, 238, .92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border, #e2ddd5);
+      padding: 0 24px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    [data-theme="dark"] .topbar {
+      background: rgba(19, 18, 15, .92)
+    }
+
+    .tb-left {
+      display: flex;
+      align-items: center;
+      gap: 14px
+    }
+
+    .tb-title {
+      font-family: var(--fh);
+      font-weight: 700;
+      font-size: 17px
+    }
+
+    .tb-right {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 8px;
+      cursor: pointer;
+      border-radius: 8px;
+      background: none;
+      border: none
+    }
+
+    .hamburger span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px
+    }
+
+    .page {
+      display: none;
+      padding: 24px;
+      animation: fadeIn .25s ease
+    }
+
+    .page.active {
+      display: block
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .4);
+      z-index: 45
+    }
+
+    .overlay.show {
+      display: block
+    }
+
+    .card {
+      background: var(--surface, #fff);
+      border: 1px solid var(--border, #e2ddd5);
+      border-radius: 14px;
+      padding: 20px
+    }
+
+    .sec-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px
+    }
+
+    .sec-hdr h3 {
+      font-family: var(--fh);
+      font-weight: 700;
+      font-size: 16px
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 20px
+    }
+
+    .stat-card {
+      background: var(--surface, #fff);
+      border: 1px solid var(--border, #e2ddd5);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all .2s
+    }
+
+    .stat-card:hover {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, .07);
+      transform: translateY(-2px)
+    }
+
+    .sc-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .sc-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px
+    }
+
+    .sc-icon.red {
+      background: rgba(220, 53, 69, .1)
+    }
+
+    .sc-icon.green {
+      background: rgba(39, 174, 96, .1)
+    }
+
+    .sc-icon.gold {
+      background: rgba(245, 166, 35, .1)
+    }
+
+    .sc-icon.blue {
+      background: var(--blue-pale)
+    }
+
+    .sc-num {
+      font-family: var(--fh);
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text, #1c1c1a);
+      line-height: 1
+    }
+
+    .sc-lbl {
+      font-size: 12px;
+      color: var(--text3, #8a8a82)
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      border: none;
+      font-family: var(--fb)
+    }
+
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: 12px
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--navy), var(--red));
+      color: #fff
+    }
+
+    .btn-primary:hover {
+      opacity: .9;
+      transform: translateY(-1px)
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text2, #4a4a45);
+      border: 1.5px solid var(--border, #e2ddd5)
+    }
+
+    .btn-outline:hover {
+      border-color: var(--red);
+      color: var(--red)
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text2, #4a4a45)
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg2, #f0ede6)
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--red);
+      border: 1.5px solid rgba(220, 53, 69, .3)
+    }
+
+    .btn-danger:hover {
+      background: rgba(220, 53, 69, .08)
+    }
+
+    .btn:disabled {
+      opacity: .5;
+      cursor: not-allowed
+    }
+
+    .form-group {
+      margin-bottom: 16px
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      font-family: var(--fm)
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      background: var(--bg, #f5f2ee);
+      border: 1.5px solid var(--border2, #d0cbc2);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: var(--text);
+      font-family: var(--fb);
+      outline: none;
+      transition: border-color .2s
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, .1)
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px
+    }
+
+    .modal-overlay.open {
+      display: flex
+    }
+
+    .modal {
+      background: var(--surface, #fff);
+      border-radius: 18px;
+      padding: 28px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, .25)
+    }
+
+    .modal-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px
+    }
+
+    .modal-title {
+      font-family: var(--fh);
+      font-size: 20px;
+      font-weight: 800
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--text2)
+    }
+
+    .modal-close:hover {
+      background: var(--bg2)
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: flex-end
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+      align-items: center;
+      gap: 8px
+    }
+
+    .alert.show {
+      display: flex
+    }
+
+    .alert.error {
+      background: rgba(220, 53, 69, .1);
+      color: var(--red);
+      border: 1px solid rgba(220, 53, 69, .2)
+    }
+
+    .alert.success {
+      background: rgba(39, 174, 96, .1);
+      color: #1e8449;
+      border: 1px solid rgba(39, 174, 96, .2)
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--fm)
+    }
+
+    .badge-green {
+      background: rgba(39, 174, 96, .12);
+      color: #1e8449
+    }
+
+    .badge-gold {
+      background: rgba(245, 166, 35, .15);
+      color: #8a6010
+    }
+
+    .badge-red {
+      background: rgba(220, 53, 69, .1);
+      color: var(--red)
+    }
+
+    .badge-blue {
+      background: var(--blue-pale);
+      color: var(--navy)
+    }
+
+    .user-row {
+      background: var(--surface, #fff);
+      border: 1px solid var(--border, #e2ddd5);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      transition: all .2s
+    }
+
+    .user-row:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .06)
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .u-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text, #1c1c1a)
+    }
+
+    .u-sub {
+      font-size: 12px;
+      color: var(--text3, #8a8a82)
+    }
+
+    .u-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .proj-row {
+      background: var(--surface, #fff);
+      border: 1px solid var(--border, #e2ddd5);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface, #fff);
+      border: 1.5px solid var(--border2, #d0cbc2);
+      border-radius: 100px;
+      padding: 10px 18px;
+      margin-bottom: 18px
+    }
+
+    .search-bar:focus-within {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, .1)
+    }
+
+    .search-bar input {
+      border: none;
+      background: transparent;
+      outline: none;
+      flex: 1;
+      font-size: 14px;
+      color: var(--text);
+      font-family: var(--fb)
+    }
+
+    .spin-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(220, 53, 69, .2);
+      border-top-color: var(--red);
+      border-radius: 50%;
+      animation: spin .7s linear infinite
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text3)
+    }
+
+    .empty-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+      display: block
+    }
+
+    .empty h4 {
+      font-family: var(--fh);
+      margin-bottom: 6px;
+      color: var(--text2)
+    }
+
+    .theme-toggle {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text2);
+      transition: background .15s
+    }
+
+    .theme-toggle:hover {
+      background: var(--bg2)
+    }
+
+    @media(max-width:1100px) {
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr)
+      }
+    }
+
+    @media(max-width:768px) {
+      .sidebar {
+        transform: translateX(-100%)
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 0 0 40px rgba(0, 0, 0, .2)
+      }
+
+      .main {
+        margin-left: 0
+      }
+
+      .hamburger {
+        display: flex
+      }
+
+      .page {
+        padding: 14px
+      }
+
+      .topbar {
+        padding: 0 14px
+      }
+    }
+
+    @media(max-width:540px) {
+      .stats-row {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .form-row {
+        grid-template-columns: 1fr
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div class="layout">
+  <div class="layout">
 
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="logo-mark">ط</div>
-      <span class="logo-text">Talib<span>-Awn</span></span>
-      <span class="admin-badge">Admin</span>
-    </div>
-    <div class="sidebar-profile">
-      <div class="avatar avatar-md" style="background:#dc3545;color:#fff;">A</div>
-      <div class="profile-info">
-        <div class="name">Platform Admin</div>
-        <div class="role">Super administrator</div>
+    <aside class="sidebar" id="sidebar">
+      <div class="sb-hdr">
+        <img src="logo-07.svg" class="logo-mark" alt="Talib-Awn" style="background:transparent;box-shadow:none;">
+        <span class="logo-text">Talib<span>-Awn</span></span>
+        <span class="admin-chip">Admin</span>
       </div>
-    </div>
-    <nav class="sidebar-nav">
-      <div class="nav-section-label">Overview</div>
-      <div class="nav-item active" onclick="showPage('dashboard', this)"><span class="nav-icon">📊</span> Dashboard</div>
-      <div class="nav-item" onclick="showPage('analytics', this)"><span class="nav-icon">📈</span> Analytics</div>
-
-      <div class="nav-section-label">Users</div>
-      <div class="nav-item" onclick="showPage('students', this)"><span class="nav-icon">🎓</span> Students <span class="nav-badge" style="background:#dc3545;">12</span></div>
-      <div class="nav-item" onclick="showPage('employers', this)"><span class="nav-icon">🧑‍💼</span> Employers</div>
-
-      <div class="nav-section-label">Content</div>
-      <div class="nav-item" onclick="showPage('jobs', this)"><span class="nav-icon">💼</span> Job posts</div>
-      <div class="nav-item" onclick="showPage('services', this)"><span class="nav-icon">🧩</span> Services</div>
-
-      <div class="nav-section-label">Moderation</div>
-      <div class="nav-item" onclick="showPage('reports', this)"><span class="nav-icon">🚨</span> Reports <span class="nav-badge" style="background:#dc3545;">5</span></div>
-      <div class="nav-item" onclick="showPage('warnings', this)"><span class="nav-icon">⚠️</span> Warnings</div>
-
-      <div class="nav-section-label">Finance</div>
-      <div class="nav-item" onclick="showPage('finance', this)"><span class="nav-icon">💰</span> Transactions</div>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="nav-item" style="color:rgba(255,255,255,0.55);"><span class="nav-icon">⚙️</span> Settings</div>
-      <a href="#" onclick="signOut()" class="nav-item" style="color:rgba(255,255,255,0.55);"><span class="nav-icon">🚪</span> Sign out</a>
-    </div>
-  </aside>
-
-  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-
-  <main class="main-content">
-    <div class="topbar">
-      <div class="topbar-left">
-        <div class="hamburger hide-desktop" onclick="openSidebar()"><span></span><span></span><span></span></div>
-        <span class="topbar-title" id="pageTitle">Dashboard</span>
-      </div>
-      <div class="topbar-right">
-        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"></button>
-        <div style="width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;position:relative;transition:background var(--transition);" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='transparent'">
-          🔔<span style="position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:#dc3545;"></span>
-        </div>
-        <div class="avatar avatar-sm" style="background:#dc3545;color:#fff;">A</div>
-      </div>
-    </div>
-
-    <div class="page active" id="page-dashboard">
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-card-header"><div class="stat-card-icon green">🎓</div><span class="stat-card-change" style="color:var(--sage-deep);">+48 this week</span></div>
-          <div class="stat-card-num">2,412</div>
-          <div class="stat-card-label">Total students</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-header"><div class="stat-card-icon gold">🧑‍💼</div><span class="stat-card-change" style="color:var(--gold);">+12 this week</span></div>
-          <div class="stat-card-num">384</div>
-          <div class="stat-card-label">Total employers</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-header"><div class="stat-card-icon blue">💼</div><span class="stat-card-change" style="color:#5078c8;">+23 today</span></div>
-          <div class="stat-card-num">836</div>
-          <div class="stat-card-label">Active job posts</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-header"><div class="stat-card-icon red">🚨</div><span class="stat-card-change" style="color:#dc3545;">5 urgent</span></div>
-          <div class="stat-card-num">5</div>
-          <div class="stat-card-label">Open reports</div>
-        </div>
-      </div>
-
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-card-header"><div class="stat-card-icon gold">💰</div></div>
-          <div class="stat-card-num">1.2M <span style="font-size:14px;color:var(--text3);">DZD</span></div>
-          <div class="stat-card-label">Total transactions this month</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-header"><div class="stat-card-icon green">⭐</div></div>
-          <div class="stat-card-num">4.8</div>
-          <div class="stat-card-label">Platform avg. rating</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-header"><div class="stat-card-icon blue">✅</div></div>
-          <div class="stat-card-num">1,840</div>
-          <div class="stat-card-label">Completed tasks total</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-header"><div class="stat-card-icon red">⏳</div></div>
-          <div class="stat-card-num">12</div>
-          <div class="stat-card-label">Unverified accounts pending</div>
-        </div>
-      </div>
-
-      <div class="content-grid">
+      <div class="sb-profile">
+        <div class="avatar av-md" id="sbAvatar"></div>
         <div>
-          <div class="section-header"><h3>Recent user registrations</h3><button class="btn btn-ghost btn-sm" onclick="showPage('students', null)">See all →</button></div>
-          <div class="data-table">
-            <div class="table-header" style="grid-template-columns:2fr 1fr 1fr 1fr;">
-              <span>User</span><span>Role</span><span>Status</span><span>Action</span>
+          <div class="sb-name" id="sbName">Loading…</div>
+          <div class="sb-role">🛡️ Administrator</div>
+        </div>
+      </div>
+      <nav class="sb-nav">
+        <div class="nav-sec">Management</div>
+        <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">📊</span> Dashboard
+        </div>
+        <div class="nav-item" onclick="showPage('users',this)"><span class="nav-icon">👥</span> Users</div>
+        <div class="nav-item" onclick="showPage('services',this)"><span class="nav-icon">🧩</span> Services</div>
+        <div class="nav-item" onclick="showPage('events',this)"><span class="nav-icon">📅</span> Events</div>
+        <div class="nav-item" onclick="showPage('announcements',this)"><span class="nav-icon">📢</span> Announcements
+        </div>
+      </nav>
+      <div class="sb-foot">
+        <div class="nav-item" onclick="doSignOut()" style="color:#ff6b6b"><span class="nav-icon">🚪</span> Sign out
+        </div>
+      </div>
+    </aside>
+
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="tb-left">
+          <button class="hamburger" onclick="openSidebar()"><span></span><span></span><span></span></button>
+          <span class="tb-title" id="pageTitle">Dashboard</span>
+        </div>
+        <div class="tb-right">
+          <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">🌙</button>
+        </div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="sc-hdr">
+              <div class="sc-icon red">👥</div>
             </div>
-            <div class="table-row" style="grid-template-columns:2fr 1fr 1fr 1fr;">
-              <div class="user-cell"><div class="avatar avatar-sm">يا</div><div><div class="name">Yacine Amrani</div><div class="sub">yacine@univ-alger.dz</div></div></div>
-              <span class="badge badge-green">Student</span>
-              <span class="badge badge-green">✅ Verified</span>
-              <button class="btn btn-ghost btn-sm">View</button>
+            <div class="sc-num" id="stUsers">—</div>
+            <div class="sc-lbl">Total users</div>
+          </div>
+          <div class="stat-card">
+            <div class="sc-hdr">
+              <div class="sc-icon green">🧩</div>
             </div>
-            <div class="table-row" style="grid-template-columns:2fr 1fr 1fr 1fr;">
-              <div class="user-cell"><div class="avatar avatar-sm" style="background:rgba(196,163,90,0.2);color:var(--gold);">تد</div><div><div class="name">TechStore DZ</div><div class="sub">contact@techstore.dz</div></div></div>
-              <span class="badge badge-gold">Employer</span>
-              <span class="badge badge-green">✅ Verified</span>
-              <button class="btn btn-ghost btn-sm">View</button>
+            <div class="sc-num" id="stSvcs">—</div>
+            <div class="sc-lbl">Services posted</div>
+          </div>
+          <div class="stat-card">
+            <div class="sc-hdr">
+              <div class="sc-icon gold">📅</div>
             </div>
-            <div class="table-row" style="grid-template-columns:2fr 1fr 1fr 1fr;">
-              <div class="user-cell"><div class="avatar avatar-sm" style="background:var(--mint);">نك</div><div><div class="name">Nadia Khalladi</div><div class="sub">nadia.k@esba.dz</div></div></div>
-              <span class="badge badge-green">Student</span>
-              <span class="badge badge-gold">⏳ Pending</span>
-              <div style="display:flex;gap:4px;"><button class="btn btn-primary btn-sm" style="background:linear-gradient(135deg,#1565C0,#2196F3);padding:5px 10px;">✓ Approve</button><button class="btn btn-ghost btn-sm" style="color:var(--clay);">✗</button></div>
+            <div class="sc-num" id="stEvts">—</div>
+            <div class="sc-lbl">Events</div>
+          </div>
+          <div class="stat-card">
+            <div class="sc-hdr">
+              <div class="sc-icon blue">🔒</div>
             </div>
-            <div class="table-row" style="grid-template-columns:2fr 1fr 1fr 1fr;">
-              <div class="user-cell"><div class="avatar avatar-sm" style="background:rgba(80,120,200,0.15);color:#5078c8;">رم</div><div><div class="name">Rami Messaoud</div><div class="sub">rami@gmail.com</div></div></div>
-              <span class="badge badge-green">Student</span>
-              <span class="badge badge-gold">⏳ Pending</span>
-              <div style="display:flex;gap:4px;"><button class="btn btn-primary btn-sm" style="background:linear-gradient(135deg,#1565C0,#2196F3);padding:5px 10px;">✓ Approve</button><button class="btn btn-ghost btn-sm" style="color:var(--clay);">✗</button></div>
+            <div class="sc-num" id="stBanned">—</div>
+            <div class="sc-lbl">Banned users</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+          <div class="card">
+            <div class="sec-hdr">
+              <h3>Recent users</h3><button class="btn btn-ghost btn-sm" onclick="showPage('users',null)">See all
+                →</button>
+            </div>
+            <div id="recentUsers">
+              <div class="spin-wrap">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="sec-hdr">
+              <h3>Recent services</h3><button class="btn btn-ghost btn-sm" onclick="showPage('services',null)">See all
+                →</button>
+            </div>
+            <div id="recentSvcs">
+              <div class="spin-wrap">
+                <div class="spinner"></div>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
+      <!-- USERS -->
+      <div class="page" id="page-users">
+        <div class="sec-hdr">
+          <h3 id="usersTitle">All Users</h3>
+        </div>
+        <div class="search-bar">
+          <span style="font-size:15px;color:var(--text3)">🔍</span>
+          <input type="text" id="userSearch" placeholder="Search by name or email…" oninput="renderUsers()">
+        </div>
+        <div id="usersList">
+          <div class="spin-wrap">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SERVICES -->
+      <div class="page" id="page-services">
+        <div class="sec-hdr">
+          <h3 id="svcsTitle">All Services</h3>
+        </div>
+        <div id="adminSvcsList">
+          <div class="spin-wrap">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EVENTS -->
+      <div class="page" id="page-events">
+        <div class="sec-hdr">
+          <h3>Events</h3>
+          <button class="btn btn-primary btn-sm" onclick="openEventModal()">+ Create event</button>
+        </div>
+        <div id="adminEventsList">
+          <div class="spin-wrap">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANNOUNCEMENTS -->
+      <div class="page" id="page-announcements">
+        <div class="sec-hdr">
+          <h3>Announcements</h3>
+          <button class="btn btn-primary btn-sm" onclick="openAnnModal()">+ Create announcement</button>
+        </div>
+        <div id="adminAnnsList">
+          <div class="spin-wrap">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- BAN MODAL -->
+  <div class="modal-overlay" id="banModal">
+    <div class="modal">
+      <div class="modal-hdr">
+        <span class="modal-title" id="banModalTitle">Ban User</span>
+        <button class="modal-close" onclick="document.getElementById('banModal').classList.remove('open')">✕</button>
+      </div>
+      <div id="banAlert" class="alert"></div>
+      <div class="form-group"><label>Reason for ban *</label><textarea id="banReason" rows="3"
+          placeholder="Describe why this user is being banned…"></textarea></div>
+      <input type="hidden" id="banUserId">
+      <div class="modal-actions">
+        <button class="btn btn-ghost"
+          onclick="document.getElementById('banModal').classList.remove('open')">Cancel</button>
+        <button class="btn btn-danger" id="banSubmitBtn" onclick="submitBan()">🔒 Ban user</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WARN MODAL -->
+  <div class="modal-overlay" id="warnModal">
+    <div class="modal">
+      <div class="modal-hdr">
+        <span class="modal-title">Send Warning</span>
+        <button class="modal-close" onclick="document.getElementById('warnModal').classList.remove('open')">✕</button>
+      </div>
+      <div id="warnAlert" class="alert"></div>
+      <p style="font-size:14px;color:var(--text2);margin-bottom:16px">After 3 warnings the account is automatically
+        banned.</p>
+      <div class="form-group"><label>Warning reason *</label><textarea id="warnReason" rows="3"
+          placeholder="Describe the violation…"></textarea></div>
+      <input type="hidden" id="warnUserId">
+      <div class="modal-actions">
+        <button class="btn btn-ghost"
+          onclick="document.getElementById('warnModal').classList.remove('open')">Cancel</button>
+        <button class="btn btn-outline" style="border-color:var(--gold);color:#8a6010" id="warnSubmitBtn"
+          onclick="submitWarn()">⚠️ Send warning</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE EVENT MODAL -->
+  <div class="modal-overlay" id="eventModal">
+    <div class="modal">
+      <div class="modal-hdr">
+        <span class="modal-title" id="evModalTitle">Create Event</span>
+        <button class="modal-close" onclick="document.getElementById('eventModal').classList.remove('open')">✕</button>
+      </div>
+      <div id="evAlert" class="alert"></div>
+      <div class="form-group"><label>Title *</label><input type="text" id="evTitle" placeholder="Event title"></div>
+      <div class="form-group"><label>Description</label><textarea id="evDesc" rows="3"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Start date & time *</label><input type="datetime-local" id="evStart"></div>
+        <div class="form-group"><label>End date & time</label><input type="datetime-local" id="evEnd"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Location</label><input type="text" id="evLoc" placeholder="Room 101, Campus…">
+        </div>
+        <div class="form-group"><label>Capacity</label><input type="number" id="evCap" placeholder="Unlimited"></div>
+      </div>
+      <div class="form-group"><label>Type</label>
+        <select id="evType">
+          <option value="workshop">Workshop</option>
+          <option value="seminar">Seminar</option>
+          <option value="conference">Conference</option>
+          <option value="social">Social</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <input type="hidden" id="evEditId">
+      <div class="modal-actions">
+        <button class="btn btn-ghost"
+          onclick="document.getElementById('eventModal').classList.remove('open')">Cancel</button>
+        <button class="btn btn-primary" id="evSubmitBtn" onclick="submitEvent()">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE ANNOUNCEMENT MODAL -->
+  <div class="modal-overlay" id="annModal">
+    <div class="modal">
+      <div class="modal-hdr">
+        <span class="modal-title" id="annModalTitle">Create Announcement</span>
+        <button class="modal-close" onclick="document.getElementById('annModal').classList.remove('open')">✕</button>
+      </div>
+      <div id="annAlert" class="alert"></div>
+      <div class="form-group"><label>Title *</label><input type="text" id="annTitle"></div>
+      <div class="form-group"><label>Content *</label><textarea id="annContent" rows="4"></textarea></div>
+      <div class="form-group"><label>Image URL (optional)</label><input type="text" id="annImg" placeholder="https://…">
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;gap:10px">
+        <input type="checkbox" id="annPinned" style="width:auto;height:auto;border-radius:4px">
+        <label for="annPinned" style="text-transform:none;letter-spacing:0;font-size:14px;cursor:pointer">📌 Pin this
+          announcement</label>
+      </div>
+      <input type="hidden" id="annEditId">
+      <div class="modal-actions">
+        <button class="btn btn-ghost"
+          onclick="document.getElementById('annModal').classList.remove('open')">Cancel</button>
+        <button class="btn btn-primary" id="annSubmitBtn" onclick="submitAnn()">Publish</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import {
+      supabase, requireProfile, signOut,
+      adminGetAllUsers, adminBanUser, adminUnbanUser, adminWarnUser,
+      getProjects, deleteProject,
+      getEvents, getAnnouncements,
+      fmtDate, esc,
+    } from './supabase.js';
+
+    let ME = null;
+    let allUsers = [];
+    let adminId = null;
+
+    (async () => {
+      applyTheme();
+      ME = await requireProfile();
+      if (!ME || ME.role?.toLowerCase() !== 'admin') { window.location.href = 'login.html'; return; }
+      adminId = ME.id;
+      document.getElementById('sbName').textContent = `${ME.firstname} ${ME.lastname}`;
+      const ini = (ME.firstname[0] + (ME.lastname[0] || '')).toUpperCase();
+      setAv('sbAvatar', ME.image, ini);
+      loadDashboard();
+    })();
+
+    function applyTheme() {
+      const t = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+      document.documentElement.dataset.theme = t;
+      document.getElementById('themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
+    }
+    window.toggleTheme = () => {
+      const dark = document.documentElement.dataset.theme !== 'dark';
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+      document.getElementById('themeBtn').textContent = dark ? '☀️' : '🌙';
+    };
+
+    function setAv(id, url, ini) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (url) el.innerHTML = `<img src="${esc(url)}" alt="${ini}" onerror="this.parentElement.textContent='${ini}'">`;
+      else el.textContent = ini;
+    }
+
+    // ── dashboard ─────────────────────────────────────────────────────────────────
+    async function loadDashboard() {
+      const [{ data: users }, { data: svcs }, { data: evts }] = await Promise.all([
+        adminGetAllUsers(),
+        getProjects(),
+        getEvents(),
+      ]);
+      allUsers = users || [];
+      const banned = allUsers.filter(u => u.is_banned).length;
+      document.getElementById('stUsers').textContent = allUsers.length;
+      document.getElementById('stSvcs').textContent = (svcs || []).length;
+      document.getElementById('stEvts').textContent = (evts || []).length;
+      document.getElementById('stBanned').textContent = banned;
+
+      // Recent users (last 5)
+      const ru = document.getElementById('recentUsers');
+      const recent5 = allUsers.slice(0, 5);
+      if (!recent5.length) { ru.innerHTML = `<div class="empty"><span>No users yet.</span></div>`; }
+      else ru.innerHTML = recent5.map(u => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <div class="avatar av-sm">${(u.firstname[0] || '?').toUpperCase()}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600">${esc(u.firstname)} ${esc(u.lastname)}</div>
+        <div style="font-size:11px;color:var(--text3)">${esc(u.role)} · ${fmtDate(u.created_at)}</div>
+      </div>
+      ${u.is_banned ? '<span class="badge badge-red">Banned</span>' : ''}
+    </div>`).join('');
+
+      // Recent services (last 5)
+      const rs = document.getElementById('recentSvcs');
+      const svc5 = (svcs || []).slice(0, 5);
+      if (!svc5.length) { rs.innerHTML = `<div class="empty"><span>No services yet.</span></div>`; }
+      else rs.innerHTML = svc5.map(p => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600">${esc(p.title)}</div>
+        <div style="font-size:11px;color:var(--text3)">${esc(p.category || 'other')} · ${esc(p.owner?.firstname || '')} ${esc(p.owner?.lastname || '')}</div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="delSvc(${p.id})">🗑</button>
+    </div>`).join('');
+    }
+
+    // ── users ─────────────────────────────────────────────────────────────────────
+    async function loadUsers() {
+      document.getElementById('usersList').innerHTML = `<div class="spin-wrap"><div class="spinner"></div></div>`;
+      const { data } = await adminGetAllUsers();
+      allUsers = data || [];
+      renderUsers();
+    }
+    window.renderUsers = () => {
+      const q = (document.getElementById('userSearch')?.value || '').toLowerCase();
+      let list = allUsers;
+      if (q) list = list.filter(u =>
+        u.firstname.toLowerCase().includes(q) || u.lastname.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
+      );
+      document.getElementById('usersTitle').textContent = `All Users (${list.length})`;
+      const el = document.getElementById('usersList');
+      if (!list.length) { el.innerHTML = `<div class="empty"><span class="empty-icon">👥</span><h4>No users found</h4></div>`; return; }
+      el.innerHTML = list.map(u => `
+    <div class="user-row">
+      <div class="user-info">
+        <div class="avatar av-sm">${(u.firstname[0] || '?').toUpperCase()}</div>
         <div>
-          <div class="section-header"><h3>Platform alerts</h3></div>
-          <div class="notifs-list">
-            <div class="notif-item">
-              <div class="notif-icon red">🚨</div>
-              <div class="notif-body"><strong>New report filed</strong><p>User flagged a job post for false salary claims.</p><span class="notif-time">1h ago</span></div>
-            </div>
-            <div class="notif-item">
-              <div class="notif-icon gold">⏳</div>
-              <div class="notif-body"><strong>12 accounts pending</strong><p>Student cards waiting for manual review.</p><span class="notif-time">Today</span></div>
-            </div>
-            <div class="notif-item">
-              <div class="notif-icon green">✅</div>
-              <div class="notif-body"><strong>Platform health: good</strong><p>All systems running. 99.7% uptime this week.</p><span class="notif-time">Auto-check</span></div>
-            </div>
-            <div class="notif-item">
-              <div class="notif-icon red">⚠️</div>
-              <div class="notif-body"><strong>User reached 2 warnings</strong><p>Omar D. · One more warning = account ban.</p><span class="notif-time">Yesterday</span></div>
-            </div>
-          </div>
+          <div class="u-name">${esc(u.firstname)} ${esc(u.lastname)}</div>
+          <div class="u-sub">${esc(u.email)} · ${esc(u.role)} · ${esc(u.grade || '')} ${esc(u.domain ? '· ' + u.domain : '')} · Joined ${fmtDate(u.created_at)}</div>
         </div>
       </div>
-    </div>
+      <div class="u-actions">
+        ${u.warnings > 0 ? `<span class="badge badge-gold">⚠️ ${u.warnings}/3</span>` : ''}
+        ${u.is_banned ? `
+          <span class="badge badge-red">🔒 Banned</span>
+          <button class="btn btn-outline btn-sm" onclick="unban(${u.id})">Unban</button>
+        ` : `
+          <button class="btn btn-outline btn-sm" style="border-color:var(--gold);color:#8a6010" onclick="openWarn(${u.id},'${esc(u.firstname + ' ' + u.lastname)}')">⚠️ Warn</button>
+          <button class="btn btn-danger btn-sm" onclick="openBan(${u.id},'${esc(u.firstname + ' ' + u.lastname)}')">🔒 Ban</button>
+        `}
+      </div>
+    </div>`).join('');
+    };
 
-    <div class="page" id="page-students">
-      <div class="search-bar"><span style="font-size:16px;color:var(--text3);">🔍</span><input type="text" placeholder="Search by name, university, or email..."></div>
-      <div class="filter-row">
-        <button class="filter-btn active">All (2,412)</button>
-        <button class="filter-btn">Verified (2,400)</button>
-        <button class="filter-btn">Pending (12)</button>
-        <button class="filter-btn">Banned (0)</button>
-        <button class="filter-btn">Warned (4)</button>
-      </div>
-      <div class="data-table">
-        <div class="table-header" style="grid-template-columns:2fr 1.5fr 1fr 1fr 1.5fr;">
-          <span>Student</span><span>University</span><span>Rating</span><span>Status</span><span>Actions</span>
-        </div>
-        <div class="table-row" style="grid-template-columns:2fr 1.5fr 1fr 1fr 1.5fr;">
-          <div class="user-cell"><div class="avatar avatar-sm">يا</div><div><div class="name">Yacine Amrani</div><div class="sub">CS, 3rd year</div></div></div>
-          <span style="font-size:13px;color:var(--text2);">Univ. Algiers 1</span>
-          <span class="stars" style="font-size:12px;">★★★★★ 4.9</span>
-          <span class="badge badge-green">Verified</span>
-          <div style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm">View</button><button class="btn btn-outline btn-sm" style="color:#dc3545;border-color:#dc3545;font-size:12px;padding:5px 10px;" onclick="warnUser('Yacine Amrani')">⚠️ Warn</button></div>
-        </div>
-        <div class="table-row" style="grid-template-columns:2fr 1.5fr 1fr 1fr 1.5fr;">
-          <div class="user-cell"><div class="avatar avatar-sm" style="background:var(--mint);">نك</div><div><div class="name">Nadia Khalladi</div><div class="sub">Design, 4th year</div></div></div>
-          <span style="font-size:13px;color:var(--text2);">ESBA Algiers</span>
-          <span class="stars" style="font-size:12px;">★★★★★ 5.0</span>
-          <span class="badge badge-gold">Pending</span>
-          <div style="display:flex;gap:4px;"><button class="btn btn-primary btn-sm" style="background:linear-gradient(135deg,#1565C0,#2196F3);font-size:12px;padding:5px 10px;">Verify</button><button class="btn btn-ghost btn-sm" style="color:var(--clay);font-size:12px;padding:5px 10px;">Reject</button></div>
-        </div>
-        <div class="table-row" style="grid-template-columns:2fr 1.5fr 1fr 1fr 1.5fr;">
-          <div class="user-cell"><div class="avatar avatar-sm" style="background:rgba(80,120,200,0.15);color:#5078c8;">رم</div><div><div class="name">Rami Messaoud</div><div class="sub">Engineering</div></div></div>
-          <span style="font-size:13px;color:var(--text2);">ENP Algiers</span>
-          <span class="stars" style="font-size:12px;">★★★★ 4.6</span>
-          <span class="badge badge-gold">Pending</span>
-          <div style="display:flex;gap:4px;"><button class="btn btn-primary btn-sm" style="background:linear-gradient(135deg,#1565C0,#2196F3);font-size:12px;padding:5px 10px;">Verify</button><button class="btn btn-ghost btn-sm" style="color:var(--clay);font-size:12px;padding:5px 10px;">Reject</button></div>
-        </div>
-        <div class="table-row" style="grid-template-columns:2fr 1.5fr 1fr 1fr 1.5fr;">
-          <div class="user-cell"><div class="avatar avatar-sm" style="background:rgba(139,111,94,0.15);color:var(--clay);">عد</div><div><div class="name">Omar Djaafri</div><div class="sub">Economics, 2nd year</div></div></div>
-          <span style="font-size:13px;color:var(--text2);">Univ. Oran</span>
-          <span class="stars" style="font-size:12px;">★★★ 3.2</span>
-          <span style="display:flex;align-items:center;gap:4px;"><span class="badge badge-red">⚠️ 2 warnings</span></span>
-          <div style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm">View</button><button class="btn btn-outline btn-sm" style="color:#dc3545;border-color:#dc3545;font-size:12px;padding:5px 10px;">🔒 Ban</button></div>
-        </div>
-      </div>
-    </div>
+    window.openBan = (id, name) => {
+      document.getElementById('banUserId').value = id;
+      document.getElementById('banModalTitle').textContent = `Ban: ${name}`;
+      document.getElementById('banReason').value = '';
+      document.getElementById('banAlert').classList.remove('show');
+      document.getElementById('banModal').classList.add('open');
+    };
+    window.submitBan = async () => {
+      const id = document.getElementById('banUserId').value;
+      const reason = document.getElementById('banReason').value.trim();
+      if (!reason) { showMAlert('banAlert', 'Reason is required.'); return; }
+      const btn = document.getElementById('banSubmitBtn');
+      btn.disabled = true; btn.textContent = 'Banning…';
+      const { error } = await adminBanUser(id, reason);
+      btn.disabled = false; btn.textContent = '🔒 Ban user';
+      if (error) { showMAlert('banAlert', error.message); return; }
+      document.getElementById('banModal').classList.remove('open');
+      loadUsers();
+    };
+    window.unban = async (id) => {
+      if (!confirm('Unban this user?')) return;
+      await adminUnbanUser(id);
+      loadUsers();
+    };
+    window.openWarn = (id, name) => {
+      document.getElementById('warnUserId').value = id;
+      document.getElementById('warnReason').value = '';
+      document.getElementById('warnAlert').classList.remove('show');
+      document.getElementById('warnModal').classList.add('open');
+    };
+    window.submitWarn = async () => {
+      const id = document.getElementById('warnUserId').value;
+      const btn = document.getElementById('warnSubmitBtn');
+      btn.disabled = true; btn.textContent = 'Sending…';
+      const { data, error, auto_banned } = await adminWarnUser(id);
+      btn.disabled = false; btn.textContent = '⚠️ Send warning';
+      if (error) { showMAlert('warnAlert', error.message); return; }
+      document.getElementById('warnModal').classList.remove('open');
+      if (auto_banned) alert(`User has been automatically banned after 3 warnings.`);
+      loadUsers();
+    };
 
-    <div class="page" id="page-employers">
-      <div class="search-bar"><span style="font-size:16px;color:var(--text3);">🔍</span><input type="text" placeholder="Search employers by name or email..."></div>
-      <div class="data-table">
-        <div class="table-header" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr;">
-          <span>Employer</span><span>Jobs posted</span><span>Hired</span><span>Status</span><span>Actions</span>
-        </div>
-        <div class="table-row" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr;">
-          <div class="user-cell"><div class="avatar avatar-sm" style="background:rgba(196,163,90,0.2);color:var(--gold);">تد</div><div><div class="name">TechStore DZ</div><div class="sub">contact@techstore.dz</div></div></div>
-          <span style="font-size:14px;font-weight:600;">4</span>
-          <span style="font-size:14px;font-weight:600;">5</span>
-          <span class="badge badge-green">Active</span>
-          <div style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm">View</button><button class="btn btn-outline btn-sm" style="color:#dc3545;border-color:#dc3545;font-size:12px;padding:5px 10px;">⚠️ Warn</button></div>
-        </div>
-        <div class="table-row" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr;">
-          <div class="user-cell"><div class="avatar avatar-sm" style="background:var(--mint);">صد</div><div><div class="name">Startup DZ</div><div class="sub">hello@startupdz.com</div></div></div>
-          <span style="font-size:14px;font-weight:600;">2</span>
-          <span style="font-size:14px;font-weight:600;">3</span>
-          <span class="badge badge-green">Active</span>
-          <div style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm">View</button><button class="btn btn-outline btn-sm" style="color:#dc3545;border-color:#dc3545;font-size:12px;padding:5px 10px;">⚠️ Warn</button></div>
-        </div>
+    // ── services ──────────────────────────────────────────────────────────────────
+    async function loadAdminSvcs() {
+      document.getElementById('adminSvcsList').innerHTML = `<div class="spin-wrap"><div class="spinner"></div></div>`;
+      const { data, error } = await getProjects();
+      const el = document.getElementById('adminSvcsList');
+      if (error || !data?.length) { el.innerHTML = `<div class="empty"><span class="empty-icon">🧩</span><h4>No services</h4></div>`; return; }
+      el.innerHTML = data.map(p => `
+    <div class="proj-row">
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:14px">${esc(p.title)}</div>
+        <div style="font-size:12px;color:var(--text3)">${esc(p.category || 'other')} · by ${esc(p.owner?.firstname || '')} ${esc(p.owner?.lastname || '')} · ❤️${p.like_count || 0} · ${fmtDate(p.created_at)}</div>
       </div>
-    </div>
+      <button class="btn btn-danger btn-sm" onclick="delSvc(${p.id})">🗑 Delete</button>
+    </div>`).join('');
+    }
+    window.delSvc = async (id) => {
+      if (!confirm('Delete this service?')) return;
+      const { error } = await deleteProject(id);
+      if (error) { alert(error.message); return; }
+      loadAdminSvcs(); loadDashboard();
+    };
 
-    <div class="page" id="page-jobs">
-      <div class="section-header"><h3>All job posts (836)</h3></div>
-      <div class="filter-row">
-        <button class="filter-btn active">All</button>
-        <button class="filter-btn">Active</button>
-        <button class="filter-btn">Reported</button>
-        <button class="filter-btn">Paused</button>
-        <button class="filter-btn">Closed</button>
+    // ── events ────────────────────────────────────────────────────────────────────
+    async function loadAdminEvents() {
+      document.getElementById('adminEventsList').innerHTML = `<div class="spin-wrap"><div class="spinner"></div></div>`;
+      const { data, error } = await getEvents();
+      const el = document.getElementById('adminEventsList');
+      if (error || !data?.length) { el.innerHTML = `<div class="empty"><span class="empty-icon">📅</span><h4>No events</h4><p>Create your first event above.</p></div>`; return; }
+      el.innerHTML = data.map(e => {
+        const d = new Date(e.start_at);
+        return `<div class="proj-row">
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:14px">${esc(e.title)}</div>
+        <div style="font-size:12px;color:var(--text3)">📅 ${d.toLocaleDateString()} ${e.location ? '· 📍' + esc(e.location) : ''} · ${esc(e.event_type)} · ${(e.registrations?.[0]?.count || 0)} registered${e.capacity ? ' / ' + e.capacity : ''}</div>
       </div>
-      <div class="data-table">
-        <div class="table-header" style="grid-template-columns:2.5fr 1.5fr 1fr 1fr 1fr;">
-          <span>Job title</span><span>Employer</span><span>Salary</span><span>Status</span><span>Actions</span>
-        </div>
-        <div class="table-row" style="grid-template-columns:2.5fr 1.5fr 1fr 1fr 1fr;">
-          <div><div style="font-weight:600;font-size:14px;">Graphic Designer</div><div style="font-size:12px;color:var(--text3);">Algiers · Part-time</div></div>
-          <span style="font-size:13px;">TechStore DZ</span>
-          <span style="font-size:13px;font-weight:600;">6,000 DZD</span>
-          <span class="badge badge-green">Active</span>
-          <div style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm">View</button><button class="btn btn-outline btn-sm" style="color:#dc3545;border-color:#dc3545;font-size:12px;padding:5px 10px;">Remove</button></div>
-        </div>
-        <div class="table-row" style="grid-template-columns:2.5fr 1.5fr 1fr 1fr 1fr;">
-          <div><div style="font-weight:600;font-size:14px;">Web Developer</div><div style="font-size:12px;color:var(--text3);">Remote · Flexible</div></div>
-          <span style="font-size:13px;">StartupDZ</span>
-          <span style="font-size:13px;font-weight:600;">9,000 DZD</span>
-          <span class="badge badge-red">⚠️ Reported</span>
-          <div style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm">Review</button><button class="btn btn-outline btn-sm" style="color:#dc3545;border-color:#dc3545;font-size:12px;padding:5px 10px;">Remove</button></div>
-        </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" onclick="openEventModal(${JSON.stringify(e).replace(/"/g, '&quot;')})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="delEvent(${e.id})">🗑</button>
       </div>
-    </div>
+    </div>`;
+      }).join('');
+    }
 
-    <div class="page" id="page-services">
-      <div class="section-header"><h3>Student services (240)</h3></div>
-      <div class="data-table">
-        <div class="table-header" style="grid-template-columns:2.5fr 1.5fr 1fr 1fr 1fr;">
-          <span>Service</span><span>Student</span><span>Price</span><span>Status</span><span>Actions</span>
-        </div>
-        <div class="table-row" style="grid-template-columns:2.5fr 1.5fr 1fr 1fr 1fr;">
-          <div><div style="font-weight:600;font-size:14px;">Professional Logo Design</div><div style="font-size:12px;color:var(--text3);">Design · 2 days delivery</div></div>
-          <span style="font-size:13px;">Yacine Amrani</span>
-          <span style="font-size:13px;font-weight:600;">3,500 DZD</span>
-          <span class="badge badge-green">Active</span>
-          <div style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm">View</button><button class="btn btn-outline btn-sm" style="color:#dc3545;border-color:#dc3545;font-size:12px;padding:5px 10px;">Remove</button></div>
-        </div>
-        <div class="table-row" style="grid-template-columns:2.5fr 1.5fr 1fr 1fr 1fr;">
-          <div><div style="font-weight:600;font-size:14px;">Responsive Landing Page</div><div style="font-size:12px;color:var(--text3);">Dev · 5 days delivery</div></div>
-          <span style="font-size:13px;">Sara Benali</span>
-          <span style="font-size:13px;font-weight:600;">8,000 DZD</span>
-          <span class="badge badge-green">Active</span>
-          <div style="display:flex;gap:4px;"><button class="btn btn-ghost btn-sm">View</button><button class="btn btn-outline btn-sm" style="color:#dc3545;border-color:#dc3545;font-size:12px;padding:5px 10px;">Remove</button></div>
-        </div>
-      </div>
-    </div>
+    window.openEventModal = (data) => {
+      const d = typeof data === 'string' ? JSON.parse(data) : (data || {});
+      document.getElementById('evTitle').value = d.title || '';
+      document.getElementById('evDesc').value = d.description || '';
+      document.getElementById('evLoc').value = d.location || '';
+      document.getElementById('evCap').value = d.capacity || '';
+      document.getElementById('evType').value = d.event_type || 'other';
+      document.getElementById('evStart').value = d.start_at ? d.start_at.slice(0, 16) : '';
+      document.getElementById('evEnd').value = d.end_at ? d.end_at.slice(0, 16) : '';
+      document.getElementById('evEditId').value = d.id || '';
+      document.getElementById('evModalTitle').textContent = d.id ? 'Edit Event' : 'Create Event';
+      document.getElementById('evSubmitBtn').textContent = d.id ? 'Save changes' : 'Create';
+      document.getElementById('evAlert').classList.remove('show');
+      document.getElementById('eventModal').classList.add('open');
+    };
 
-    <div class="page" id="page-reports">
-      <div class="section-header"><h3>Open reports (5)</h3></div>
-      <div class="report-card">
-        <div class="report-header">
-          <div>
-            <div class="report-title">🚨 False salary claim in job post</div>
-            <div class="report-meta">Reported by: Yacine A. · Job: "Web Developer" by StartupDZ · 1h ago</div>
-          </div>
-          <div class="report-actions">
-            <button class="btn btn-outline btn-sm">Dismiss</button>
-            <button class="btn btn-outline btn-sm" style="color:#dc3545;border-color:#dc3545;">Remove post</button>
-            <button class="btn btn-outline btn-sm" onclick="warnUser('StartupDZ')">⚠️ Warn employer</button>
-          </div>
-        </div>
-        <div class="report-body">"The salary listed is 15,000 DZD/month but after being hired I was told it's only 4,000 DZD. This is misleading and dishonest."</div>
-      </div>
-      <div class="report-card">
-        <div class="report-header">
-          <div>
-            <div class="report-title">⚠️ Student not delivering on time</div>
-            <div class="report-meta">Reported by: TechStore DZ · Student: Omar D. · 3h ago</div>
-          </div>
-          <div class="report-actions">
-            <button class="btn btn-outline btn-sm">Dismiss</button>
-            <button class="btn btn-outline btn-sm" onclick="warnUser('Omar Djaafri')">⚠️ Warn student</button>
-          </div>
-        </div>
-        <div class="report-body">"The student accepted the task and then went silent. No updates, no delivery, no response to messages for 5 days."</div>
-      </div>
-      <div class="report-card">
-        <div class="report-header">
-          <div>
-            <div class="report-title">🚩 Suspicious account activity</div>
-            <div class="report-meta">Auto-detected · User: unknown-student · 6h ago</div>
-          </div>
-          <div class="report-actions">
-            <button class="btn btn-outline btn-sm">Investigate</button>
-            <button class="btn btn-outline btn-sm" style="color:#dc3545;border-color:#dc3545;">Suspend account</button>
-          </div>
-        </div>
-        <div class="report-body">System detected multiple login attempts from different IP addresses within a short time window. Possible unauthorized access.</div>
-      </div>
-    </div>
+    window.submitEvent = async () => {
+      const title = document.getElementById('evTitle').value.trim();
+      const start = document.getElementById('evStart').value;
+      const editId = document.getElementById('evEditId').value;
+      if (!title || !start) { showMAlert('evAlert', 'Title and start date are required.'); return; }
+      const btn = document.getElementById('evSubmitBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      const payload = {
+        title, description: document.getElementById('evDesc').value.trim(),
+        location: document.getElementById('evLoc').value.trim() || null,
+        capacity: document.getElementById('evCap').value ? parseInt(document.getElementById('evCap').value) : null,
+        event_type: document.getElementById('evType').value,
+        start_at: new Date(start).toISOString(),
+        end_at: document.getElementById('evEnd').value ? new Date(document.getElementById('evEnd').value).toISOString() : null,
+      };
+      let error;
+      if (editId) {
+        ({ error } = await supabase.from('events').update(payload).eq('id', editId));
+      } else {
+        ({ error } = await supabase.from('events').insert({ ...payload, is_visible: true }));
+      }
+      btn.disabled = false; btn.textContent = editId ? 'Save changes' : 'Create';
+      if (error) { showMAlert('evAlert', error.message); return; }
+      document.getElementById('eventModal').classList.remove('open');
+      loadAdminEvents();
+    };
 
-    <div class="page" id="page-warnings">
-      <div class="section-header"><h3>Warning log</h3></div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div class="avatar avatar-sm" style="background:rgba(139,111,94,0.15);color:var(--clay);">عد</div>
-          <div>
-            <div style="font-weight:600;font-size:14px;">Omar Djaafri</div>
-            <div style="font-size:12px;color:var(--text3);">Student · Univ. Oran</div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="badge badge-red">⚠️ 2 / 3 warnings</span>
-          <span style="font-size:12px;color:var(--text3);">Last: 2 days ago</span>
-          <button class="btn btn-outline btn-sm" style="color:#dc3545;border-color:#dc3545;font-size:12px;">🔒 Ban account</button>
-        </div>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div class="avatar avatar-sm" style="background:var(--mint);">فب</div>
-          <div>
-            <div style="font-weight:600;font-size:14px;">Farouk Benamara</div>
-            <div style="font-size:12px;color:var(--text3);">Student · Univ. Constantine</div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="badge badge-gold">⚠️ 1 / 3 warnings</span>
-          <span style="font-size:12px;color:var(--text3);">1 week ago</span>
-          <button class="btn btn-outline btn-sm" onclick="warnUser('Farouk Benamara')">⚠️ Add warning</button>
-        </div>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div class="avatar avatar-sm" style="background:rgba(196,163,90,0.15);color:var(--gold);">شع</div>
-          <div>
-            <div style="font-weight:600;font-size:14px;">Chifaa Entreprises</div>
-            <div style="font-size:12px;color:var(--text3);">Employer</div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="badge badge-gold">⚠️ 1 / 3 warnings</span>
-          <span style="font-size:12px;color:var(--text3);">3 weeks ago</span>
-          <button class="btn btn-outline btn-sm" onclick="warnUser('Chifaa Entreprises')">⚠️ Add warning</button>
-        </div>
-      </div>
-    </div>
+    window.delEvent = async (id) => {
+      if (!confirm('Delete this event?')) return;
+      const { error } = await supabase.from('events').delete().eq('id', id);
+      if (error) { alert(error.message); return; }
+      loadAdminEvents();
+    };
 
-    <div class="page" id="page-analytics">
-      <div class="stats-row">
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icon green">📈</div><span class="stat-card-change" style="color:var(--sage-deep);">+22%</span></div><div class="stat-card-num">+48</div><div class="stat-card-label">New users this week</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icon gold">💸</div><span class="stat-card-change" style="color:var(--gold);">+18%</span></div><div class="stat-card-num">1.2M DZD</div><div class="stat-card-label">Volume this month</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icon blue">✅</div><span class="stat-card-change" style="color:#5078c8;">+35%</span></div><div class="stat-card-num">340</div><div class="stat-card-label">Tasks completed this month</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icon green">🤝</div></div><div class="stat-card-num">78%</div><div class="stat-card-label">Successful hire rate</div></div>
+    // ── announcements ─────────────────────────────────────────────────────────────
+    async function loadAdminAnns() {
+      document.getElementById('adminAnnsList').innerHTML = `<div class="spin-wrap"><div class="spinner"></div></div>`;
+      const { data, error } = await getAnnouncements();
+      const el = document.getElementById('adminAnnsList');
+      if (error || !data?.length) { el.innerHTML = `<div class="empty"><span class="empty-icon">📢</span><h4>No announcements</h4><p>Create your first one above.</p></div>`; return; }
+      el.innerHTML = data.map(a => `
+    <div class="proj-row">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          ${a.is_pinned ? '<span class="badge badge-gold">📌 Pinned</span>' : ''}
+          <span style="font-weight:600;font-size:14px">${esc(a.title)}</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">${fmtDate(a.created_at)} · by ${esc(a.author?.firstname || '')} ${esc(a.author?.lastname || '')}</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(a.content)}</div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-        <div class="platform-card">
-          <h4>Platform metrics</h4>
-          <div class="p-metric"><span class="p-metric-label">Total registered users</span><span class="p-metric-val">2,796</span></div>
-          <div class="p-metric"><span class="p-metric-label">Active this month</span><span class="p-metric-val">1,840</span></div>
-          <div class="p-metric"><span class="p-metric-label">Jobs posted all time</span><span class="p-metric-val">2,140</span></div>
-          <div class="p-metric"><span class="p-metric-label">Tasks completed all time</span><span class="p-metric-val">1,840</span></div>
-          <div class="p-metric"><span class="p-metric-label">Total volume transacted</span><span class="p-metric-val">8.4M DZD</span></div>
-          <div class="p-metric"><span class="p-metric-label">Platform commission earned</span><span class="p-metric-val">420K DZD</span></div>
-        </div>
-        <div class="platform-card">
-          <h4>Top service categories</h4>
-          <div class="p-metric"><span class="p-metric-label">💻 Programming</span><span class="p-metric-val">32%</span></div>
-          <div class="p-metric"><span class="p-metric-label">🎨 Design & Art</span><span class="p-metric-val">28%</span></div>
-          <div class="p-metric"><span class="p-metric-label">✍️ Writing</span><span class="p-metric-val">15%</span></div>
-          <div class="p-metric"><span class="p-metric-label">🗣️ Translation</span><span class="p-metric-val">10%</span></div>
-          <div class="p-metric"><span class="p-metric-label">📊 Data & Research</span><span class="p-metric-val">8%</span></div>
-          <div class="p-metric"><span class="p-metric-label">📱 Social Media</span><span class="p-metric-val">7%</span></div>
-        </div>
+      <div style="display:flex;gap:8px;flex-shrink:0">
+        <button class="btn btn-outline btn-sm" onclick="openAnnModal(${JSON.stringify(a).replace(/"/g, '&quot;')})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="delAnn(${a.id})">🗑</button>
       </div>
-    </div>
+    </div>`).join('');
+    }
 
-    <div class="page" id="page-finance">
-      <div class="stats-row">
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icon gold">💰</div></div><div class="stat-card-num">1.2M <span style="font-size:14px;color:var(--text3);">DZD</span></div><div class="stat-card-label">Volume this month</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icon green">📥</div></div><div class="stat-card-num">340K <span style="font-size:14px;color:var(--text3);">DZD</span></div><div class="stat-card-label">Total deposits</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icon blue">📤</div></div><div class="stat-card-num">280K <span style="font-size:14px;color:var(--text3);">DZD</span></div><div class="stat-card-label">Student withdrawals</div></div>
-        <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icon gold">📊</div></div><div class="stat-card-num">42K <span style="font-size:14px;color:var(--text3);">DZD</span></div><div class="stat-card-label">Platform commission</div></div>
-      </div>
-      <div class="section-header"><h3>Recent transactions</h3></div>
-      <div class="data-table">
-        <div class="table-header" style="grid-template-columns:2fr 1.5fr 1fr 1fr 1fr;">
-          <span>Description</span><span>User</span><span>Amount</span><span>Type</span><span>Date</span>
-        </div>
-        <div class="table-row" style="grid-template-columns:2fr 1.5fr 1fr 1fr 1fr;">
-          <span style="font-size:14px;">Deposit via BaridiMob</span>
-          <span style="font-size:13px;">TechStore DZ</span>
-          <span style="font-weight:700;color:var(--sage-deep);">+20,000 DZD</span>
-          <span class="badge badge-blue">Deposit</span>
-          <span style="font-size:12px;color:var(--text3);">Today, 9am</span>
-        </div>
-        <div class="table-row" style="grid-template-columns:2fr 1.5fr 1fr 1fr 1fr;">
-          <span style="font-size:14px;">Payment for logo design</span>
-          <span style="font-size:13px;">Yacine A. ← TechStore</span>
-          <span style="font-weight:700;color:var(--clay);">3,500 DZD</span>
-          <span class="badge badge-green">Task pay</span>
-          <span style="font-size:12px;color:var(--text3);">Yesterday</span>
-        </div>
-        <div class="table-row" style="grid-template-columns:2fr 1.5fr 1fr 1fr 1fr;">
-          <span style="font-size:14px;">Withdrawal to Edahabia</span>
-          <span style="font-size:13px;">Sara Benali</span>
-          <span style="font-weight:700;color:var(--clay);">6,500 DZD</span>
-          <span class="badge badge-clay">Withdrawal</span>
-          <span style="font-size:12px;color:var(--text3);">2 days ago</span>
-        </div>
-        <div class="table-row" style="grid-template-columns:2fr 1.5fr 1fr 1fr 1fr;">
-          <span style="font-size:14px;">Platform commission</span>
-          <span style="font-size:13px;">System</span>
-          <span style="font-weight:700;color:var(--sage-deep);">+350 DZD</span>
-          <span class="badge badge-gold">Commission</span>
-          <span style="font-size:12px;color:var(--text3);">2 days ago</span>
-        </div>
-      </div>
-    </div>
+    window.openAnnModal = (data) => {
+      const d = typeof data === 'string' ? JSON.parse(data) : (data || {});
+      document.getElementById('annTitle').value = d.title || '';
+      document.getElementById('annContent').value = d.content || '';
+      document.getElementById('annImg').value = d.image || '';
+      document.getElementById('annPinned').checked = d.is_pinned || false;
+      document.getElementById('annEditId').value = d.id || '';
+      document.getElementById('annModalTitle').textContent = d.id ? 'Edit Announcement' : 'Create Announcement';
+      document.getElementById('annSubmitBtn').textContent = d.id ? 'Save changes' : 'Publish';
+      document.getElementById('annAlert').classList.remove('show');
+      document.getElementById('annModal').classList.add('open');
+    };
 
-  </main>
-</div>
+    window.submitAnn = async () => {
+      const title = document.getElementById('annTitle').value.trim();
+      const content = document.getElementById('annContent').value.trim();
+      const editId = document.getElementById('annEditId').value;
+      if (!title || !content) { showMAlert('annAlert', 'Title and content are required.'); return; }
+      const btn = document.getElementById('annSubmitBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      const payload = {
+        title, content,
+        image: document.getElementById('annImg').value.trim() || null,
+        is_pinned: document.getElementById('annPinned').checked,
+        is_visible: true,
+      };
+      let error;
+      if (editId) {
+        ({ error } = await supabase.from('announcements').update(payload).eq('id', editId));
+      } else {
+        ({ error } = await supabase.from('announcements').insert({ ...payload, author_id: adminId }));
+      }
+      btn.disabled = false; btn.textContent = editId ? 'Save changes' : 'Publish';
+      if (error) { showMAlert('annAlert', error.message); return; }
+      document.getElementById('annModal').classList.remove('open');
+      loadAdminAnns();
+    };
 
-<div id="warnToast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:12px 22px;border-radius:999px;font-size:14px;font-weight:600;z-index:200;box-shadow:var(--shadow-lg);transition:opacity 0.3s;">⚠️ Warning sent</div>
+    window.delAnn = async (id) => {
+      if (!confirm('Delete this announcement?')) return;
+      const { error } = await supabase.from('announcements').delete().eq('id', id);
+      if (error) { alert(error.message); return; }
+      loadAdminAnns();
+    };
 
-<script src="api.js"></script>
-<script>
-(function() {
-  const saved = localStorage.getItem('theme');
-  if (saved) document.documentElement.dataset.theme = saved;
-  else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.dataset.theme = 'dark';
-})();
-function toggleTheme() {
-  const html = document.documentElement;
-  html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
-  localStorage.setItem('theme', html.dataset.theme);
-}
-function showPage(name, navEl) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const page = document.getElementById('page-' + name);
-  if (page) page.classList.add('active');
-  if (navEl) navEl.classList.add('active');
-  const titles = {dashboard:'Dashboard',analytics:'Analytics',students:'Students',employers:'Employers',jobs:'Job Posts',services:'Services',reports:'Reports',warnings:'Warnings',finance:'Transactions'};
-  document.getElementById('pageTitle').textContent = titles[name] || name;
-  if (window.innerWidth < 768) closeSidebar();
-}
-function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
-function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
-function warnUser(name) {
-  const toast = document.getElementById('warnToast');
-  toast.textContent = '⚠️ Warning sent to ' + name;
-  toast.style.display = 'block';
-  setTimeout(() => { toast.style.display = 'none'; }, 3000);
-}
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', function() { this.closest('.filter-row').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); });
-});
-</script>
+    // ── navigation ────────────────────────────────────────────────────────────────
+    const titles = { dashboard: 'Dashboard', users: 'Users', services: 'Services', events: 'Events', announcements: 'Announcements' };
+    window.showPage = (name, navEl) => {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('page-' + name)?.classList.add('active');
+      if (navEl) navEl.classList.add('active');
+      document.getElementById('pageTitle').textContent = titles[name] || name;
+      if (window.innerWidth < 768) closeSidebar();
+      if (name === 'users') loadUsers();
+      if (name === 'services') loadAdminSvcs();
+      if (name === 'events') loadAdminEvents();
+      if (name === 'announcements') loadAdminAnns();
+    };
+    window.openSidebar = () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); };
+    window.closeSidebar = () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); };
+    window.doSignOut = async () => { await signOut(); };
 
-<script src="chat-widget.js"></script>
+    // ── helpers ───────────────────────────────────────────────────────────────────
+    function showMAlert(id, msg) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = msg; el.className = 'alert error show'; el.style.display = 'flex';
+    }
+  </script>
+
+  <script src="chat-widget.js"></script>
 </body>
+
 </html>

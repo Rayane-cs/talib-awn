@@ -477,7 +477,10 @@ body { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
 </div>
 
-<script src="api.js"></script>
+<script type="module">
+import { requireProfile } from './supabase.js';
+requireProfile(); // redirects to login.html if not authenticated
+</script>
 <script>
 (function() {
   const saved = localStorage.getItem('theme');
