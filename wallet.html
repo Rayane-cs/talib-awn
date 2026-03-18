@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallet · Talib-Awn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* ─── Layout ─────────────────────────────────────────────── */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* ─── Sidebar (reuses employer-dashboard pattern) ─────────── */
+    .sidebar {
+      width: 240px; flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; bottom: 0; left: 0; z-index: 50;
+      overflow-y: auto;
+    }
+    .sb-hdr {
+      padding: 18px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; color: var(--blue); }
+    .logo span { color: var(--text3); font-weight: 600; }
+    .sb-nav { padding: 10px 12px; flex: 1; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 500; color: var(--text2);
+      transition: all var(--transition); cursor: pointer; margin-bottom: 2px;
+    }
+    .nav-item:hover { background: var(--bg2); color: var(--text); }
+    .nav-item.active {
+      background: var(--blue-pale); color: var(--blue-deep); font-weight: 600;
+    }
+    [data-theme="dark"] .nav-item.active { background: rgba(33,150,243,0.15); color: var(--blue-light); }
+    .nav-item .ni { width: 18px; text-align: center; font-size: 16px; }
+    .sb-footer { padding: 12px; border-top: 1px solid var(--border); }
+    .sb-user {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px; border-radius: var(--radius-sm);
+      background: var(--bg2);
+    }
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue-light), var(--blue-deep));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+      overflow: hidden;
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .sb-user-info { min-width: 0; flex: 1; }
+    .sb-user-name  { font-size: 13px; font-weight: 600; truncate: ellipsis; white-space: nowrap; overflow: hidden; }
+    .sb-user-role  { font-size: 11px; color: var(--text3); }
+
+    /* ─── Main content ───────────────────────────────────────── */
+    .main { margin-left: 240px; flex: 1; min-height: 100vh; padding: 32px; max-width: 960px; }
+
+    /* ─── Page header ────────────────────────────────────────── */
+    .page-hdr { margin-bottom: 28px; }
+    .page-hdr h1 {
+      font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800;
+      color: var(--text); margin-bottom: 4px;
+    }
+    .page-hdr p { color: var(--text3); font-size: 14px; }
+
+    /* ─── Balance hero card ──────────────────────────────────── */
+    .balance-card {
+      background: linear-gradient(135deg, var(--blue-deep) 0%, var(--blue) 60%, #42A5F5 100%);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      color: #fff;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
+      margin-bottom: 24px;
+      position: relative; overflow: hidden;
+      box-shadow: 0 12px 44px rgba(21,101,192,0.35);
+    }
+    .balance-card::before {
+      content: ''; position: absolute; right: -60px; top: -60px;
+      width: 260px; height: 260px; border-radius: 50%;
+      background: rgba(255,255,255,0.07); pointer-events: none;
+    }
+    .balance-card::after {
+      content: ''; position: absolute; right: 40px; bottom: -80px;
+      width: 160px; height: 160px; border-radius: 50%;
+      background: rgba(255,255,255,0.05); pointer-events: none;
+    }
+    .balance-label { font-size: 13px; font-weight: 500; opacity: .8; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+    .balance-amount {
+      font-family: 'Syne', sans-serif; font-size: 38px; font-weight: 800;
+      letter-spacing: -.02em; line-height: 1;
+    }
+    .balance-amount .currency { font-size: 18px; font-weight: 600; opacity: .75; margin-left: 6px; vertical-align: top; margin-top: 6px; display: inline-block; }
+    .balance-sub { margin-top: 10px; font-size: 13px; opacity: .7; }
+    .balance-actions { display: flex; gap: 10px; flex-shrink: 0; align-self: center; flex-wrap: wrap; }
+    .btn-white {
+      background: rgba(255,255,255,0.95); color: var(--blue-deep);
+      font-weight: 700; padding: 10px 20px; border-radius: var(--radius-full);
+      font-size: 14px; transition: all .2s; white-space: nowrap;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+    .btn-white:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 5px 18px rgba(0,0,0,0.2); }
+    .btn-white-outline {
+      background: rgba(255,255,255,0.15); color: #fff;
+      border: 1.5px solid rgba(255,255,255,0.45);
+      font-weight: 600; padding: 9px 20px; border-radius: var(--radius-full);
+      font-size: 14px; transition: all .2s; white-space: nowrap;
+    }
+    .btn-white-outline:hover { background: rgba(255,255,255,0.25); }
+
+    /* ─── Quick stats row ────────────────────────────────────── */
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-icon { font-size: 20px; margin-bottom: 8px; }
+    .stat-val  { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--text); }
+    .stat-label { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+    /* ─── Two-column section grid ─────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+
+    /* ─── Section card ────────────────────────────────────────── */
+    .section-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700;
+      color: var(--text); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-title .badge {
+      background: var(--blue-pale); color: var(--blue-deep);
+      font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+      font-family: 'DM Sans', sans-serif;
+    }
+    [data-theme="dark"] .section-title .badge { background: rgba(33,150,243,0.15); color: var(--blue-light); }
+
+    /* ─── Deposit form ────────────────────────────────────────── */
+    .form-group { margin-bottom: 14px; }
+    .form-label { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 6px; display: block; }
+    .input-wrap { position: relative; }
+    .input-wrap .input-prefix {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      color: var(--text3); font-size: 14px; font-weight: 600; pointer-events: none;
+    }
+    .form-input {
+      width: 100%; padding: 11px 14px; padding-left: 42px;
+      border: 1.5px solid var(--border2); border-radius: var(--radius-sm);
+      background: var(--bg); color: var(--text); font-size: 15px;
+      font-family: 'DM Mono', monospace; font-weight: 500;
+      transition: border-color var(--transition);
+      outline: none;
+    }
+    .form-input:focus { border-color: var(--blue); background: var(--surface); }
+    .quick-amounts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .quick-btn {
+      padding: 6px 14px; border-radius: var(--radius-full);
+      background: var(--bg2); border: 1.5px solid var(--border);
+      font-size: 13px; font-weight: 600; color: var(--text2);
+      cursor: pointer; transition: all .15s; font-family: 'DM Mono', monospace;
+    }
+    .quick-btn:hover { border-color: var(--blue); color: var(--blue-deep); background: var(--blue-pale); }
+    [data-theme="dark"] .quick-btn:hover { background: rgba(33,150,243,0.12); color: var(--blue-light); }
+    .btn-deposit {
+      width: 100%; margin-top: 6px;
+      background: linear-gradient(135deg, var(--blue-deep), var(--blue));
+      color: #fff; padding: 12px; border-radius: var(--radius-sm);
+      font-size: 15px; font-weight: 700; letter-spacing: .01em;
+      transition: all .2s; box-shadow: 0 3px 12px rgba(33,150,243,0.3);
+    }
+    .btn-deposit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(33,150,243,0.42); }
+    .btn-deposit:disabled { opacity: .6; transform: none; cursor: not-allowed; }
+    .chargily-info {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 10px 14px; margin-top: 14px;
+      font-size: 12px; color: var(--text3);
+    }
+    .chargily-info img { height: 18px; opacity: .8; }
+
+    /* ─── Withdrawal form ─────────────────────────────────────── */
+    .form-select {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid var(--border2); border-radius: var(--radius-sm);
+      background: var(--bg); color: var(--text); font-size: 14px;
+      font-family: 'DM Sans', sans-serif; outline: none;
+      transition: border-color var(--transition);
+    }
+    .form-select:focus { border-color: var(--blue); background: var(--surface); }
+    .form-input.no-prefix { padding-left: 14px; }
+    .btn-withdraw {
+      width: 100%; margin-top: 6px;
+      background: linear-gradient(135deg, #E65100, #F57C00);
+      color: #fff; padding: 12px; border-radius: var(--radius-sm);
+      font-size: 15px; font-weight: 700; transition: all .2s;
+      box-shadow: 0 3px 12px rgba(230,81,0,0.25);
+    }
+    .btn-withdraw:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(230,81,0,0.38); }
+    .btn-withdraw:disabled { opacity: .6; transform: none; cursor: not-allowed; }
+    .withdraw-min-note { font-size: 12px; color: var(--text3); margin-top: 6px; }
+
+    /* ─── Transactions table ──────────────────────────────────── */
+    .tx-table-wrap { overflow-x: auto; margin-top: 4px; }
+    .tx-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .tx-table th {
+      text-align: left; padding: 8px 12px 10px;
+      color: var(--text3); font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .05em;
+      border-bottom: 1px solid var(--border);
+    }
+    .tx-table td { padding: 13px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .tx-table tr:last-child td { border-bottom: none; }
+    .tx-table tr:hover td { background: var(--bg2); }
+    .tx-type-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+    }
+    .tx-type-pill.green  { background: #E8F5E9; color: #2E7D32; }
+    .tx-type-pill.amber  { background: #FFF8E1; color: #F57F17; }
+    .tx-type-pill.red    { background: #FFEBEE; color: #C62828; }
+    .tx-type-pill.blue   { background: #E3F2FD; color: #1565C0; }
+    .tx-type-pill.gray   { background: var(--bg2); color: var(--text3); }
+    [data-theme="dark"] .tx-type-pill.green  { background: rgba(46,125,50,.2);   color: #81C784; }
+    [data-theme="dark"] .tx-type-pill.amber  { background: rgba(245,127,23,.2);  color: #FFD54F; }
+    [data-theme="dark"] .tx-type-pill.red    { background: rgba(198,40,40,.2);   color: #EF9A9A; }
+    [data-theme="dark"] .tx-type-pill.blue   { background: rgba(21,101,192,.2);  color: #90CAF9; }
+    .tx-amount { font-family: 'DM Mono', monospace; font-weight: 600; font-size: 14px; }
+    .tx-amount.credit { color: #2E7D32; }
+    .tx-amount.credit::before { content: '+'; }
+    .tx-amount.debit  { color: #C62828; }
+    .tx-amount.debit::before  { content: '−'; }
+    [data-theme="dark"] .tx-amount.credit { color: #81C784; }
+    [data-theme="dark"] .tx-amount.debit  { color: #EF9A9A; }
+    .status-dot {
+      display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500;
+    }
+    .status-dot::before {
+      content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    }
+    .status-dot.pending   { color: var(--text3); }
+    .status-dot.pending::before { background: #FFC107; }
+    .status-dot.completed { color: #2E7D32; }
+    .status-dot.completed::before { background: #4CAF50; }
+    .status-dot.failed    { color: #C62828; }
+    .status-dot.failed::before { background: #F44336; }
+    [data-theme="dark"] .status-dot.completed { color: #81C784; }
+    [data-theme="dark"] .status-dot.failed    { color: #EF9A9A; }
+    .tx-ref  { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tx-date { font-size: 12px; color: var(--text3); white-space: nowrap; }
+
+    /* ─── Escrow table ────────────────────────────────────────── */
+    .escrow-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0; border-bottom: 1px solid var(--border); gap: 12px;
+    }
+    .escrow-item:last-child { border-bottom: none; }
+    .escrow-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .escrow-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #FFA726, #F57C00);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+      overflow: hidden;
+    }
+    .escrow-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .escrow-name  { font-size: 14px; font-weight: 600; color: var(--text); }
+    .escrow-meta  { font-size: 12px; color: var(--text3); margin-top: 1px; }
+    .escrow-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .escrow-amount { font-family: 'DM Mono', monospace; font-weight: 700; font-size: 14px; color: var(--text); white-space: nowrap; }
+    .escrow-status {
+      padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+    }
+    .escrow-status.held     { background: #FFF8E1; color: #F57F17; }
+    .escrow-status.released { background: #E8F5E9; color: #2E7D32; }
+    .escrow-status.cancelled{ background: var(--bg2); color: var(--text3); }
+    [data-theme="dark"] .escrow-status.held     { background: rgba(245,127,23,.18); color: #FFD54F; }
+    [data-theme="dark"] .escrow-status.released { background: rgba(46,125,50,.18);  color: #81C784; }
+    .btn-release {
+      padding: 6px 14px; border-radius: var(--radius-sm);
+      background: var(--blue-pale); color: var(--blue-deep);
+      font-size: 12px; font-weight: 700; transition: all .15s;
+    }
+    .btn-release:hover { background: var(--blue); color: #fff; }
+    .btn-cancel-escrow {
+      padding: 6px 14px; border-radius: var(--radius-sm);
+      background: var(--bg2); color: var(--text3);
+      font-size: 12px; font-weight: 600; transition: all .15s;
+    }
+    .btn-cancel-escrow:hover { background: #FFEBEE; color: #C62828; }
+
+    /* ─── Withdrawals list ────────────────────────────────────── */
+    .wd-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 0; border-bottom: 1px solid var(--border); gap: 12px;
+    }
+    .wd-item:last-child { border-bottom: none; }
+    .wd-amount  { font-family: 'DM Mono', monospace; font-weight: 700; font-size: 14px; color: var(--text); }
+    .wd-method  { font-size: 12px; color: var(--text3); }
+    .wd-status  {
+      padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+    }
+    .wd-status.pending   { background: #FFF8E1; color: #F57F17; }
+    .wd-status.approved  { background: #E8F5E9; color: #2E7D32; }
+    .wd-status.rejected  { background: #FFEBEE; color: #C62828; }
+    [data-theme="dark"] .wd-status.pending  { background: rgba(245,127,23,.18); color: #FFD54F; }
+    [data-theme="dark"] .wd-status.approved { background: rgba(46,125,50,.18);  color: #81C784; }
+    [data-theme="dark"] .wd-status.rejected { background: rgba(198,40,40,.18);  color: #EF9A9A; }
+
+    /* ─── Toast notifications ─────────────────────────────────── */
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+    .toast {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 18px; border-radius: var(--radius-sm);
+      background: var(--surface); border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg); min-width: 260px; max-width: 360px;
+      font-size: 14px; font-weight: 500;
+      animation: slideIn .3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .toast.success { border-left: 3px solid #4CAF50; }
+    .toast.error   { border-left: 3px solid #F44336; }
+    .toast.info    { border-left: 3px solid var(--blue); }
+    .toast-icon { font-size: 16px; flex-shrink: 0; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ─── Empty state ────────────────────────────────────────── */
+    .empty-state {
+      text-align: center; padding: 32px 20px; color: var(--text3); font-size: 14px;
+    }
+    .empty-state .empty-icon { font-size: 32px; margin-bottom: 8px; opacity: .5; }
+
+    /* ─── Theme toggle ───────────────────────────────────────── */
+    .theme-btn {
+      width: 32px; height: 32px; border-radius: var(--radius-sm);
+      background: var(--bg2); display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: all .2s; border: 1px solid var(--border);
+    }
+    .theme-btn:hover { background: var(--bg3); }
+
+    /* ─── Loading shimmer ─────────────────────────────────────── */
+    .shimmer {
+      background: linear-gradient(90deg, var(--bg2) 25%, var(--bg3) 50%, var(--bg2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 6px;
+    }
+    @keyframes shimmer { 0%{ background-position:200% 0 } 100%{ background-position:-200% 0 } }
+
+    /* ─── Banner for URL-based status ─────────────────────────── */
+    .status-banner {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 20px; border-radius: var(--radius-sm); margin-bottom: 20px;
+      font-size: 14px; font-weight: 500;
+    }
+    .status-banner.success { background: #E8F5E9; color: #2E7D32; border: 1px solid #C8E6C9; }
+    .status-banner.failed  { background: #FFEBEE; color: #C62828; border: 1px solid #FFCDD2; }
+    [data-theme="dark"] .status-banner.success { background: rgba(46,125,50,.15); color: #81C784; border-color: rgba(76,175,80,.2); }
+    [data-theme="dark"] .status-banner.failed  { background: rgba(198,40,40,.15); color: #EF9A9A; border-color: rgba(244,67,54,.2); }
+
+    /* ─── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .sidebar { width: 200px; }
+      .main    { margin-left: 200px; padding: 20px; }
+      .grid-2  { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; padding: 16px; }
+      .balance-card { flex-direction: column; }
+      .balance-actions { width: 100%; }
+      .stats-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Toast container ─────────────────────────────────────────────────── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ─── Layout ──────────────────────────────────────────────────────────── -->
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-hdr">
+      <a href="index.html" class="logo">Talib<span>-Awn</span></a>
+      <button class="theme-btn" id="themeBtn" title="Toggle theme">🌙</button>
+    </div>
+
+    <nav class="sb-nav">
+      <a href="student-dashboard.html"  class="nav-item"><span class="ni">🏠</span> Dashboard</a>
+      <a href="wallet.html"             class="nav-item active"><span class="ni">💳</span> Wallet</a>
+      <a href="employer-dashboard.html" class="nav-item"><span class="ni">💼</span> Jobs</a>
+      <a href="dashboard.html"          class="nav-item"><span class="ni">📋</span> Projects</a>
+      <a href="#"                       class="nav-item" id="signOutBtn"><span class="ni">↩</span> Sign Out</a>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="avatar" id="sbAvatar">—</div>
+        <div class="sb-user-info">
+          <div class="sb-user-name" id="sbName">Loading…</div>
+          <div class="sb-user-role" id="sbRole">—</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Payment status banner (from redirect) -->
+    <div id="statusBanner" style="display:none"></div>
+
+    <!-- Page header -->
+    <div class="page-hdr">
+      <h1>💳 My Wallet</h1>
+      <p>Manage your balance, deposits, escrows and withdrawals</p>
+    </div>
+
+    <!-- Balance hero card -->
+    <div class="balance-card" id="balanceCard">
+      <div>
+        <div class="balance-label">Available Balance</div>
+        <div class="balance-amount" id="balanceAmount">
+          <span class="shimmer" style="display:inline-block;width:120px;height:38px"></span>
+        </div>
+        <div class="balance-sub" id="balanceSub">Updated just now</div>
+      </div>
+      <div class="balance-actions">
+        <button class="btn-white"         onclick="scrollToDeposit()">＋ Deposit</button>
+        <button class="btn-white-outline" onclick="scrollToWithdraw()">↑ Withdraw</button>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon">📥</div>
+        <div class="stat-val" id="statDeposits">—</div>
+        <div class="stat-label">Total Deposited</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏸</div>
+        <div class="stat-val" id="statEscrow">—</div>
+        <div class="stat-label">In Escrow</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">↑</div>
+        <div class="stat-val" id="statWithdrawn">—</div>
+        <div class="stat-label">Total Withdrawn</div>
+      </div>
+    </div>
+
+    <!-- Deposit + Withdraw forms -->
+    <div class="grid-2">
+
+      <!-- Deposit form -->
+      <div class="section-card" id="depositSection">
+        <div class="section-title">💰 Deposit Funds</div>
+
+        <div class="form-group">
+          <label class="form-label" for="depositAmount">Amount (DZD)</label>
+          <div class="input-wrap">
+            <span class="input-prefix">DZ</span>
+            <input type="number" id="depositAmount" class="form-input"
+                   placeholder="500" min="100" max="200000" step="100">
+          </div>
+          <div class="quick-amounts" id="quickAmounts">
+            <button class="quick-btn" onclick="setDeposit(500)">500</button>
+            <button class="quick-btn" onclick="setDeposit(1000)">1,000</button>
+            <button class="quick-btn" onclick="setDeposit(2500)">2,500</button>
+            <button class="quick-btn" onclick="setDeposit(5000)">5,000</button>
+            <button class="quick-btn" onclick="setDeposit(10000)">10,000</button>
+          </div>
+        </div>
+
+        <button class="btn-deposit" id="depositBtn" onclick="handleDeposit()">
+          Pay with Chargily →
+        </button>
+
+        <div class="chargily-info">
+          <span>🔒</span>
+          <span>Secured by <strong>Chargily Pay</strong> · Edahabia &amp; CIB accepted · DZD only</span>
+        </div>
+      </div>
+
+      <!-- Withdrawal form -->
+      <div class="section-card" id="withdrawSection">
+        <div class="section-title">📤 Request Withdrawal</div>
+
+        <div class="form-group">
+          <label class="form-label" for="wdAmount">Amount (DZD)</label>
+          <div class="input-wrap">
+            <span class="input-prefix">DZ</span>
+            <input type="number" id="wdAmount" class="form-input"
+                   placeholder="500" min="500" step="100">
+          </div>
+          <p class="withdraw-min-note">Minimum withdrawal: <strong>500 DZD</strong></p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="wdMethod">Payout Method</label>
+          <select id="wdMethod" class="form-select">
+            <option value="ccp">CCP (Compte Chèque Postal)</option>
+            <option value="edahabia">Edahabia Card</option>
+            <option value="baridimob">BaridiMob</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="wdAccount">Account / Card Number</label>
+          <input type="text" id="wdAccount" class="form-input no-prefix"
+                 placeholder="e.g. 00799999 0012345678 67" maxlength="60">
+        </div>
+
+        <button class="btn-withdraw" id="withdrawBtn" onclick="handleWithdraw()">
+          Request Withdrawal
+        </button>
+      </div>
+    </div>
+
+    <!-- Transaction history -->
+    <div class="section-card" style="margin-bottom:24px">
+      <div class="section-title">
+        📄 Transaction History
+        <span class="badge" id="txBadge">0</span>
+      </div>
+
+      <div class="tx-table-wrap">
+        <table class="tx-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Reference</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="txBody">
+            <tr><td colspan="5">
+              <div class="shimmer" style="height:40px;margin:8px 0"></div>
+              <div class="shimmer" style="height:40px;margin:8px 0"></div>
+              <div class="shimmer" style="height:40px;margin:8px 0"></div>
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Escrow section (employer view) -->
+    <div class="section-card" style="margin-bottom:24px" id="escrowSection">
+      <div class="section-title">
+        🔒 Active Escrows
+        <span class="badge" id="escrowBadge">0</span>
+      </div>
+      <div id="escrowList">
+        <div class="shimmer" style="height:56px;margin-bottom:8px"></div>
+        <div class="shimmer" style="height:56px"></div>
+      </div>
+    </div>
+
+    <!-- Student incoming escrows -->
+    <div class="section-card" style="margin-bottom:24px" id="incomingEscrowSection">
+      <div class="section-title">
+        💸 Incoming Payments
+        <span class="badge" id="incomingBadge">0</span>
+      </div>
+      <div id="incomingEscrowList">
+        <div class="empty-state">
+          <div class="empty-icon">🎓</div>
+          <div>Your completed job payments will appear here</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Withdrawal history -->
+    <div class="section-card" style="margin-bottom:24px">
+      <div class="section-title">
+        📋 Withdrawal History
+        <span class="badge" id="wdBadge">0</span>
+      </div>
+      <div id="wdList">
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <div>No withdrawals yet</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ─── Scripts ──────────────────────────────────────────────────────────── -->
+<script type="module">
+import { supabase, requireProfile, signOut } from './supabase.js';
+import {
+  getWallet, getTransactions, initiateDeposit,
+  getMyEscrowsAsEmployer, getMyEscrowsAsStudent,
+  releaseEscrow, cancelEscrow,
+  requestWithdrawal, getWithdrawals,
+  formatDZD, txMeta, txStatusLabel
+} from './wallet.js';
+
+// ── Globals ──────────────────────────────────────────────────────────────────
+let profile = null;
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+(async () => {
+  // Detect payment redirect status (?status=success|failed)
+  const params = new URLSearchParams(location.search);
+  const status = params.get('status');
+  if (status === 'success') {
+    const b = document.getElementById('statusBanner');
+    b.innerHTML = '<span>✅</span> <span>Payment submitted successfully! Your wallet will be credited within seconds once Chargily confirms.</span>';
+    b.className = 'status-banner success';
+    b.style.display = 'flex';
+    // Clean URL without reloading
+    history.replaceState({}, '', 'wallet.html');
+  } else if (status === 'failed') {
+    const b = document.getElementById('statusBanner');
+    b.innerHTML = '<span>❌</span> <span>Payment was cancelled or failed. No money was deducted. Please try again.</span>';
+    b.className = 'status-banner failed';
+    b.style.display = 'flex';
+    history.replaceState({}, '', 'wallet.html');
+  }
+
+  profile = await requireProfile();
+  if (!profile) return;
+
+  // Populate sidebar user info
+  document.getElementById('sbName').textContent = `${profile.firstname} ${profile.lastname}`;
+  document.getElementById('sbRole').textContent = profile.role ?? 'User';
+  const avatarEl = document.getElementById('sbAvatar');
+  if (profile.image) {
+    avatarEl.innerHTML = `<img src="${esc(profile.image)}" alt="">`;
+  } else {
+    avatarEl.textContent = (profile.firstname?.[0] ?? '?').toUpperCase();
+  }
+
+  // Load everything in parallel
+  await Promise.all([
+    loadWallet(),
+    loadTransactions(),
+    loadEscrows(),
+    loadWithdrawals(),
+  ]);
+
+  // Set up real-time wallet updates (live balance refresh)
+  supabase
+    .channel(`wallet:${profile.id}`)
+    .on('postgres_changes', {
+      event: '*', schema: 'public', table: 'wallets',
+      filter: `user_id=eq.${profile.id}`
+    }, () => loadWallet())
+    .on('postgres_changes', {
+      event: 'INSERT', schema: 'public', table: 'transactions',
+      filter: `user_id=eq.${profile.id}`
+    }, () => { loadTransactions(); loadWallet(); })
+    .subscribe();
+})();
+
+// ── Load wallet balance ───────────────────────────────────────────────────────
+async function loadWallet() {
+  const { data, error } = await getWallet();
+  const amountEl = document.getElementById('balanceAmount');
+  const subEl    = document.getElementById('balanceSub');
+  if (error) {
+    amountEl.textContent = 'Error';
+    return;
+  }
+  const bal = data?.balance ?? 0;
+  amountEl.innerHTML = `${formatNum(bal)}<span class="currency">DZD</span>`;
+  if (data?.updated_at) {
+    subEl.textContent = 'Updated ' + fmtRelative(data.updated_at);
+  }
+}
+
+// ── Load transactions ─────────────────────────────────────────────────────────
+async function loadTransactions() {
+  const { data, error } = await getTransactions(100);
+  const tbody = document.getElementById('txBody');
+  const badge = document.getElementById('txBadge');
+
+  if (error || !data.length) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📄</div>No transactions yet</div></td></tr>`;
+    badge.textContent = '0';
+
+    // Reset stats
+    document.getElementById('statDeposits').textContent  = '0 DZD';
+    document.getElementById('statEscrow').textContent    = '0 DZD';
+    document.getElementById('statWithdrawn').textContent = '0 DZD';
+    return;
+  }
+
+  badge.textContent = data.length;
+
+  // Compute stats
+  let totalDep = 0, totalEscrow = 0, totalWd = 0;
+  data.forEach(tx => {
+    if (tx.type === 'deposit'  && tx.status === 'completed') totalDep    += Number(tx.amount);
+    if (tx.type === 'escrow'   && tx.status === 'completed') totalEscrow += Number(tx.amount);
+    if (tx.type === 'withdraw' && tx.status === 'completed') totalWd     += Number(tx.amount);
+  });
+  document.getElementById('statDeposits').textContent  = formatNum(totalDep)  + ' DZD';
+  document.getElementById('statEscrow').textContent    = formatNum(totalEscrow)+ ' DZD';
+  document.getElementById('statWithdrawn').textContent = formatNum(totalWd)   + ' DZD';
+
+  // Render rows
+  const isCredit = t => ['deposit','release','refund'].includes(t);
+  tbody.innerHTML = data.map(tx => {
+    const meta  = txMeta(tx.type);
+    const credit = isCredit(tx.type);
+    return `
+      <tr>
+        <td><span class="tx-type-pill ${meta.color}">${meta.icon} ${meta.label}</span></td>
+        <td><span class="tx-amount ${credit ? 'credit' : 'debit'}">${formatNum(tx.amount)} DZD</span></td>
+        <td><span class="status-dot ${tx.status}">${txStatusLabel(tx.status)}</span></td>
+        <td><span class="tx-ref" title="${esc(tx.reference ?? '')}">${esc(tx.reference ?? '—').slice(0,16)}</span></td>
+        <td><span class="tx-date">${fmtDate(tx.created_at)}</span></td>
+      </tr>`;
+  }).join('');
+}
+
+// ── Load escrows ──────────────────────────────────────────────────────────────
+async function loadEscrows() {
+  const [emp, stu] = await Promise.all([
+    getMyEscrowsAsEmployer(),
+    getMyEscrowsAsStudent(),
+  ]);
+
+  // Employer view
+  const empList  = document.getElementById('escrowList');
+  const empBadge = document.getElementById('escrowBadge');
+  const empData  = emp.data.filter(e => e.status === 'held');
+  empBadge.textContent = empData.length;
+
+  if (!empData.length) {
+    empList.innerHTML = `<div class="empty-state"><div class="empty-icon">🔒</div>No active escrows</div>`;
+  } else {
+    empList.innerHTML = empData.map(e => `
+      <div class="escrow-item" id="esc-${e.id}">
+        <div class="escrow-left">
+          <div class="escrow-avatar">
+            ${e.student?.image
+              ? `<img src="${esc(e.student.image)}" alt="">`
+              : (e.student?.firstname?.[0] ?? '?').toUpperCase()}
+          </div>
+          <div>
+            <div class="escrow-name">${esc(e.student?.firstname ?? '')} ${esc(e.student?.lastname ?? '')}</div>
+            <div class="escrow-meta">Created ${fmtDate(e.created_at)}${e.note ? ' · ' + esc(e.note) : ''}</div>
+          </div>
+        </div>
+        <div class="escrow-right">
+          <span class="escrow-amount">${formatNum(e.amount)} DZD</span>
+          <span class="escrow-status held">Held</span>
+          <button class="btn-release" onclick="handleRelease(${e.id})">Release ✓</button>
+          <button class="btn-cancel-escrow" onclick="handleCancelEscrow(${e.id})">Cancel</button>
+        </div>
+      </div>`).join('');
+  }
+
+  // Student view (incoming)
+  const stuList  = document.getElementById('incomingEscrowList');
+  const stuBadge = document.getElementById('incomingBadge');
+  stuBadge.textContent = stu.data.length;
+
+  if (!stu.data.length) {
+    stuList.innerHTML = `<div class="empty-state"><div class="empty-icon">💸</div>No incoming payments yet</div>`;
+  } else {
+    stuList.innerHTML = stu.data.map(e => `
+      <div class="escrow-item">
+        <div class="escrow-left">
+          <div class="escrow-avatar" style="background:linear-gradient(135deg,#42A5F5,#1565C0)">
+            ${e.employer?.image
+              ? `<img src="${esc(e.employer.image)}" alt="">`
+              : (e.employer?.firstname?.[0] ?? '?').toUpperCase()}
+          </div>
+          <div>
+            <div class="escrow-name">${esc(e.employer?.firstname ?? '')} ${esc(e.employer?.lastname ?? '')}</div>
+            <div class="escrow-meta">${fmtDate(e.created_at)}</div>
+          </div>
+        </div>
+        <div class="escrow-right">
+          <span class="escrow-amount">${formatNum(e.amount)} DZD</span>
+          <span class="escrow-status ${e.status}">${e.status.charAt(0).toUpperCase() + e.status.slice(1)}</span>
+        </div>
+      </div>`).join('');
+  }
+}
+
+// ── Load withdrawals ──────────────────────────────────────────────────────────
+async function loadWithdrawals() {
+  const { data } = await getWithdrawals();
+  const el    = document.getElementById('wdList');
+  const badge = document.getElementById('wdBadge');
+  badge.textContent = data.length;
+
+  if (!data.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div>No withdrawals yet</div>`;
+    return;
+  }
+
+  const methodLabel = { ccp: 'CCP', edahabia: 'Edahabia', baridimob: 'BaridiMob' };
+  el.innerHTML = data.map(w => `
+    <div class="wd-item">
+      <div>
+        <div class="wd-amount">${formatNum(w.amount)} DZD</div>
+        <div class="wd-method">${methodLabel[w.payout_method] ?? w.payout_method} · ${fmtDate(w.created_at)}</div>
+        ${w.admin_note ? `<div style="font-size:12px;color:var(--text3);margin-top:2px">Note: ${esc(w.admin_note)}</div>` : ''}
+      </div>
+      <span class="wd-status ${w.status}">${w.status.charAt(0).toUpperCase() + w.status.slice(1)}</span>
+    </div>`).join('');
+}
+
+// ── Action handlers ───────────────────────────────────────────────────────────
+window.handleDeposit = async function() {
+  const btn    = document.getElementById('depositBtn');
+  const amount = Number(document.getElementById('depositAmount').value);
+
+  if (!amount || amount < 100) return toast('Minimum deposit is 100 DZD.', 'error');
+  if (amount > 200_000)        return toast('Maximum deposit is 200,000 DZD.', 'error');
+
+  btn.disabled = true;
+  btn.textContent = 'Redirecting to Chargily…';
+
+  const { error } = await initiateDeposit(amount);
+  if (error) {
+    toast(error, 'error');
+    btn.disabled = false;
+    btn.textContent = 'Pay with Chargily →';
+  }
+  // On success, the function redirects — this line is never reached
+};
+
+window.handleWithdraw = async function() {
+  const btn     = document.getElementById('withdrawBtn');
+  const amount  = Number(document.getElementById('wdAmount').value);
+  const method  = document.getElementById('wdMethod').value;
+  const account = document.getElementById('wdAccount').value.trim();
+
+  if (!amount || amount < 500) return toast('Minimum withdrawal is 500 DZD.', 'error');
+  if (!account)                return toast('Please enter your account/card number.', 'error');
+
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  const { data, error } = await requestWithdrawal({
+    amount, payoutMethod: method, accountNumber: account
+  });
+
+  btn.disabled = false;
+  btn.textContent = 'Request Withdrawal';
+
+  if (error) {
+    toast(error.message ?? 'Withdrawal failed.', 'error');
+  } else {
+    toast('Withdrawal request submitted! Admin will process it shortly.', 'success');
+    document.getElementById('wdAmount').value  = '';
+    document.getElementById('wdAccount').value = '';
+    await Promise.all([loadWallet(), loadWithdrawals()]);
+  }
+};
+
+window.handleRelease = async function(escrowId) {
+  if (!confirm('Release escrow to student? This marks the job as completed.')) return;
+  const { error } = await releaseEscrow(escrowId);
+  if (error) return toast(error.message ?? 'Release failed.', 'error');
+  toast('Escrow released! Student has been credited.', 'success');
+  await Promise.all([loadWallet(), loadEscrows(), loadTransactions()]);
+};
+
+window.handleCancelEscrow = async function(escrowId) {
+  if (!confirm('Cancel this escrow? Your money will be refunded to your wallet.')) return;
+  const { error } = await cancelEscrow(escrowId);
+  if (error) return toast(error.message ?? 'Cancel failed.', 'error');
+  toast('Escrow cancelled. Balance refunded.', 'info');
+  await Promise.all([loadWallet(), loadEscrows(), loadTransactions()]);
+};
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+window.setDeposit = n => { document.getElementById('depositAmount').value = n; };
+window.scrollToDeposit  = () => document.getElementById('depositSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+window.scrollToWithdraw = () => document.getElementById('withdrawSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+function formatNum(n) {
+  return new Intl.NumberFormat('en-DZ', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(n);
+}
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function fmtRelative(iso) {
+  const diff = Date.now() - new Date(iso).getTime();
+  if (diff < 60_000)      return 'just now';
+  if (diff < 3_600_000)   return Math.floor(diff / 60_000) + 'm ago';
+  if (diff < 86_400_000)  return Math.floor(diff / 3_600_000) + 'h ago';
+  return fmtDate(iso);
+}
+
+function esc(str) {
+  return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Toast system ──────────────────────────────────────────────────────────────
+function toast(msg, type = 'info') {
+  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span class="toast-icon">${icons[type] ?? 'ℹ️'}</span><span>${esc(msg)}</span>`;
+  const container = document.getElementById('toastContainer');
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 5000);
+}
+
+// ── Theme toggle ──────────────────────────────────────────────────────────────
+const html    = document.documentElement;
+const themeBtn = document.getElementById('themeBtn');
+const saved   = localStorage.getItem('theme') ?? 'light';
+html.dataset.theme = saved;
+themeBtn.textContent = saved === 'dark' ? '☀️' : '🌙';
+
+themeBtn.addEventListener('click', () => {
+  const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+  html.dataset.theme = next;
+  localStorage.setItem('theme', next);
+  themeBtn.textContent = next === 'dark' ? '☀️' : '🌙';
+});
+
+// ── Sign out ──────────────────────────────────────────────────────────────────
+document.getElementById('signOutBtn').addEventListener('click', async (e) => {
+  e.preventDefault();
+  await supabase.auth.signOut();
+  window.location.href = 'login.html';
+});
+</script>
+</body>
+</html>
