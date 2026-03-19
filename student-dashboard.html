@@ -1139,14 +1139,16 @@
       <nav class="sb-nav">
         <div class="nav-sec">Main</div>
         <div class="nav-item active" onclick="showPage('home',this)"><span class="nav-icon">🏠</span> Home</div>
-        <div class="nav-item" onclick="showPage('services',this)"><span class="nav-icon">🧩</span> Services</div>
-        <div class="nav-item" onclick="showPage('events',this)"><span class="nav-icon">📅</span> Events</div>
-        <div class="nav-item" onclick="showPage('announcements',this)"><span class="nav-icon">📢</span> Announcements
+        <div class="nav-item" onclick="showPage('jobs',this)"><span class="nav-icon">💼</span> Jobs</div>
+        <div class="nav-item" onclick="showPage('mini-offers',this)"><span class="nav-icon">🧩</span> Mini Offers</div>
+        <div class="nav-item" onclick="showPage('applications',this)"><span class="nav-icon">📝</span> My Applications
         </div>
+
         <div class="nav-sec">Account</div>
         <div class="nav-item" onclick="showPage('profile',this)"><span class="nav-icon">👤</span> My Profile</div>
+        <div class="nav-item" onclick="showPage('earning',this)"><span class="nav-icon">💳</span> Earning</div>
+        <div class="nav-item" onclick="showPage('reviews',this)"><span class="nav-icon">⭐</span> Reviews</div>
         <div class="nav-item" onclick="showPage('community',this)"><span class="nav-icon">🌐</span> Community</div>
-        <a href="wallet.html" class="nav-item"><span class="nav-icon">💳</span> Wallet</a>
       </nav>
       <div class="sb-foot">
         <div class="nav-item" onclick="goChat()"><span class="nav-icon">💬</span> Messages</div>
@@ -1298,23 +1300,30 @@
       <!-- PROFILE -->
       <div class="page" id="page-profile">
         <div class="profile-hdr" id="profileHdr">
-          <div class="avatar av-lg" id="profAvatar"></div>
+          <div class="avatar av-lg" id="profAvatar" style="width:100px;height:100px;font-size:32px"></div>
           <div style="flex:1">
-            <div class="pname" id="profName">—</div>
-            <div class="psub" id="profSub">—</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px" id="profTags"></div>
-            <div class="pstats">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="pname" id="profName" style="font-size:28px">—</div>
+              <div id="profRating"
+                style="display:flex;align-items:center;gap:4px;background:var(--gold-pale);color:#8a6010;padding:4px 10px;border-radius:100px;font-size:13px;font-weight:700">
+                ⭐ 0.0</div>
+            </div>
+            <div class="psub" id="profSub" style="font-size:15px;margin-top:4px">—</div>
+            <div id="profBio" style="margin-top:12px;font-size:14px;color:var(--text2);max-width:600px;line-height:1.6">
+              No bio added yet.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px" id="profTags"></div>
+            <div class="pstats" style="margin-top:20px;border-top:1px solid var(--border);padding-top:15px">
               <div>
-                <div class="ps-num" id="psSvc">—</div>
+                <div class="ps-num" id="psSvc">0</div>
                 <div class="ps-lbl">Services</div>
               </div>
               <div>
-                <div class="ps-num" id="psFol">—</div>
-                <div class="ps-lbl">Followers</div>
+                <div class="ps-num" id="psTasks">0</div>
+                <div class="ps-lbl">Tasks Done</div>
               </div>
               <div>
-                <div class="ps-num" id="psFlg">—</div>
-                <div class="ps-lbl">Following</div>
+                <div class="ps-num" id="psFol">0</div>
+                <div class="ps-lbl">Reviews</div>
               </div>
             </div>
           </div>
@@ -1351,6 +1360,60 @@
             <h4>Search for members</h4>
             <p>Type a name and press Search</p>
           </div>
+        </div>
+      </div>
+
+      <!-- NEW PAGES PLACEHOLDERS -->
+      <div class="page" id="page-jobs">
+        <div class="sec-hdr">
+          <h3>Part-time Jobs</h3>
+        </div>
+        <div class="empty"><span class="empty-icon">💼</span>
+          <h4>No jobs posted yet</h4>
+          <p>Check back later for new opportunities.</p>
+        </div>
+      </div>
+
+      <div class="page" id="page-mini-offers">
+        <div class="sec-hdr">
+          <h3>Mini Offers</h3>
+        </div>
+        <div class="empty"><span class="empty-icon">🧩</span>
+          <h4>No mini-tasks found</h4>
+          <p>Explore student services here soon.</p>
+        </div>
+      </div>
+
+      <div class="page" id="page-applications">
+        <div class="sec-hdr">
+          <h3>My Applications</h3>
+        </div>
+        <div class="empty"><span class="empty-icon">📝</span>
+          <h4>No active applications</h4>
+          <p>Your job and task applications will appear here.</p>
+        </div>
+      </div>
+
+      <div class="page" id="page-earning">
+        <div class="sec-hdr">
+          <h3>My Earning</h3>
+        </div>
+        <div class="card wallet-card" style="max-width:400px;margin:20px auto;text-align:center">
+          <div style="font-size:14px;color:var(--text3);margin-bottom:8px">Current Balance</div>
+          <div style="font-size:36px;font-family:var(--fh);font-weight:800;color:var(--navy)">0.00 <span
+              style="font-size:16px;color:var(--text3)">DZD</span></div>
+          <button class="btn btn-primary btn-sm" style="margin-top:20px;width:100%" disabled>Withdraw via
+            Chargily</button>
+        </div>
+      </div>
+
+      <div class="page" id="page-reviews">
+        <div class="sec-hdr">
+          <h3>Reviews & Ratings</h3>
+        </div>
+        <div class="empty"><span class="empty-icon">⭐</span>
+          <h4>No reviews yet</h4>
+          <p>Feedback from employers will show up here after you complete tasks.</p>
         </div>
       </div>
     </main>
@@ -1399,8 +1462,22 @@
         <div class="form-group"><label>First name *</label><input type="text" id="eFn"></div>
         <div class="form-group"><label>Last name *</label><input type="text" id="eLn"></div>
       </div>
-      <div class="form-group"><label>Phone</label><input type="text" id="ePh"></div>
-      <div class="form-group"><label>Profile image URL</label><input type="text" id="eImg" placeholder="https://…">
+      <div class="form-group"><label>Bio</label><textarea id="eBio" rows="2"
+          placeholder="Tell us about yourself…"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>University / Institution</label><input type="text" id="eInst"></div>
+        <div class="form-group"><label>Grade / Year</label><input type="text" id="eGrade"
+            placeholder="e.g. Master 1, L2…"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Field of Study</label><input type="text" id="eField"></div>
+        <div class="form-group"><label>Specialty</label><input type="text" id="eSpec"></div>
+      </div>
+      <div class="form-group"><label>Skills (comma separated)</label><input type="text" id="eSkills"
+          placeholder="Design, PHP, Translation…"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Phone</label><input type="text" id="ePh"></div>
+        <div class="form-group"><label>Avatar URL</label><input type="text" id="eImg"></div>
       </div>
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
@@ -1487,22 +1564,84 @@
       setAvatar('profAvatar', ME.image, ini, true);
       document.getElementById('profName').textContent = name;
       document.getElementById('profSub').textContent = [ME.grade, ME.domain, ME.institution].filter(Boolean).join(' · ');
+      document.getElementById('profBio').textContent = ME.bio || 'No bio added yet.';
+      document.getElementById('profRating').textContent = `⭐ ${parseFloat(ME.rating || 0).toFixed(1)}`;
+
       const tags = document.getElementById('profTags');
-      [ME.grade, ME.domain, ME.field_of_study].filter(Boolean).forEach(t => {
+      tags.innerHTML = '';
+      const tArr = [ME.grade, ME.domain, ME.field_of_study].filter(Boolean);
+      if (ME.skills) {
+        ME.skills.split(',').forEach(s => tArr.push(s.trim()));
+      }
+      tArr.forEach(t => {
         const s = document.createElement('span');
         s.className = 'cat-tag'; s.textContent = t; tags.appendChild(s);
       });
+
       document.getElementById('accountInfo').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;font-size:14px">
-      <div><span style="color:var(--text3);font-size:11px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Email</span><div style="margin-top:3px;font-weight:500">${esc(ME.email)}</div></div>
-      <div><span style="color:var(--text3);font-size:11px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Phone</span><div style="margin-top:3px;font-weight:500">${esc(ME.phone || '—')}</div></div>
-      <div><span style="color:var(--text3);font-size:11px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Member since</span><div style="margin-top:3px;font-weight:500">${fmtDate(ME.created_at)}</div></div>
-      ${ME.institution ? `<div><span style="color:var(--text3);font-size:11px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Institution</span><div style="margin-top:3px;font-weight:500">${esc(ME.institution)}</div></div>` : ''}
+      <div><span style="color:var(--text3);font-size:10px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Institution</span><div style="margin-top:2px;font-weight:600">${esc(ME.institution || '—')}</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
+        <div><span style="color:var(--text3);font-size:10px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Grade</span><div style="margin-top:2px;font-weight:600">${esc(ME.grade || '—')}</div></div>
+        <div><span style="color:var(--text3);font-size:10px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Field</span><div style="margin-top:2px;font-weight:600">${esc(ME.field_of_study || '—')}</div></div>
+      </div>
+      <div><span style="color:var(--text3);font-size:10px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Specialty</span><div style="margin-top:2px;font-weight:600">${esc(ME.specialty || '—')}</div></div>
+      <div><span style="color:var(--text3);font-size:10px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Email</span><div style="margin-top:2px;font-weight:600">${esc(ME.email)}</div></div>
+      <div><span style="color:var(--text3);font-size:10px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Phone</span><div style="margin-top:2px;font-weight:600">${esc(ME.phone || '—')}</div></div>
     </div>`;
+
+      // Fill edit modal inputs
       document.getElementById('eFn').value = ME.firstname;
       document.getElementById('eLn').value = ME.lastname;
+      document.getElementById('eBio').value = ME.bio || '';
+      document.getElementById('eInst').value = ME.institution || '';
+      document.getElementById('eGrade').value = ME.grade || '';
+      document.getElementById('eField').value = ME.field_of_study || '';
+      document.getElementById('eSpec').value = ME.specialty || '';
+      document.getElementById('eSkills').value = ME.skills || '';
       document.getElementById('ePh').value = ME.phone || '';
       document.getElementById('eImg').value = ME.image || '';
+    }
+
+    window.openEditModal = () => {
+      document.getElementById('editAlert').classList.remove('show');
+      document.getElementById('editModal').classList.add('open');
+    };
+    window.closeEditModal = () => document.getElementById('editModal').classList.remove('open');
+    window.submitEdit = async () => {
+      const fn = document.getElementById('eFn').value.trim();
+      const ln = document.getElementById('eLn').value.trim();
+      const bio = document.getElementById('eBio').value.trim();
+      const inst = document.getElementById('eInst').value.trim();
+      const grad = document.getElementById('eGrade').value.trim();
+      const fld = document.getElementById('eField').value.trim();
+      const spc = document.getElementById('eSpec').value.trim();
+      const skls = document.getElementById('eSkills').value.trim();
+      const ph = document.getElementById('ePh').value.trim();
+      const img = document.getElementById('eImg').value.trim();
+
+      if (!fn || !ln) {
+        showEAlert('editAlert', 'First and last name are required.');
+        return;
+      }
+      const btn = document.getElementById('editSubmitBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+
+      const payload = {
+        firstname: fn, lastname: ln, bio,
+        institution: inst, grade: grad, field_of_study: fld, specialty: spc,
+        skills: skls, phone: ph, image: img || null
+      };
+
+      const { data, error } = await updateProfile(ME.auth_id, payload);
+      btn.disabled = false; btn.textContent = 'Save changes';
+      if (error) { showEAlert('editAlert', error.message); return; }
+      ME = data; renderUser(); closeEditModal();
+    };
+
+    function showEAlert(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg; el.className = 'alert error show'; el.style.display = 'flex';
     }
 
     function setAvatar(id, url, ini, large) {
@@ -1852,18 +1991,29 @@
     };
 
     // ── navigation ────────────────────────────────────────────────────────────────
-    const titles = { home: 'Home', services: 'Services', events: 'Events', announcements: 'Announcements', profile: 'My Profile', community: 'Community' };
+    const titles = {
+      home: 'Home',
+      jobs: 'Part-time Jobs',
+      'mini-offers': 'Mini Offers',
+      applications: 'My Applications',
+      profile: 'My Profile',
+      earning: 'Earning',
+      reviews: 'Reviews',
+      community: 'Community'
+    };
 
     window.showPage = (name, navEl) => {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById('page-' + name)?.classList.add('active');
+      const pg = document.getElementById('page-' + name);
+      if (pg) pg.classList.add('active');
       if (navEl) navEl.classList.add('active');
       document.getElementById('pageTitle').textContent = titles[name] || name;
       if (window.innerWidth < 768) closeSidebar();
-      if (name === 'services') loadServices();
-      if (name === 'events') loadEvents();
-      if (name === 'announcements') loadAnnouncements();
+
+      // Auto-load specific section data
+      if (name === 'home') renderUser();
+      if (name === 'profile') renderUser();
     };
 
     window.openSidebar = () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); };

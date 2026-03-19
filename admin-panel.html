@@ -840,8 +840,9 @@
         <div class="nav-item" onclick="showPage('users',this)"><span class="nav-icon">👥</span> Users</div>
         <div class="nav-item" onclick="showPage('services',this)"><span class="nav-icon">🧩</span> Services</div>
         <div class="nav-item" onclick="showPage('events',this)"><span class="nav-icon">📅</span> Events</div>
-        <div class="nav-item" onclick="showPage('announcements',this)"><span class="nav-icon">📢</span> Announcements</div>
-        <a href="admin-withdrawals.html" class="nav-item"><span class="ni">💸</span> Withdrawals</a>
+        <div class="nav-item" onclick="showPage('announcements',this)"><span class="nav-icon">📢</span> Announcements
+        </div>
+        <div class="nav-item" onclick="showPage('withdrawals',this)"><span class="nav-icon">💸</span> Withdrawals</div>
       </nav>
       <div class="sb-foot">
         <div class="nav-item" onclick="doSignOut()" style="color:#ff6b6b"><span class="nav-icon">🚪</span> Sign out
@@ -973,6 +974,17 @@
           </div>
         </div>
       </div>
+      <!-- WITHDRAWALS -->
+      <div class="page" id="page-withdrawals">
+        <div class="sec-hdr">
+          <h3>Withdrawal Requests</h3>
+        </div>
+        <div id="withdrawalsList">
+          <div class="spin-wrap">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -1084,6 +1096,7 @@
     import {
       supabase, requireProfile, signOut,
       adminGetAllUsers, adminBanUser, adminUnbanUser, adminWarnUser,
+      adminGetWithdrawals, adminUpdateWithdrawal,
       getProjects, deleteProject,
       getEvents, getAnnouncements,
       fmtDate, esc,
@@ -1399,6 +1412,73 @@
       loadAdminAnns();
     };
 
+    // ── withdrawals ───────────────────────────────────────────────────────────────
+    async function loadWithdrawals() {
+      const el = document.getElementById('withdrawalsList');
+      if (!el) return;
+      el.innerHTML = `<div class="spin-wrap"><div class="spinner"></div></div>`;
+      const { data, error } = await adminGetWithdrawals();
+      if (error) { el.innerHTML = `<div class="alert error show">${error.message}</div>`; return; }
+      if (!data?.length) {
+        el.innerHTML = `<div class="empty"><span class="empty-icon">💸</span><h4>No withdrawal requests</h4><p>Pending payout requests from students will appear here.</p></div>`;
+        return;
+      }
+      el.innerHTML = `
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Amount</th>
+          <th>Method</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${data.map(w => `
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="avatar av-sm">${(w.user?.firstname?.[0] || '?').toUpperCase()}</div>
+                <div>
+                  <div style="font-weight:600">${esc(w.user?.firstname || '')} ${esc(w.user?.lastname || '')}</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-weight:700;color:var(--navy)">${w.amount.toFixed(2)} DZD</td>
+            <td><span class="badge" style="background:var(--blue-pale);color:var(--blue)">${esc(w.method)}</span></td>
+            <td><span class="badge status-${w.status.toLowerCase()}">${w.status}</span></td>
+            <td>${fmtDate(w.created_at)}</td>
+            <td>
+              <div style="display:flex;gap:6px">
+                ${w.status === 'Pending' ? `
+                  <button class="btn btn-primary btn-sm" style="padding:4px 10px;font-size:11px" onclick="verifyWithdrawal(${w.id})">Verify</button>
+                  <button class="btn btn-outline btn-sm" style="padding:4px 10px;font-size:11px;border-color:#c0392b;color:#c0392b" onclick="rejectWithdrawal(${w.id})">Reject</button>
+                ` : '—'}
+              </div>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+    }
+
+    window.verifyWithdrawal = async (id) => {
+      if (!confirm('Mark this withdrawal as completed?')) return;
+      const { error } = await adminUpdateWithdrawal(id, 'Completed');
+      if (error) { alert(error.message); return; }
+      loadWithdrawals();
+    };
+
+    window.rejectWithdrawal = async (id) => {
+      const reason = prompt('Reason for rejection:');
+      if (reason === null) return;
+      const { error } = await adminUpdateWithdrawal(id, 'Rejected');
+      if (error) { alert(error.message); return; }
+      loadWithdrawals();
+    };
+
     window.delAnn = async (id) => {
       if (!confirm('Delete this announcement?')) return;
       const { error } = await supabase.from('announcements').delete().eq('id', id);
@@ -1407,18 +1487,29 @@
     };
 
     // ── navigation ────────────────────────────────────────────────────────────────
-    const titles = { dashboard: 'Dashboard', users: 'Users', services: 'Services', events: 'Events', announcements: 'Announcements' };
+    const titles = {
+      dashboard: 'Dashboard',
+      users: 'Users',
+      services: 'Services',
+      events: 'Events',
+      announcements: 'Announcements',
+      withdrawals: 'Withdrawals'
+    };
+
     window.showPage = (name, navEl) => {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById('page-' + name)?.classList.add('active');
+      const pg = document.getElementById('page-' + name);
+      if (pg) pg.classList.add('active');
       if (navEl) navEl.classList.add('active');
       document.getElementById('pageTitle').textContent = titles[name] || name;
       if (window.innerWidth < 768) closeSidebar();
+
       if (name === 'users') loadUsers();
       if (name === 'services') loadAdminSvcs();
       if (name === 'events') loadAdminEvents();
       if (name === 'announcements') loadAdminAnns();
+      if (name === 'withdrawals') loadWithdrawals();
     };
     window.openSidebar = () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); };
     window.closeSidebar = () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); };

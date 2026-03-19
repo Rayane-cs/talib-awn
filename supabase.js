@@ -410,6 +410,24 @@ export async function adminWarnUser(userId) {
   return { data, error, auto_banned: newWarnings >= 3 };
 }
 
+export async function adminGetWithdrawals() {
+  const { data, error } = await supabase
+    .from('withdrawals')
+    .select(`*, user:users!user_id(firstname, lastname, image)`)
+    .order('created_at', { ascending: false });
+  return { data, error };
+}
+
+export async function adminUpdateWithdrawal(id, status) {
+  const { data, error } = await supabase
+    .from('withdrawals')
+    .update({ status })
+    .eq('id', id)
+    .select()
+    .single();
+  return { data, error };
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 //  UI HELPERS
 // ─────────────────────────────────────────────────────────────────────────────

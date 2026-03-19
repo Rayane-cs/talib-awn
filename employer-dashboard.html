@@ -993,13 +993,14 @@
       <nav class="sb-nav">
         <div class="nav-sec">Main</div>
         <div class="nav-item active" onclick="showPage('home',this)"><span class="nav-icon">🏠</span> Home</div>
-        <div class="nav-item" onclick="showPage('browse',this)"><span class="nav-icon">🔍</span> Browse Services</div>
-        <div class="nav-item" onclick="showPage('events',this)"><span class="nav-icon">📅</span> Events</div>
-        <div class="nav-item" onclick="showPage('announcements',this)"><span class="nav-icon">📢</span> Announcements
-        </div>
+        <div class="nav-item" onclick="showPage('offers',this)"><span class="nav-icon">💼</span> Offers</div>
+        <div class="nav-item" onclick="showPage('mini-offers',this)"><span class="nav-icon">🧩</span> Mini Offers</div>
+        <div class="nav-item" onclick="showPage('hiring',this)"><span class="nav-icon">🤝</span> My Hiring</div>
+
         <div class="nav-sec">Account</div>
         <div class="nav-item" onclick="showPage('profile',this)"><span class="nav-icon">👤</span> My Profile</div>
-        <a href="wallet.html" class="nav-item"><span class="nav-icon">💳</span> Wallet</a>
+        <div class="nav-item" onclick="showPage('spending',this)"><span class="nav-icon">💳</span> Spending</div>
+        <div class="nav-item" onclick="showPage('reviews',this)"><span class="nav-icon">⭐</span> Reviews</div>
       </nav>
       <div class="sb-foot">
         <div class="nav-item" onclick="goChat()"><span class="nav-icon">💬</span> Messages</div>
@@ -1097,10 +1098,10 @@
         </div>
       </div>
 
-      <!-- BROWSE SERVICES -->
-      <div class="page" id="page-browse">
+      <!-- MINI OFFERS (Renamed from browse) -->
+      <div class="page" id="page-mini-offers">
         <div class="sec-hdr">
-          <h3 id="browseTitle">Student Services</h3>
+          <h3 id="miniOffersTitle">Student Mini-Tasks (Gigs)</h3>
         </div>
         <div class="search-bar">
           <span style="font-size:15px;color:var(--text3)">🔍</span>
@@ -1119,6 +1120,57 @@
           <div class="spin-wrap">
             <div class="spinner"></div>
           </div>
+        </div>
+      </div>
+
+      <!-- OFFERS (Student posts searching for jobs) -->
+      <div class="page" id="page-offers">
+        <div class="sec-hdr">
+          <h3>Student Job Requests</h3>
+        </div>
+        <div class="search-bar">
+          <span style="font-size:15px;color:var(--text3)">🔍</span>
+          <input type="text" placeholder="Search students looking for work…">
+        </div>
+        <div class="empty"><span class="empty-icon">💼</span>
+          <h4>No job requests yet</h4>
+          <p>Students searching for part-time work will appear here.</p>
+        </div>
+      </div>
+
+      <!-- MY HIRING -->
+      <div class="page" id="page-hiring">
+        <div class="sec-hdr">
+          <h3>My Hiring</h3>
+        </div>
+        <div class="empty"><span class="empty-icon">🤝</span>
+          <h4>No active hires</h4>
+          <p>Students you are currently working with or have requested will appear here.</p>
+        </div>
+      </div>
+
+      <!-- SPENDING -->
+      <div class="page" id="page-spending">
+        <div class="sec-hdr">
+          <h3>My Spending</h3>
+        </div>
+        <div class="card wallet-card" style="max-width:400px;margin:20px auto;text-align:center">
+          <div style="font-size:14px;color:var(--text3);margin-bottom:8px">Total Spent</div>
+          <div style="font-size:36px;font-family:var(--fh);font-weight:800;color:var(--navy)">0.00 <span
+              style="font-size:16px;color:var(--text3)">DZD</span></div>
+          <p style="font-size:13px;color:var(--text3);margin-top:10px">Manage your payments and budget for student
+            tasks.</p>
+        </div>
+      </div>
+
+      <!-- REVIEWS -->
+      <div class="page" id="page-reviews">
+        <div class="sec-hdr">
+          <h3>Reviews from Students</h3>
+        </div>
+        <div class="empty"><span class="empty-icon">⭐</span>
+          <h4>No reviews yet</h4>
+          <p>Students you've worked with will leave feedback here.</p>
         </div>
       </div>
 
@@ -1148,16 +1200,41 @@
 
       <!-- PROFILE -->
       <div class="page" id="page-profile">
-        <div class="card" style="margin-bottom:20px">
-          <div style="display:flex;align-items:flex-start;gap:20px">
-            <div class="avatar av-lg" id="profAvatar"></div>
-            <div style="flex:1">
-              <div style="font-family:var(--fh);font-size:22px;font-weight:800;margin-bottom:4px" id="profName">—</div>
-              <div style="font-size:13px;color:var(--text2)" id="profSub">—</div>
+        <div class="profile-hdr" id="profileHdr"
+          style="display:flex;align-items:flex-start;gap:24px;background:var(--white);padding:32px;border-radius:16px;border:1px solid var(--border);margin-bottom:24px">
+          <div class="avatar av-lg" id="profAvatar" style="width:100px;height:100px;font-size:32px"></div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="pname" id="profName"
+                style="font-family:var(--fh);font-size:28px;font-weight:800;color:var(--navy)">—</div>
+              <div id="profRating"
+                style="display:flex;align-items:center;gap:4px;background:var(--gold-pale);color:#8a6010;padding:4px 10px;border-radius:100px;font-size:13px;font-weight:700">
+                ⭐ 0.0</div>
             </div>
-            <button class="btn btn-outline btn-sm" onclick="openEditModal()">✏️ Edit profile</button>
+            <div class="psub" id="profSub" style="font-size:15px;color:var(--text2);margin-top:4px">—</div>
+            <div id="profBio" style="margin-top:12px;font-size:14px;color:var(--text2);max-width:600px;line-height:1.6">
+              No bio added yet.</div>
+            <div class="pstats"
+              style="margin-top:20px;border-top:1px solid var(--border);padding-top:15px;display:flex;gap:30px">
+              <div>
+                <div class="ps-num" id="psOffers" style="font-size:20px;font-weight:800;color:var(--navy)">0</div>
+                <div class="ps-lbl" style="font-size:12px;color:var(--text3)">Jobs Posted</div>
+              </div>
+              <div>
+                <div class="ps-num" id="psHires" style="font-size:20px;font-weight:800;color:var(--navy)">0</div>
+                <div class="ps-lbl" style="font-size:12px;color:var(--text3)">Hires</div>
+              </div>
+              <div>
+                <div class="ps-num" id="psReviews" style="font-size:20px;font-weight:800;color:var(--navy)">0</div>
+                <div class="ps-lbl" style="font-size:12px;color:var(--text3)">Reviews</div>
+              </div>
+            </div>
           </div>
-          <div style="margin-top:20px" id="accountInfo"></div>
+          <button class="btn btn-outline btn-sm" onclick="openEditModal()">✏️ Edit profile</button>
+        </div>
+        <div class="card">
+          <h4 style="font-family:var(--fh);font-weight:700;margin-bottom:16px">Company Information</h4>
+          <div id="accountInfo"></div>
         </div>
       </div>
     </main>
@@ -1175,9 +1252,16 @@
         <div class="form-group"><label>First name *</label><input type="text" id="eFn"></div>
         <div class="form-group"><label>Last name *</label><input type="text" id="eLn"></div>
       </div>
-      <div class="form-group"><label>Company name</label><input type="text" id="eCo"></div>
-      <div class="form-group"><label>Phone</label><input type="text" id="ePh"></div>
-      <div class="form-group"><label>Profile image URL</label><input type="text" id="eImg" placeholder="https://…">
+      <div class="form-group"><label>Bio</label><textarea id="eBio" rows="2"
+          placeholder="Tell us about your company…"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Company Name</label><input type="text" id="eCo"></div>
+        <div class="form-group"><label>Industry / Sector</label><input type="text" id="eInd"
+            placeholder="e.g. Tech, Retail, Education…"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Phone</label><input type="text" id="ePh"></div>
+        <div class="form-group"><label>Avatar URL</label><input type="text" id="eImg"></div>
       </div>
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
@@ -1248,20 +1332,29 @@
       const name = `${ME.firstname} ${ME.lastname}`;
       const ini = (ME.firstname[0] + (ME.lastname[0] || '')).toUpperCase();
       document.getElementById('sbName').textContent = name;
+      document.getElementById('sbRole').textContent = `🧑‍💼 ${ME.company || 'Employer'}`;
       setAvatar('sbAvatar', ME.image, ini);
       setAvatar('topAvatar', ME.image, ini);
+      setAvatar('profAvatar', ME.image, ini);
       document.getElementById('profName').textContent = name;
-      document.getElementById('profSub').textContent = ME.company_name || ME.grade || 'Employer';
-      if (document.getElementById('profAvatar')) setAvatar('profAvatar', ME.image, ini);
+      document.getElementById('profSub').textContent = [ME.company, ME.industry].filter(Boolean).join(' · ');
+      document.getElementById('profBio').textContent = ME.bio || 'No bio added yet.';
+      document.getElementById('profRating').textContent = `⭐ ${parseFloat(ME.rating || 0).toFixed(1)}`;
+
       document.getElementById('accountInfo').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;font-size:14px">
-      <div><span style="color:var(--text3);font-size:11px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Email</span><div style="margin-top:3px;font-weight:500">${esc(ME.email)}</div></div>
-      <div><span style="color:var(--text3);font-size:11px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Phone</span><div style="margin-top:3px;font-weight:500">${esc(ME.phone || '—')}</div></div>
-      <div><span style="color:var(--text3);font-size:11px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Member since</span><div style="margin-top:3px;font-weight:500">${fmtDate(ME.created_at)}</div></div>
+      <div><span style="color:var(--text3);font-size:10px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Company</span><div style="margin-top:2px;font-weight:600">${esc(ME.company || '—')}</div></div>
+      <div><span style="color:var(--text3);font-size:10px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Industry</span><div style="margin-top:2px;font-weight:600">${esc(ME.industry || '—')}</div></div>
+      <div><span style="color:var(--text3);font-size:10px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Email</span><div style="margin-top:2px;font-weight:600">${esc(ME.email)}</div></div>
+      <div><span style="color:var(--text3);font-size:10px;font-family:var(--fm);text-transform:uppercase;letter-spacing:.08em">Phone</span><div style="margin-top:2px;font-weight:600">${esc(ME.phone || '—')}</div></div>
     </div>`;
+
+      // Fill edit modal inputs
       document.getElementById('eFn').value = ME.firstname;
       document.getElementById('eLn').value = ME.lastname;
-      document.getElementById('eCo').value = ME.company_name || '';
+      document.getElementById('eBio').value = ME.bio || '';
+      document.getElementById('eCo').value = ME.company || '';
+      document.getElementById('eInd').value = ME.industry || '';
       document.getElementById('ePh').value = ME.phone || '';
       document.getElementById('eImg').value = ME.image || '';
     }
@@ -1464,29 +1557,64 @@
     window.submitEdit = async () => {
       const fn = document.getElementById('eFn').value.trim();
       const ln = document.getElementById('eLn').value.trim();
+      const bio = document.getElementById('eBio').value.trim();
       const co = document.getElementById('eCo').value.trim();
+      const ind = document.getElementById('eInd').value.trim();
       const ph = document.getElementById('ePh').value.trim();
       const img = document.getElementById('eImg').value.trim();
-      if (!fn || !ln) { const a = document.getElementById('editAlert'); a.textContent = 'First and last name required.'; a.className = 'alert error show'; a.style.display = 'flex'; return; }
+
+      if (!fn || !ln) {
+        const a = document.getElementById('editAlert');
+        a.textContent = 'First and last name required.';
+        a.className = 'alert error show';
+        a.style.display = 'flex';
+        return;
+      }
       const btn = document.getElementById('editSubmitBtn');
       btn.disabled = true; btn.textContent = 'Saving…';
-      const { data, error } = await updateProfile(ME.auth_id, { firstname: fn, lastname: ln, phone: ph || ME.phone, image: img || null, company_name: co || null });
+
+      const payload = {
+        firstname: fn,
+        lastname: ln,
+        bio: bio,
+        company: co,
+        industry: ind,
+        phone: ph,
+        image: img || null
+      };
+
+      const { data, error } = await updateProfile(ME.auth_id, payload);
       btn.disabled = false; btn.textContent = 'Save changes';
-      if (error) { const a = document.getElementById('editAlert'); a.textContent = error.message; a.className = 'alert error show'; a.style.display = 'flex'; return; }
+      if (error) {
+        const a = document.getElementById('editAlert');
+        a.textContent = error.message;
+        a.className = 'alert error show';
+        a.style.display = 'flex';
+        return;
+      }
       ME = data; renderUser(); closeEditModal();
     };
 
-    const titles = { home: 'Home', browse: 'Browse Services', events: 'Events', announcements: 'Announcements', profile: 'My Profile' };
+    const titles = {
+      home: 'Home',
+      offers: 'Student Job Requests',
+      'mini-offers': 'Mini Offers (Gigs)',
+      hiring: 'My Hiring',
+      spending: 'My Spending',
+      reviews: 'Reviews',
+      profile: 'My Profile'
+    };
+
     window.showPage = (name, navEl) => {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById('page-' + name)?.classList.add('active');
+      const pg = document.getElementById('page-' + name);
+      if (pg) pg.classList.add('active');
       if (navEl) navEl.classList.add('active');
       document.getElementById('pageTitle').textContent = titles[name] || name;
       if (window.innerWidth < 768) closeSidebar();
-      if (name === 'browse') loadBrowse();
-      if (name === 'events') loadEvents();
-      if (name === 'announcements') loadAnnouncements();
+
+      if (name === 'mini-offers') loadBrowse();
     };
     window.openSidebar = () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); };
     window.closeSidebar = () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); };
