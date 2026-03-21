@@ -1,13 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign In · Talib-Awn طالب عون</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="auth.css">
-</head>
+  <style>
+    :root{
+      --fh:'Playfair Display',serif;
+      --fb:'Inter',sans-serif;
+    }
+    /* override auth.css fonts */
+    body { font-family: var(--fb); }
+    h1,h2,.brand-logo-name { font-family: var(--fh); }
 
+    /* ── animations ── */
+    @keyframes fadeUp   { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+    @keyframes slideIn  { from{opacity:0;transform:translateX(32px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes floatBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+    .brand-side { animation: fadeIn .9s ease both; }
+    .brand-eyebrow { animation: fadeUp .6s .1s ease both; }
+    .brand-side h1  { animation: fadeUp .7s .2s ease both; font-family: var(--fh); font-style:normal; }
+    .brand-side h1 em { font-style: italic; }
+    .brand-side p   { animation: fadeUp .7s .3s ease both; }
+    .brand-stats    { animation: fadeUp .7s .4s ease both; }
+
+    .form-box { animation: slideIn .65s .15s ease both; }
+
+    /* input focus glow */
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(26,110,245,.12);
+      transition: box-shadow .2s, border-color .2s;
+    }
+
+    /* btn hover lift */
+    .btn-submit { transition: transform .2s, box-shadow .2s; }
+    .btn-submit:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(26,110,245,.35);
+    }
+
+    /* brand logo float */
+    .brand-logo { animation: floatBob 5s ease-in-out infinite; }
+
+    /* stat numbers pop in */
+    .b-stat-num {
+      font-family: var(--fh);
+      font-size: 28px;
+      font-weight: 800;
+      animation: fadeUp .7s .5s ease both;
+    }
+    .b-stat-label { font-family: var(--fb); font-size:12px; font-weight:500; }
+
+    .brand-logo-name { font-family: var(--fh); font-size:20px; font-weight:800; letter-spacing:-.02em; }
+    .brand-logo-arabic { font-family: var(--fh); }
+
+    .form-header h2 { font-family: var(--fh); font-weight:800; letter-spacing:-.02em; }
+    .form-header p  { font-family: var(--fb); font-weight:400; }
+
+    label { font-family: var(--fb); font-size:13px; font-weight:600; }
+    .btn-submit .btn-label { font-family: var(--fb); font-weight:700; letter-spacing:.02em; }
+    .form-footer { font-family: var(--fb); font-size:14px; }
+
+    /* stagger form fields */
+    .form-group:nth-child(1) { animation: fadeUp .5s .3s ease both; opacity:0; animation-fill-mode:both; }
+    .form-group:nth-child(2) { animation: fadeUp .5s .4s ease both; opacity:0; animation-fill-mode:both; }
+  </style>
+</head>
 <body>
   <div class="page-wrap">
     <div class="brand-side">
@@ -56,8 +122,7 @@
           <button type="button" class="password-toggle" id="pwdToggle">👁️</button>
         </div>
         <div style="text-align:right;margin-bottom:20px;">
-          <a href="forgot-password.html"
-            style="font-size:13px;color:var(--blue);font-weight:600;text-decoration:none;">Forgot password?</a>
+          <a href="forgot-password.html" style="font-family:var(--fb);font-size:13px;color:var(--blue);font-weight:600;text-decoration:none;">Forgot password?</a>
         </div>
         <button class="btn-submit" id="loginBtn">
           <div class="spinner"></div>
@@ -68,17 +133,65 @@
     </div>
   </div>
 
+  <!-- 3D Logo -->
+  <canvas id="logo3d" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+  <script>
+  (function(){
+    var canvas=document.getElementById('logo3d');
+    if(!canvas||typeof THREE==='undefined') return;
+    var renderer=new THREE.WebGLRenderer({canvas:canvas,alpha:true,antialias:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    renderer.setClearColor(0x000000,0);
+    var scene=new THREE.Scene();
+    var W=window.innerWidth, H=window.innerHeight;
+    var camera=new THREE.OrthographicCamera(-W/2,W/2,H/2,-H/2,-2000,2000);
+    camera.position.z=800;
+    scene.add(new THREE.AmbientLight(0xffffff,0.55));
+    var sun=new THREE.DirectionalLight(0xffffff,1.1); sun.position.set(2,3,4); scene.add(sun);
+    var rim=new THREE.DirectionalLight(0x5ba3f8,0.5); rim.position.set(-3,-1,2); scene.add(rim);
+    var mat=new THREE.MeshPhongMaterial({color:0xf5a623,specular:0xf2b85c,shininess:40});
+    var mesh=null;
+    new THREE.OBJLoader().load('logo_blue.obj',function(obj){
+      obj.traverse(function(c){if(c.isMesh)c.material=mat;});
+      var box=new THREE.Box3().setFromObject(obj);
+      var ctr=new THREE.Vector3(); box.getCenter(ctr); obj.position.sub(ctr);
+      var sz=new THREE.Vector3(); box.getSize(sz);
+      obj.scale.setScalar(1/Math.max(sz.x,sz.y,sz.z));
+      mesh=obj; scene.add(mesh);
+    });
+    function resize(){
+      W=window.innerWidth; H=window.innerHeight;
+      renderer.setSize(W,H,false);
+      camera.left=-W/2; camera.right=W/2; camera.top=H/2; camera.bottom=-H/2;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener('resize',resize); resize();
+    var rot=0;
+    function tick(){
+      requestAnimationFrame(tick);
+      if(!mesh) return;
+      rot+=0.006;
+      /* positioned in left panel centre */
+      mesh.position.set(-window.innerWidth*0.25, 0, 0);
+      mesh.scale.setScalar(window.innerHeight*0.22);
+      mesh.rotation.x=0.12; mesh.rotation.y=rot;
+      renderer.render(scene,camera);
+    }
+    tick();
+  })();
+  </script>
+
   <script type="module">
     import { supabase, signIn, redirectByRole, showAlert, setLoading } from './supabase.js';
 
-    // Redirect if already logged in
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
       const { data: p } = await supabase.from('users').select('role').eq('auth_id', session.user.id).single();
       redirectByRole(p?.role);
     }
 
-    // Stats
     (async () => {
       const [{ count: u }, { count: p }] = await Promise.all([
         supabase.from('users').select('*', { count: 'exact', head: true }).neq('role', 'Admin'),
@@ -97,13 +210,10 @@
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
       if (!email || !password) { showAlert('alertBox', 'Please fill in all fields.'); return; }
-
       setLoading('loginBtn', true);
       document.getElementById('alertBox').classList.remove('show');
-
       const { data, error } = await signIn({ email, password });
       setLoading('loginBtn', false);
-
       if (error) {
         const { data: prof } = await supabase.from('users').select('is_banned,ban_reason').eq('email', email).maybeSingle();
         if (prof?.is_banned) {
@@ -121,5 +231,4 @@
     document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   </script>
 </body>
-
 </html>

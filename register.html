@@ -1,109 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create Account · Talib-Awn طالب عون</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="auth.css">
   <style>
-    .user-type-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 8px
+    :root{ --fh:'Playfair Display',serif; --fb:'Inter',sans-serif; }
+    body { font-family: var(--fb); }
+    h1,h2,.brand-logo-name { font-family: var(--fh); }
+
+    /* ── animations ── */
+    @keyframes fadeUp   { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+    @keyframes slideIn  { from{opacity:0;transform:translateX(32px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes floatBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    @keyframes pulseRing{ 0%{box-shadow:0 0 0 0 rgba(26,110,245,.4)} 70%{box-shadow:0 0 0 10px rgba(26,110,245,0)} 100%{box-shadow:0 0 0 0 rgba(26,110,245,0)} }
+
+    .brand-side { animation: fadeIn .9s ease both; }
+    .brand-eyebrow { animation: fadeUp .6s .1s ease both; }
+    .brand-side h1 { animation: fadeUp .7s .2s ease both; font-family: var(--fh); }
+    .brand-side h1 em { font-style: italic; }
+    .brand-side p  { animation: fadeUp .7s .3s ease both; }
+    .form-box { animation: slideIn .65s .15s ease both; }
+    .brand-logo { animation: floatBob 5s ease-in-out infinite; }
+
+    .btn-submit { transition: transform .2s, box-shadow .2s; }
+    .btn-submit:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(26,110,245,.35);
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(26,110,245,.12);
+      transition: box-shadow .2s, border-color .2s;
     }
 
+    /* type cards */
+    .user-type-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:8px }
     .utc {
-      border: 2px solid var(--border);
+      border:2px solid var(--border); border-radius:16px; padding:22px 18px;
+      cursor:pointer; transition:all .25s; text-align:center;
+      background:#f8faff; position:relative; overflow:hidden;
+    }
+    .utc::before { content:''; position:absolute; inset:0; background:var(--blue-pale); opacity:0; transition:opacity .2s }
+    .utc:hover { border-color:var(--blue-light); transform:translateY(-2px); box-shadow:0 6px 20px rgba(26,110,245,.1) }
+    .utc:hover::before { opacity:1 }
+    .utc.selected { border-color:var(--blue); box-shadow:0 0 0 3px rgba(26,110,245,.12); animation:pulseRing .4s ease; }
+    .utc.selected::before { opacity:1 }
+    .utc-icon { font-size:36px; margin-bottom:10px; display:block; position:relative; z-index:1 }
+    .utc-title { font-family:var(--fh); font-size:16px; font-weight:700; color:var(--text); margin-bottom:4px; position:relative; z-index:1 }
+    .utc-sub { font-size:12px; font-family:var(--fb); color:var(--text3); line-height:1.4; position:relative; z-index:1 }
+    .utc.selected .utc-title { color:var(--blue) }
+    .check-badge {
+      position:absolute; top:10px; right:10px; width:22px; height:22px;
+      border-radius:50%; background:var(--blue); color:#fff; font-size:12px;
+      display:none; align-items:center; justify-content:center; z-index:1
+    }
+    .utc.selected .check-badge { display:flex }
+
+    /* ── upload area — supports camera capture ── */
+    .card-upload-area {
+      border: 2px dashed var(--border);
       border-radius: 16px;
-      padding: 22px 18px;
-      cursor: pointer;
-      transition: all .2s;
+      padding: 28px 20px;
       text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
       background: #f8faff;
       position: relative;
-      overflow: hidden
+      margin-bottom: 16px;
     }
+    .card-upload-area:hover { border-color: var(--blue); background: var(--blue-pale); }
+    /* hidden real inputs */
+    .card-upload-area input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .card-upload-icon { font-size: 36px; display: block; margin-bottom: 10px; }
+    .card-upload-text { font-family: var(--fb); font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .card-upload-sub  { font-family: var(--fb); font-size: 12px; color: var(--text3); }
 
-    .utc::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--blue-pale);
-      opacity: 0;
-      transition: opacity .2s
+    /* two source buttons below the drop zone */
+    .upload-actions {
+      display: flex; gap: 10px; margin-bottom: 16px;
     }
+    .upload-btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--border);
+      background: #fff; cursor: pointer; font-family: var(--fb); font-size: 13px;
+      font-weight: 600; color: var(--text2); transition: all .2s; position: relative; overflow: hidden;
+    }
+    .upload-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-pale); }
+    .upload-btn input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
 
-    .utc:hover {
-      border-color: var(--blue-light)
-    }
+    label { font-family:var(--fb); font-size:13px; font-weight:600; }
+    .form-header h2 { font-family:var(--fh); font-weight:800; letter-spacing:-.02em; }
+    .form-header p  { font-family:var(--fb); font-weight:400; }
+    .btn-submit .btn-label { font-family:var(--fb); font-weight:700; letter-spacing:.02em; }
+    .form-footer { font-family:var(--fb); font-size:14px; }
+    .brand-logo-name { font-family:var(--fh); font-size:20px; font-weight:800; letter-spacing:-.02em; }
+    .brand-logo-arabic { font-family:var(--fh); }
 
-    .utc:hover::before {
-      opacity: 1
-    }
+    /* step dots */
+    .step-indicator { display:flex; align-items:center; gap:6px; margin-bottom:28px; }
+    .step-dot { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--fb); font-size:12px; font-weight:700; transition:all .3s; flex-shrink:0; }
+    .step-dot.active  { background:var(--blue); color:#fff; box-shadow:0 0 0 4px rgba(26,110,245,.2); }
+    .step-dot.done    { background:#22c55e; color:#fff; }
+    .step-dot.pending { background:var(--border); color:var(--text3); }
+    .step-label { font-family:var(--fb); font-size:12px; font-weight:600; transition:color .3s; white-space:nowrap; }
+    .step-label.active { color:var(--blue); }
+    .step-label.done   { color:#22c55e; }
+    .step-label.pending{ color:var(--text3); }
+    .step-line { flex:1; height:2px; background:var(--border); border-radius:2px; transition:background .3s; }
+    .step-line.done { background:#22c55e; }
 
-    .utc.selected {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(26, 110, 245, .12)
-    }
+    /* otp inputs */
+    .otp-inputs { display:flex; gap:8px; justify-content:center; margin-bottom:24px; }
+    .otp-inputs input { width:40px; height:48px; border:2px solid var(--border); border-radius:10px; text-align:center; font-family:var(--fh); font-size:22px; font-weight:700; color:var(--text); background:#f8faff; transition:all .2s; }
+    .otp-inputs input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(26,110,245,.12); outline:none; }
+    .otp-inputs input.filled { border-color:var(--blue); background:#fff; }
 
-    .utc.selected::before {
-      opacity: 1
-    }
+    /* timer */
+    .timer-badge { display:inline-flex; align-items:center; gap:6px; font-family:var(--fb); font-size:13px; font-weight:600; padding:6px 14px; border-radius:100px; background:#f0f4ff; color:var(--blue); margin-bottom:20px; }
+    .timer-badge.expired { background:#fef2f2; color:#b91c1c; }
 
-    .utc-icon {
-      font-size: 36px;
-      margin-bottom: 10px;
-      display: block;
-      position: relative;
-      z-index: 1
-    }
+    /* step transition */
+    .step-panel { animation: fadeUp .4s ease both; }
 
-    .utc-title {
-      font-family: var(--font-head);
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 4px;
-      position: relative;
-      z-index: 1
-    }
+    .btn-secondary { background:transparent; border:1.5px solid var(--border); border-radius:10px; padding:10px 20px; font-family:var(--fb); font-size:14px; font-weight:600; color:var(--text2); cursor:pointer; transition:all .2s; }
+    .btn-secondary:hover { border-color:var(--blue); color:var(--blue); }
+    .resend-btn { background:none; border:none; font-family:var(--fb); font-size:14px; font-weight:600; color:var(--blue); cursor:pointer; opacity:.5; transition:opacity .2s; }
+    .resend-btn:not(:disabled) { opacity:1; }
 
-    .utc-sub {
-      font-size: 12px;
-      color: var(--text3);
-      line-height: 1.4;
-      position: relative;
-      z-index: 1
-    }
-
-    .utc.selected .utc-title {
-      color: var(--blue)
-    }
-
-    .check-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--blue);
-      color: #fff;
-      font-size: 12px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1
-    }
-
-    .utc.selected .check-badge {
-      display: flex
-    }
+    .scan-status,.prefill-notice,.card-preview { display:none; }
+    .scan-status.show  { display:flex; align-items:center; gap:10px; padding:12px 16px; background:#f0f4ff; border-radius:10px; margin-bottom:12px; font-family:var(--fb); font-size:14px; color:var(--blue); }
+    .prefill-notice.show { display:block; padding:10px 14px; background:#f0fdf4; border-radius:10px; margin-bottom:12px; font-family:var(--fb); font-size:13px; color:#15803d; font-weight:600; }
+    .card-preview.show { display:block; margin-bottom:14px; }
+    .card-preview img { width:100%; border-radius:12px; object-fit:cover; max-height:160px; }
+    .scan-spinner { width:18px; height:18px; border:2px solid rgba(26,110,245,.3); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    input.prefilled { background:#f0fdf4; border-color:#86efac; }
   </style>
 </head>
-
 <body>
   <div class="page-wrap">
     <div class="brand-side">
@@ -138,8 +180,8 @@
 
         <div id="alertBox" class="alert"></div>
 
-        <!-- ── STEP 1: Choose type ── -->
-        <div id="step1">
+        <!-- ── STEP 1 ── -->
+        <div id="step1" class="step-panel">
           <div class="form-header">
             <h2>Who are you?</h2>
             <p>This determines what you can do on the platform.</p>
@@ -149,13 +191,13 @@
               <div class="check-badge">✓</div>
               <span class="utc-icon">🎓</span>
               <div class="utc-title">Student</div>
-              <div class="utc-sub">Find part-time jobs & offer mini services</div>
+              <div class="utc-sub">Find part-time jobs &amp; offer mini services</div>
             </div>
             <div class="utc" id="cardEmployer" onclick="selectType('employer')">
               <div class="check-badge">✓</div>
               <span class="utc-icon">🧑‍💼</span>
               <div class="utc-title">Employer</div>
-              <div class="utc-sub">Post jobs & hire talented students</div>
+              <div class="utc-sub">Post jobs &amp; hire talented students</div>
             </div>
           </div>
           <div style="margin-top:24px;">
@@ -172,35 +214,46 @@
             <h2>Upload your student card</h2>
             <p>Gemini AI will read it and fill in your info automatically.</p>
           </div>
+
+          <!-- Drop zone (gallery / files) -->
           <div class="card-upload-area" id="uploadArea">
             <input type="file" id="cardFile" accept="image/*" onchange="handleCard(event)">
             <span class="card-upload-icon">🪪</span>
             <div class="card-upload-text">Drop your student card here</div>
-            <div class="card-upload-sub">or click to browse · JPG, PNG, WEBP</div>
+            <div class="card-upload-sub">or choose an option below</div>
           </div>
+
+          <!-- Two explicit buttons: gallery vs camera -->
+          <div class="upload-actions">
+            <label class="upload-btn">
+              <span>📁</span> Choose from gallery
+              <input type="file" accept="image/*" onchange="handleCard(event)">
+            </label>
+            <label class="upload-btn">
+              <span>📷</span> Take a photo
+              <!-- capture="environment" opens rear camera on mobile -->
+              <input type="file" accept="image/*" capture="environment" onchange="handleCard(event)">
+            </label>
+          </div>
+
           <div class="card-preview" id="cardPreview"><img id="cardImg" src="" alt=""></div>
           <div class="scan-status" id="scanStatus">
-            <div class="scan-spinner"></div><span class="scan-text">Scanning with Gemini AI…</span>
+            <div class="scan-spinner"></div><span>Scanning with Gemini AI…</span>
           </div>
           <div class="prefill-notice" id="prefillNotice">✅ Card scanned — fields pre-filled below.</div>
 
-          <div id="studentFields" style="display:none">
+          <div id="studentFields" style="display:none" class="step-panel">
             <div class="form-row">
               <div class="form-group"><label>First name *</label><input type="text" id="s_fn" placeholder="Ahmed"></div>
               <div class="form-group"><label>Last name *</label><input type="text" id="s_ln" placeholder="Benali"></div>
             </div>
-            <div class="form-group"><label>University</label><input type="text" id="s_uni"
-                placeholder="University of Chlef"></div>
+            <div class="form-group"><label>University</label><input type="text" id="s_uni" placeholder="University of Chlef"></div>
             <div class="form-row">
-              <div class="form-group"><label>Field of study</label><input type="text" id="s_field"
-                  placeholder="Computer Science"></div>
-              <div class="form-group"><label>Student ID</label><input type="text" id="s_sid" placeholder="2023XXXXX">
-              </div>
+              <div class="form-group"><label>Field of study</label><input type="text" id="s_field" placeholder="Computer Science"></div>
+              <div class="form-group"><label>Student ID</label><input type="text" id="s_sid" placeholder="2023XXXXX"></div>
             </div>
-            <div class="form-group"><label>Email address *</label><input type="email" id="s_email"
-                placeholder="you@univ.dz"></div>
-            <div class="form-group"><label>Phone number</label><input type="tel" id="s_phone"
-                placeholder="+213 6XX XXX XXX"></div>
+            <div class="form-group"><label>Email address *</label><input type="email" id="s_email" placeholder="you@univ.dz"></div>
+            <div class="form-group"><label>Phone number</label><input type="tel" id="s_phone" placeholder="+213 6XX XXX XXX"></div>
             <div class="form-group">
               <label>Password *</label>
               <input type="password" id="s_pw" placeholder="Min. 6 characters">
@@ -219,7 +272,7 @@
         </div>
 
         <!-- ── STEP 2B: Employer ── -->
-        <div id="step2Employer" style="display:none">
+        <div id="step2Employer" style="display:none" class="step-panel">
           <div class="form-header">
             <h2>Create your account</h2>
             <p>Fill in your details to get started.</p>
@@ -228,12 +281,9 @@
             <div class="form-group"><label>First name *</label><input type="text" id="e_fn" placeholder="Sara"></div>
             <div class="form-group"><label>Last name *</label><input type="text" id="e_ln" placeholder="Meziane"></div>
           </div>
-          <div class="form-group"><label>Company / Business name</label><input type="text" id="e_company"
-              placeholder="Acme SARL (optional)"></div>
-          <div class="form-group"><label>Email address *</label><input type="email" id="e_email"
-              placeholder="you@company.dz"></div>
-          <div class="form-group"><label>Phone number</label><input type="tel" id="e_phone"
-              placeholder="+213 6XX XXX XXX"></div>
+          <div class="form-group"><label>Company / Business name</label><input type="text" id="e_company" placeholder="Acme SARL (optional)"></div>
+          <div class="form-group"><label>Email address *</label><input type="email" id="e_email" placeholder="you@company.dz"></div>
+          <div class="form-group"><label>Phone number</label><input type="tel" id="e_phone" placeholder="+213 6XX XXX XXX"></div>
           <div class="form-group">
             <label>Password *</label>
             <input type="password" id="e_pw" placeholder="Min. 6 characters">
@@ -251,7 +301,7 @@
         </div>
 
         <!-- ── STEP 3: OTP ── -->
-        <div id="step3" style="display:none">
+        <div id="step3" style="display:none" class="step-panel">
           <div class="form-header">
             <h2>Check your email</h2>
             <p>We sent an 8-digit code to <strong id="emailDisplay" style="color:var(--blue)"></strong></p>
@@ -270,7 +320,7 @@
             <input type="text" maxlength="1" inputmode="numeric">
           </div>
           <button class="btn-submit" id="verifyBtn" onclick="doVerify()">
-            <div class="spinner"></div><span class="btn-label">Verify & create account →</span>
+            <div class="spinner"></div><span class="btn-label">Verify &amp; create account →</span>
           </button>
           <div style="text-align:center;margin-top:18px;">
             <button class="resend-btn" id="resendBtn" onclick="resend()" disabled>Resend code</button>
@@ -282,268 +332,247 @@
     </div>
   </div>
 
+  <!-- 3D Logo -->
+  <canvas id="logo3d" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+  <script>
+  (function(){
+    var canvas=document.getElementById('logo3d');
+    if(!canvas||typeof THREE==='undefined') return;
+    var renderer=new THREE.WebGLRenderer({canvas:canvas,alpha:true,antialias:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    renderer.setClearColor(0x000000,0);
+    var scene=new THREE.Scene();
+    var W=window.innerWidth, H=window.innerHeight;
+    var camera=new THREE.OrthographicCamera(-W/2,W/2,H/2,-H/2,-2000,2000);
+    camera.position.z=800;
+    scene.add(new THREE.AmbientLight(0xffffff,0.55));
+    var sun=new THREE.DirectionalLight(0xffffff,1.1); sun.position.set(2,3,4); scene.add(sun);
+    var rim=new THREE.DirectionalLight(0x5ba3f8,0.5); rim.position.set(-3,-1,2); scene.add(rim);
+    var mat=new THREE.MeshPhongMaterial({color:0xf5a623,specular:0xf2b85c,shininess:40});
+    var mesh=null;
+    new THREE.OBJLoader().load('logo_blue.obj',function(obj){
+      obj.traverse(function(c){if(c.isMesh)c.material=mat;});
+      var box=new THREE.Box3().setFromObject(obj);
+      var ctr=new THREE.Vector3(); box.getCenter(ctr); obj.position.sub(ctr);
+      var sz=new THREE.Vector3(); box.getSize(sz);
+      obj.scale.setScalar(1/Math.max(sz.x,sz.y,sz.z));
+      mesh=obj; scene.add(mesh);
+    });
+    function resize(){
+      W=window.innerWidth; H=window.innerHeight;
+      renderer.setSize(W,H,false);
+      camera.left=-W/2; camera.right=W/2; camera.top=H/2; camera.bottom=-H/2;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener('resize',resize); resize();
+    var rot=0;
+    function tick(){
+      requestAnimationFrame(tick);
+      if(!mesh) return;
+      rot+=0.006;
+      mesh.position.set(-window.innerWidth*0.25, 0, 0);
+      mesh.scale.setScalar(window.innerHeight*0.01);
+      mesh.rotation.x=0.12; mesh.rotation.y=rot;
+      renderer.render(scene,camera);
+    }
+    tick();
+  })();
+  </script>
+
   <script type="module">
     import { supabase, signUpWithOtp, verifyEmailOtp, showAlert, setLoading } from './supabase.js';
 
-    // ── state ──────────────────────────────────────────────────────────────────
-    let selectedType = null;
-    let pendingEmail = '';
-    let pendingMeta = {};
-    let countdownInterval = null;
+    let selectedType=null, pendingEmail='', pendingMeta={}, countdownInterval=null;
+    const GEMINI_KEY='YOUR_GEMINI_API_KEY_HERE';
+    const GEMINI_MODEL='gemini-1.5-flash';
 
-    const GEMINI_KEY = 'YOUR_GEMINI_API_KEY_HERE';
-    const GEMINI_MODEL = 'gemini-1.5-flash';
-
-    // ── step navigation ────────────────────────────────────────────────────────
-    window.selectType = (t) => {
-      selectedType = t;
-      document.getElementById('cardStudent').classList.toggle('selected', t === 'student');
-      document.getElementById('cardEmployer').classList.toggle('selected', t === 'employer');
-      document.getElementById('step1Btn').disabled = false;
+    window.selectType=(t)=>{
+      selectedType=t;
+      document.getElementById('cardStudent').classList.toggle('selected',t==='student');
+      document.getElementById('cardEmployer').classList.toggle('selected',t==='employer');
+      document.getElementById('step1Btn').disabled=false;
     };
 
-    window.goStep1 = () => {
-      hide('step2Student'); hide('step2Employer'); hide('step3');
-      show('step1'); setStep(1); clearAlert();
-    };
-
-    window.goStep2 = () => {
-      if (!selectedType) return;
+    window.goStep1=()=>{ hide('step2Student');hide('step2Employer');hide('step3');show('step1');setStep(1);clearAlert(); };
+    window.goStep2=()=>{
+      if(!selectedType) return;
       hide('step1');
-      if (selectedType === 'student') show('step2Student');
-      else show('step2Employer');
-      setStep(2); clearAlert();
+      if(selectedType==='student') show('step2Student'); else show('step2Employer');
+      setStep(2);clearAlert();
+    };
+    window.goBack=()=>{
+      clearInterval(countdownInterval);hide('step3');
+      if(selectedType==='student') show('step2Student'); else show('step2Employer');
+      setStep(2);clearAlert();
     };
 
-    window.goBack = () => {
-      clearInterval(countdownInterval);
-      hide('step3');
-      if (selectedType === 'student') show('step2Student');
-      else show('step2Employer');
-      setStep(2); clearAlert();
-    };
-
-    function setStep(n) {
-      for (let i = 1; i <= 3; i++) {
-        const dot = document.getElementById('dot' + i);
-        const lbl = document.getElementById('lbl' + i);
-        if (i < n) { dot.className = 'step-dot done'; dot.textContent = '✓'; lbl.className = 'step-label done'; }
-        else if (i === n) { dot.className = 'step-dot active'; dot.textContent = i; lbl.className = 'step-label active'; }
-        else { dot.className = 'step-dot pending'; dot.textContent = i; lbl.className = 'step-label pending'; }
-        if (i < 3) { const l = document.getElementById('line' + i); if (l) l.className = i < n ? 'step-line done' : 'step-line'; }
+    function setStep(n){
+      for(let i=1;i<=3;i++){
+        const dot=document.getElementById('dot'+i), lbl=document.getElementById('lbl'+i);
+        if(i<n){dot.className='step-dot done';dot.textContent='✓';lbl.className='step-label done';}
+        else if(i===n){dot.className='step-dot active';dot.textContent=i;lbl.className='step-label active';}
+        else{dot.className='step-dot pending';dot.textContent=i;lbl.className='step-label pending';}
+        if(i<3){const l=document.getElementById('line'+i);if(l)l.className=i<n?'step-line done':'step-line';}
       }
     }
+    function show(id){
+      const el=document.getElementById(id);
+      el.style.display='';
+      el.classList.remove('step-panel');
+      void el.offsetWidth; // reflow
+      el.classList.add('step-panel');
+    }
+    function hide(id){document.getElementById(id).style.display='none';}
+    function clearAlert(){document.getElementById('alertBox').classList.remove('show');}
 
-    function show(id) { document.getElementById(id).style.display = ''; }
-    function hide(id) { document.getElementById(id).style.display = 'none'; }
-    function clearAlert() { document.getElementById('alertBox').classList.remove('show'); }
-
-    window.togglePwd = (id, btn) => {
-      const i = document.getElementById(id);
-      i.type = i.type === 'password' ? 'text' : 'password';
-      btn.textContent = i.type === 'password' ? '👁️' : '🙈';
+    window.togglePwd=(id,btn)=>{
+      const i=document.getElementById(id);
+      i.type=i.type==='password'?'text':'password';
+      btn.textContent=i.type==='password'?'👁️':'🙈';
     };
 
-    // ── Gemini card scan ────────────────────────────────────────────────────────
-    window.handleCard = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = async (ev) => {
-        const base64 = ev.target.result.split(',')[1];
-        document.getElementById('cardImg').src = ev.target.result;
+    /* shared handler for all three inputs (drop zone + gallery btn + camera btn) */
+    window.handleCard=async(e)=>{
+      const file=e.target.files[0]; if(!file) return;
+      const reader=new FileReader();
+      reader.onload=async(ev)=>{
+        const base64=ev.target.result.split(',')[1];
+        document.getElementById('cardImg').src=ev.target.result;
         document.getElementById('cardPreview').classList.add('show');
         document.getElementById('scanStatus').classList.add('show');
         document.getElementById('prefillNotice').classList.remove('show');
-        document.getElementById('studentFields').style.display = 'none';
+        document.getElementById('studentFields').style.display='none';
         clearAlert();
-        try {
-          const resp = await fetch(
+        try{
+          const resp=await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_KEY}`,
-            {
-              method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
-                contents: [{
-                  parts: [
-                    { text: 'Extract all text from this student card. Return ONLY a JSON object with keys: institution, id_number, full_name_latin, full_name_arabic, field_of_study, specialty. No markdown, no explanation.' },
-                    { inline_data: { mime_type: file.type, data: base64 } }
-                  ]
-                }],
-                generationConfig: { temperature: 0.1, maxOutputTokens: 400 }
-              })
-            }
+            {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+              contents:[{parts:[
+                {text:'Extract all text from this student card. Return ONLY a JSON object with keys: institution, id_number, full_name_latin, full_name_arabic, field_of_study, specialty. No markdown, no explanation.'},
+                {inline_data:{mime_type:file.type,data:base64}}
+              ]}],
+              generationConfig:{temperature:0.1,maxOutputTokens:400}
+            })}
           );
-          const d = await resp.json();
-          const raw = d.candidates?.[0]?.content?.parts?.[0]?.text || '';
-          const clean = raw.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
-          const info = JSON.parse(clean);
+          const d=await resp.json();
+          const raw=d.candidates?.[0]?.content?.parts?.[0]?.text||'';
+          const info=JSON.parse(raw.replace(/```json?\n?/g,'').replace(/```/g,'').trim());
           prefill(info);
-        } catch {
-          showAlert('alertBox', 'Could not read card automatically — please fill in your details manually.');
-        } finally {
+        }catch{
+          showAlert('alertBox','Could not read card automatically — please fill in your details manually.');
+        }finally{
           document.getElementById('scanStatus').classList.remove('show');
-          document.getElementById('studentFields').style.display = 'block';
+          show('studentFields');
         }
       };
       reader.readAsDataURL(file);
     };
 
-    function prefill(info) {
-      const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '';
-      if (info.full_name_latin) {
-        const parts = info.full_name_latin.trim().split(/\s+/);
-        document.getElementById('s_ln').value = cap(parts[0]);
-        document.getElementById('s_fn').value = parts.slice(1).map(cap).join(' ');
+    function prefill(info){
+      const cap=s=>s?s.charAt(0).toUpperCase()+s.slice(1).toLowerCase():'';
+      if(info.full_name_latin){
+        const parts=info.full_name_latin.trim().split(/\s+/);
+        document.getElementById('s_ln').value=cap(parts[0]);
+        document.getElementById('s_fn').value=parts.slice(1).map(cap).join(' ');
         document.getElementById('s_ln').classList.add('prefilled');
         document.getElementById('s_fn').classList.add('prefilled');
       }
-      if (info.institution) { document.getElementById('s_uni').value = info.institution; document.getElementById('s_uni').classList.add('prefilled'); }
-      if (info.field_of_study) { document.getElementById('s_field').value = info.field_of_study; document.getElementById('s_field').classList.add('prefilled'); }
-      if (info.id_number) { document.getElementById('s_sid').value = info.id_number; document.getElementById('s_sid').classList.add('prefilled'); }
+      if(info.institution){document.getElementById('s_uni').value=info.institution;document.getElementById('s_uni').classList.add('prefilled');}
+      if(info.field_of_study){document.getElementById('s_field').value=info.field_of_study;document.getElementById('s_field').classList.add('prefilled');}
+      if(info.id_number){document.getElementById('s_sid').value=info.id_number;document.getElementById('s_sid').classList.add('prefilled');}
       document.getElementById('prefillNotice').classList.add('show');
     }
 
-    // ── registration ────────────────────────────────────────────────────────────
-    window.doStudentRegister = async () => {
-      const fn = document.getElementById('s_fn').value.trim();
-      const ln = document.getElementById('s_ln').value.trim();
-      const email = document.getElementById('s_email').value.trim();
-      const phone = document.getElementById('s_phone').value.trim();
-      const pw = document.getElementById('s_pw').value;
-      const pw2 = document.getElementById('s_pw2').value;
-      const uni = document.getElementById('s_uni').value.trim();
-      const field = document.getElementById('s_field').value.trim();
-      const sid = document.getElementById('s_sid').value.trim();
-
-      if (!fn || !ln || !email || !pw) { showAlert('alertBox', 'Please fill in all required fields.'); return; }
-      if (pw.length < 6) { showAlert('alertBox', 'Password must be at least 6 characters.'); return; }
-      if (pw !== pw2) { showAlert('alertBox', 'Passwords do not match.'); return; }
-
-      pendingEmail = email;
-      pendingMeta = {
-        firstname: fn, lastname: ln, phone, role: 'client', grade: 'Student',
-        domain: field ? field.toLowerCase().slice(0, 80) : 'autre',
-        institution: uni, field_of_study: field, student_id_number: sid
-      };
-
+    window.doStudentRegister=async()=>{
+      const fn=document.getElementById('s_fn').value.trim(), ln=document.getElementById('s_ln').value.trim();
+      const email=document.getElementById('s_email').value.trim(), phone=document.getElementById('s_phone').value.trim();
+      const pw=document.getElementById('s_pw').value, pw2=document.getElementById('s_pw2').value;
+      const uni=document.getElementById('s_uni').value.trim(), field=document.getElementById('s_field').value.trim(), sid=document.getElementById('s_sid').value.trim();
+      if(!fn||!ln||!email||!pw){showAlert('alertBox','Please fill in all required fields.');return;}
+      if(pw.length<6){showAlert('alertBox','Password must be at least 6 characters.');return;}
+      if(pw!==pw2){showAlert('alertBox','Passwords do not match.');return;}
+      pendingEmail=email;
+      pendingMeta={firstname:fn,lastname:ln,phone,role:'client',grade:'Student',domain:field?field.toLowerCase().slice(0,80):'autre',institution:uni,field_of_study:field,student_id_number:sid};
       await sendOtp('sRegBtn');
     };
 
-    window.doEmployerRegister = async () => {
-      const fn = document.getElementById('e_fn').value.trim();
-      const ln = document.getElementById('e_ln').value.trim();
-      const email = document.getElementById('e_email').value.trim();
-      const phone = document.getElementById('e_phone').value.trim();
-      const pw = document.getElementById('e_pw').value;
-      const pw2 = document.getElementById('e_pw2').value;
-      const company = document.getElementById('e_company').value.trim();
-
-      if (!fn || !ln || !email || !pw) { showAlert('alertBox', 'Please fill in all required fields.'); return; }
-      if (pw.length < 6) { showAlert('alertBox', 'Password must be at least 6 characters.'); return; }
-      if (pw !== pw2) { showAlert('alertBox', 'Passwords do not match.'); return; }
-
-      pendingEmail = email;
-      pendingMeta = {
-        firstname: fn, lastname: ln, phone, role: 'client', grade: 'Company manager',
-        domain: 'autre', company_name: company
-      };
-
+    window.doEmployerRegister=async()=>{
+      const fn=document.getElementById('e_fn').value.trim(), ln=document.getElementById('e_ln').value.trim();
+      const email=document.getElementById('e_email').value.trim(), phone=document.getElementById('e_phone').value.trim();
+      const pw=document.getElementById('e_pw').value, pw2=document.getElementById('e_pw2').value;
+      const company=document.getElementById('e_company').value.trim();
+      if(!fn||!ln||!email||!pw){showAlert('alertBox','Please fill in all required fields.');return;}
+      if(pw.length<6){showAlert('alertBox','Password must be at least 6 characters.');return;}
+      if(pw!==pw2){showAlert('alertBox','Passwords do not match.');return;}
+      pendingEmail=email;
+      pendingMeta={firstname:fn,lastname:ln,phone,role:'client',grade:'Company manager',domain:'autre',company_name:company};
       await sendOtp('eRegBtn');
     };
 
-    async function sendOtp(btnId) {
-      setLoading(btnId, true); clearAlert();
-      const pw = selectedType === 'student'
-        ? document.getElementById('s_pw').value
-        : document.getElementById('e_pw').value;
-
-      const { error } = await signUpWithOtp({
-        email: pendingEmail,
-        password: pw,
-        metadata: pendingMeta,
-      });
-
-      setLoading(btnId, false);
-      if (error) { showAlert('alertBox', error.message); return; }
-
-      hide('step2Student'); hide('step2Employer');
-      show('step3');
-      setStep(3);
-      document.getElementById('emailDisplay').textContent = pendingEmail;
+    async function sendOtp(btnId){
+      setLoading(btnId,true); clearAlert();
+      const pw=selectedType==='student'?document.getElementById('s_pw').value:document.getElementById('e_pw').value;
+      const {error}=await signUpWithOtp({email:pendingEmail,password:pw,metadata:pendingMeta});
+      setLoading(btnId,false);
+      if(error){showAlert('alertBox',error.message);return;}
+      hide('step2Student');hide('step2Employer');show('step3');setStep(3);
+      document.getElementById('emailDisplay').textContent=pendingEmail;
       setupOtp(); startCountdown();
     }
 
-    // ── OTP verification ────────────────────────────────────────────────────────
-    function setupOtp() {
-      const inputs = document.querySelectorAll('#otpInputs input');
-      inputs.forEach((inp, i) => {
-        inp.value = ''; inp.className = '';
-        inp.oninput = () => {
-          inp.value = inp.value.replace(/\D/g, '').slice(-1);
-          if (inp.value) { inp.classList.add('filled'); if (i < 7) inputs[i + 1].focus(); }
+    function setupOtp(){
+      const inputs=document.querySelectorAll('#otpInputs input');
+      inputs.forEach((inp,i)=>{
+        inp.value=''; inp.className='';
+        inp.oninput=()=>{
+          inp.value=inp.value.replace(/\D/g,'').slice(-1);
+          if(inp.value){inp.classList.add('filled');if(i<7)inputs[i+1].focus();}
           else inp.classList.remove('filled');
         };
-        inp.onkeydown = e => { if (e.key === 'Backspace' && !inp.value && i > 0) inputs[i - 1].focus(); };
-        inp.onpaste = e => {
+        inp.onkeydown=e=>{if(e.key==='Backspace'&&!inp.value&&i>0)inputs[i-1].focus();};
+        inp.onpaste=e=>{
           e.preventDefault();
-          const t = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
-          inputs.forEach((el, j) => { el.value = t[j] || ''; el.classList.toggle('filled', !!el.value); });
+          const t=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'');
+          inputs.forEach((el,j)=>{el.value=t[j]||'';el.classList.toggle('filled',!!el.value);});
         };
       });
       inputs[0].focus();
     }
 
-    function getOtp() {
-      return [...document.querySelectorAll('#otpInputs input')].map(i => i.value).join('');
-    }
+    function getOtp(){return[...document.querySelectorAll('#otpInputs input')].map(i=>i.value).join('');}
 
-    function startCountdown() {
-      let s = 120;
-      const badge = document.getElementById('timerBadge');
-      const count = document.getElementById('countdown');
-      const resend = document.getElementById('resendBtn');
-      resend.disabled = true;
-      badge.className = 'timer-badge';
+    function startCountdown(){
+      let s=120;
+      const badge=document.getElementById('timerBadge'), count=document.getElementById('countdown'), resend=document.getElementById('resendBtn');
+      resend.disabled=true; badge.className='timer-badge';
       clearInterval(countdownInterval);
-      countdownInterval = setInterval(() => {
+      countdownInterval=setInterval(()=>{
         s--;
-        count.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-        if (s <= 0) {
-          clearInterval(countdownInterval);
-          badge.className = 'timer-badge expired';
-          badge.innerHTML = '⛔ Code expired';
-          resend.disabled = false;
-        }
-      }, 1000);
+        count.textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+        if(s<=0){clearInterval(countdownInterval);badge.className='timer-badge expired';badge.innerHTML='⛔ Code expired';resend.disabled=false;}
+      },1000);
     }
 
-    window.resend = async () => {
-      document.getElementById('resendBtn').disabled = true;
-      clearAlert();
-      const pw = selectedType === 'student'
-        ? document.getElementById('s_pw').value
-        : document.getElementById('e_pw').value;
-      await signUpWithOtp({ email: pendingEmail, password: pw, metadata: pendingMeta });
+    window.resend=async()=>{
+      document.getElementById('resendBtn').disabled=true; clearAlert();
+      const pw=selectedType==='student'?document.getElementById('s_pw').value:document.getElementById('e_pw').value;
+      await signUpWithOtp({email:pendingEmail,password:pw,metadata:pendingMeta});
       setupOtp(); startCountdown();
-      showAlert('alertBox', 'New code sent!', 'success');
+      showAlert('alertBox','New code sent!','success');
     };
 
-    window.doVerify = async () => {
-      const otp = getOtp();
-      if (otp.length < 8) { showAlert('alertBox', 'Enter all 8 digits.'); return; }
-
-      setLoading('verifyBtn', true); clearAlert();
-
-      const { data, error } = await verifyEmailOtp({ email: pendingEmail, token: otp });
-
-      setLoading('verifyBtn', false);
-
-      if (error) { showAlert('alertBox', error.message.includes('expired') ? 'Code expired — request a new one.' : 'Invalid code.'); return; }
-
+    window.doVerify=async()=>{
+      const otp=getOtp(); if(otp.length<8){showAlert('alertBox','Enter all 8 digits.');return;}
+      setLoading('verifyBtn',true); clearAlert();
+      const {data,error}=await verifyEmailOtp({email:pendingEmail,token:otp});
+      setLoading('verifyBtn',false);
+      if(error){showAlert('alertBox',error.message.includes('expired')?'Code expired — request a new one.':'Invalid code.');return;}
       clearInterval(countdownInterval);
-      showAlert('alertBox', '🎉 Account created! Redirecting…', 'success');
-      setTimeout(() => window.location.href = 'login.html', 1800);
+      showAlert('alertBox','🎉 Account created! Redirecting…','success');
+      setTimeout(()=>window.location.href='login.html',1800);
     };
   </script>
 </body>
-
 </html>
