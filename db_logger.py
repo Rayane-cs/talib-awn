@@ -4,7 +4,7 @@
 # ══════════════════════════════════════════════════════════════════════════════
 
 import os
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Optional
 
 
@@ -26,8 +26,8 @@ class DatabaseLogger:
             description: Detailed description of the change
             author: Who made the change (default: 'System')
         """
-        timestamp = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
-        date_only = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+        timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')
+        date_only = datetime.utcnow().strftime('%Y-%m-%d')
         
         change_entry = f"\n### {date_only} - {change_type}\n**Author:** {author}  \n**Time:** {timestamp}  \n**Description:** {description}\n"
         

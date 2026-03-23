@@ -195,8 +195,7 @@ def validate_name(name: str, field_name: str = 'Name') -> Tuple[bool, Optional[s
         return False, f'{field_name} too long (max 80 characters).'
     
     # Allow letters (including Arabic), spaces, hyphens, apostrophes
-    # Fixed regex: removed \w which includes digits and underscore
-    if not re.match(r'^[a-zA-Z\s\u0600-\u06FF\'\-]+$', name.strip()):
+    if not re.match(r'^[\w\s\u0600-\u06FF\'\-]+$', name, re.UNICODE):
         return False, f'{field_name} contains invalid characters.'
     
     return True, None

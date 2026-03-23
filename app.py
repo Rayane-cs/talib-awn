@@ -55,25 +55,7 @@ def create_app():
     # ── Extensions ─────────────────────────────────────────────────────────────
     db.init_app(app)
     JWTManager(app)
-    
-    # CORS - Configured for production security
-    cors_origins = os.environ.get('CORS_ORIGINS', '*')
-    if cors_origins == '*':
-        print('⚠️  WARNING: CORS allowing all origins. Set CORS_ORIGINS in .env for production!')
-    
-    CORS(app, 
-         resources={r'/api/*': {
-             'origins': cors_origins.split(',') if cors_origins != '*' else '*',
-             'methods': ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-             'allow_headers': ['Content-Type', 'Authorization'],
-             'expose_headers': ['Content-Type', 'Authorization'],
-             'supports_credentials': cors_origins != '*',
-             'max_age': 3600
-         }})
-
-    # ── Request/Response Logging ───────────────────────────────────────────────
-    app.before_request(log_request)
-    app.after_request(log_response)
+    CORS(app, resources={r'/api/*': {'origins': '*'}}, supports_credentials=True)
 
     # ── Blueprint ──────────────────────────────────────────────────────────────
     app.register_blueprint(bp, url_prefix='/api')
