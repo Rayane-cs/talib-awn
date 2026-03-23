@@ -274,14 +274,10 @@
   </div>
 
   <script type="module">
-    import { supabase, signIn, redirectByRole, showAlert, setLoading } from './api.js';
+    import { signIn, redirectIfLoggedIn, redirectByRole, showAlert, setLoading } from './api.js';
 
     // redirect if already logged in
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      const { data: p } = await supabase.from('users').select('role, grade').eq('auth_id', session.user.id).single();
-      redirectByRole(p);
-    }
+    redirectIfLoggedIn();
 
     const EYE    = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`;
     const EYEOFF = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
@@ -300,13 +296,10 @@
       const { data, error } = await signIn({ email, password });
       setLoading('loginBtn', false);
       if (error) {
-        const { data: prof } = await supabase.from('users').select('is_banned,ban_reason').eq('email', email).maybeSingle();
-        if (prof?.is_banned) showAlert('alertBox', `الحساب موقوف. السبب: ${prof.ban_reason}`);
-        else showAlert('alertBox', 'البريد الإلكتروني أو كلمة المرور غير صحيحة.');
+        showAlert('alertBox', error.message || 'البريد الإلكتروني أو كلمة المرور غير صحيحة.');
         return;
       }
-      const { data: profile } = await supabase.from('users').select('role, grade').eq('auth_id', data.user.id).single();
-      redirectByRole(profile);
+      redirectByRole(data.user);
     }
 
     document.getElementById('loginBtn').addEventListener('click', doLogin);

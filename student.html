@@ -378,14 +378,14 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-bottom:3px;}
 .toast.error{background:var(--red);}
 
 @media(max-width:1020px){.msg-detail{display:none;}}
-.home-wrap{grid-template-columns:1fr;}.sidebar{display:none;}.browse-grid{grid-template-columns:1fr;}.ov-grid{grid-template-columns:repeat(2,1fr);}.g2{grid-template-columns:1fr;}}
+.home-wrap{grid-template-columns:1fr;}.sidebar{display:none;}.browse-grid{grid-template-columns:1fr;}.ov-grid{grid-template-columns:repeat(2,1fr);}.g2{grid-template-columns:1fr;}
 
 /* ── Nav centered ── */
 .nav-links{flex:1;justify-content:center;}
 
 /* ── Avatar dropdown ── */
 .av-wrap{position:relative;display:inline-block;}
-.av-dropdown{position:absolute;top:calc(100% + 10px);right:0;width:210px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.13);overflow:hidden;opacity:0;transform:translateY(-8px) scale(.97);pointer-events:none;transition:opacity .18s,transform .18s;z-index:700;}
+.av-dropdown{position:absolute;top:calc(100% + 10px);left:0;right:auto;width:210px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.13);overflow:hidden;opacity:0;transform:translateY(-8px) scale(.97);pointer-events:none;transition:opacity .18s,transform .18s;z-index:700;}
 .av-dropdown.open{opacity:1;transform:translateY(0) scale(1);pointer-events:all;}
 .av-header{padding:12px 14px 10px;border-bottom:1px solid var(--border);background:var(--bg);}
 .av-hname{font-size:13px;font-weight:700;color:var(--text);}
@@ -512,7 +512,7 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-bottom:3px;}
   .fab{bottom:16px;left:14px;padding:12px 18px;font-size:13px;}
   .notif-panel{width:calc(100vw - 24px);left:12px;right:12px;}
 
-  .av-dropdown{right:auto;left:0;}
+  .av-dropdown{left:0;right:auto;}
 }
 @media(max-width:480px){
   :root{--nav-h:52px;}
@@ -640,11 +640,8 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-bottom:3px;}
 <!-- NOTIF PANEL -->
 <div class="notif-panel" id="notifPanel">
   <div class="np-hdr"><span>الإشعارات</span><button class="np-mark" onclick="markAllRead()">تحديد كمقروء</button></div>
-  <div class="np-item unread" onclick="closeNotif()"><div class="np-title">✅ تم قبول طلبك — مقهى النجمة (عامل كاشير)</div><div class="np-time">منذ 20 دقيقة</div></div>
-  <div class="np-item unread" onclick="closeNotif()"><div class="np-title">💬 رسالة جديدة من صاحب العمل — مطعم الأصالة</div><div class="np-time">منذ ساعة</div></div>
-  <div class="np-item unread" onclick="closeNotif()"><div class="np-title">💰 تم إيداع 3,200 دج في محفظتك</div><div class="np-time">منذ 3 ساعات</div></div>
-  <div class="np-item" onclick="closeNotif()"><div class="np-title">📋 وظيفة جديدة تناسب ملفك — توزيع منشورات</div><div class="np-time">أمس الساعة 14:30</div></div>
-  <div class="np-item" onclick="closeNotif()"><div class="np-title">⭐ تقييم جديد من صاحب عمل</div><div class="np-time">منذ يومين</div></div>
+  <!-- Dynamic notifications will be loaded here -->
+  <div style="padding:16px;text-align:center;font-size:12px;color:var(--text3);">لا توجد إشعارات حالياً</div>
 </div>
 
 <!-- NAVBAR -->
@@ -658,8 +655,8 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-bottom:3px;}
   <div class="nav-links" id="navLinks">
     <button class="nav-link active" id="tab-home" onclick="showPage('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>الرئيسية</button>
     <button class="nav-link" id="tab-jobs" onclick="showPage('jobs')"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>الوظائف</button>
-    <button class="nav-link" id="tab-apps" onclick="showPage('apps')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>طلباتي <span class="nbadge" id="apps-badge">3</span></button>
-    <button class="nav-link" id="tab-messages" onclick="showPage('messages')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>الرسائل <span class="nbadge" id="msg-badge">2</span></button>
+    <button class="nav-link" id="tab-apps" onclick="showPage('apps')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>طلباتي <span class="nbadge" id="apps-badge" style="display:none">0</span></button>
+    <button class="nav-link" id="tab-messages" onclick="showPage('messages')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>الرسائل <span class="nbadge" id="msg-badge" style="display:none">0</span></button>
     <button class="nav-link" id="tab-earnings" onclick="showPage('earnings')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>أرباحي</button>
     <button class="nav-link" id="tab-reviews" onclick="showPage('reviews')"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>تقييماتي</button>
     <button class="nav-link" id="tab-profile" onclick="showPage('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>الإعدادات</button>
@@ -695,8 +692,8 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-bottom:3px;}
   <nav class="drawer-nav">
     <button class="drawer-link active" id="dtab-home"     onclick="showPage('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>الرئيسية</button>
     <button class="drawer-link" id="dtab-jobs"     onclick="showPage('jobs')"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>الوظائف</button>
-    <button class="drawer-link" id="dtab-apps"     onclick="showPage('apps')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>طلباتي <span class="nbadge">3</span></button>
-    <button class="drawer-link" id="dtab-messages" onclick="showPage('messages')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>الرسائل <span class="nbadge">2</span></button>
+    <button class="drawer-link" id="dtab-apps"     onclick="showPage('apps')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>طلباتي <span class="nbadge" style="display:none">0</span></button>
+    <button class="drawer-link" id="dtab-messages" onclick="showPage('messages')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>الرسائل <span class="nbadge" style="display:none">0</span></button>
     <button class="drawer-link" id="dtab-earnings" onclick="showPage('earnings')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>أرباحي</button>
     <button class="drawer-link" id="dtab-reviews"  onclick="showPage('reviews')"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>تقييماتي</button>
     <button class="drawer-link" id="dtab-profile"  onclick="showPage('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>ملفي الشخصي</button>
@@ -798,16 +795,17 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-bottom:3px;}
         <div class="ov"><div class="ov-ico" style="background:#8B5CF6"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="ov-val">3</div><div class="ov-lbl">طلبات قيد المراجعة</div></div>
       </div>
 
-      <div class="sec-row"><h3>أحدث الوظائف الجزئية</h3><button class="sec-link" onclick="showPage('jobs')">عرض الكل (24) ←</button></div>
-      <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:18px;">
-        <div class="job-card"><div class="jc-row"><div><div class="jc-title">عامل كاشير — دوام جزئي</div><div class="jc-company">مقهى النجمة · باب الزوار</div></div><span class="badge b-open">متاح الآن</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>4 ساعات · مسائي</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>باب الزوار</span><span class="jc-m">⭐ 4.8 صاحب العمل</span></div><div class="jc-foot"><div><span class="jc-price">800 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('كاشير في مقهى النجمة','مقهى النجمة','800 دج/يوم','4 ساعات مسائية','باب الزوار، الجزائر العاصمة','مطلوب عامل كاشير لمقهى نشيط، يُفضَّل من لديه خبرة في التعامل مع الزبائن والصندوق. العمل من 16:00 إلى 20:00 أيام الأسبوع.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'مقهى النجمة')">تقدّم الآن</button></div></div></div>
-        <div class="job-card"><div class="jc-row"><div><div class="jc-title">موزّع طرود — صباحي</div><div class="jc-company">شركة سريع للتوصيل · بئر مراد رايس</div></div><span class="badge b-open">متاح الآن</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>5 ساعات · صباحي</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>بئر مراد رايس</span><span class="jc-m">⭐ 4.5 صاحب العمل</span></div><div class="jc-foot"><div><span class="jc-price">650 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('موزّع طرود صباحي','شركة سريع للتوصيل','650 دج/يوم','5 ساعات صباحية','بئر مراد رايس، الجزائر','توصيل الطرود في المنطقة، مطلوب دراجة أو دراجة نارية. من 8:00 إلى 13:00.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'شركة سريع')">تقدّم الآن</button></div></div></div>
-        <div class="job-card"><div class="jc-row"><div><div class="jc-title">مساعد مبيعات — مرن</div><div class="jc-company">متجر ميلاد للإلكترونيات · حيدرة</div></div><span class="badge b-part">عطلة الأسبوع</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>6 ساعات · السبت–الأحد</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>حيدرة</span><span class="jc-m">⭐ 4.6 صاحب العمل</span></div><div class="jc-foot"><div><span class="jc-price">750 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('مساعد مبيعات','متجر ميلاد للإلكترونيات','750 دج/يوم','6 ساعات عطلة الأسبوع','حيدرة، الجزائر','مساعدة الزبائن في اختيار المنتجات وإتمام عمليات البيع، يفضل من لديه معرفة بالإلكترونيات.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'ميلاد إلكترونيات')">تقدّم الآن</button></div></div></div>
-        <div class="job-card"><div class="jc-row"><div><div class="jc-title">مشرف قاعة فعاليات</div><div class="jc-company">قاعة الأمل للاحتفالات · القبة</div></div><span class="badge b-part">نهاية الأسبوع</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>8 ساعات · السبت</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>القبة</span><span class="jc-m">⭐ 4.9 صاحب العمل</span></div><div class="jc-foot"><div><span class="jc-price">2,400 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('مشرف قاعة فعاليات','قاعة الأمل','2400 دج/يوم','8 ساعات السبت','القبة، الجزائر','الإشراف على القاعة أثناء الحفلات والاحتفالات، استقبال الضيوف، التنسيق مع فريق العمل.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'قاعة الأمل')">تقدّم الآن</button></div></div></div>
+      <div class="sec-row"><h3>أحدث الوظائف الجزئية</h3><button class="sec-link" onclick="showPage('jobs')">عرض الكل ←</button></div>
+      <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:18px;" id="overview-jobs-list">
+        <!-- Dynamic jobs will be loaded here -->
+        <div style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">لا توجد وظائف جديدة حالياً</div>
       </div>
 
       <div class="sec-row"><h3>آخر تقييماتي</h3><button class="sec-link" onclick="showPage('reviews')">عرض الكل ←</button></div>
-      <div class="rev-card"><div class="rev-top"><div class="rev-av">م</div><div style="flex:1"><div class="rev-name">محمد بوطالبي</div><div class="rev-meta">صاحب مطعم الأصالة · 20 مارس 2025</div></div><div style="text-align:left"><span class="star">★★★★★</span><div style="font-size:11px;font-weight:700;">5.0</div></div></div><p class="rev-txt">طالب جاد ومنضبط في المواعيد. نظيف وسريع في العمل. سأوظفه مجدداً بلا تردد.</p></div>
+      <div id="overview-reviews-list">
+        <!-- Dynamic reviews will be loaded here -->
+        <div style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">لا توجد تقييمات حالياً</div>
+      </div>
     </div>
   </div>
 </div>
@@ -831,35 +829,19 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-bottom:3px;}
           <button class="fa-btn" onclick="showToast('تم تطبيق الفلاتر','success')">تطبيق</button>
         </div>
         <div>
-          <div class="res-count" id="jobs-count">24 وظيفة جزئية متاحة</div>
+          <div class="res-count" id="jobs-count">0 وظيفة جزئية متاحة</div>
           <div style="display:flex;flex-direction:column;gap:9px;" id="jobs-list">
-            <div class="job-card" data-search="كاشير مقهى النجمة باب الزوار" data-sal="800" data-type="مطاعم" data-period="مسائي" data-location="باب الزوار" data-rating="4.8"><div class="jc-row"><div><div class="jc-title">عامل كاشير — دوام جزئي</div><div class="jc-company">مقهى النجمة · باب الزوار</div></div><span class="badge b-open">متاح</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>4 ساعات · مسائي</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>باب الزوار</span><span class="jc-m">⭐ 4.8</span></div><div class="jc-foot"><div><span class="jc-price">800 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('كاشير مقهى النجمة','مقهى النجمة','800 دج/يوم','4 ساعات مسائية','باب الزوار','مطلوب عامل كاشير لمقهى نشيط في باب الزوار. العمل 4 ساعات مساءً من الاثنين للجمعة.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'مقهى النجمة')">تقدّم</button></div></div></div>
-            <div class="job-card" data-search="موزع طرود توصيل سريع" data-sal="650" data-type="توصيل" data-period="صباحي" data-location="بئر مراد رايس" data-rating="4.5"><div class="jc-row"><div><div class="jc-title">موزّع طرود — صباحي</div><div class="jc-company">شركة سريع · بئر مراد رايس</div></div><span class="badge b-open">متاح</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>5 ساعات · صباحي</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>بئر مراد رايس</span><span class="jc-m">⭐ 4.5</span></div><div class="jc-foot"><div><span class="jc-price">650 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('موزع طرود','شركة سريع','650 دج/يوم','5 ساعات صباحية','بئر مراد رايس','توصيل الطرود في المنطقة. يشترط امتلاك دراجة أو دراجة نارية.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'شركة سريع')">تقدّم</button></div></div></div>
-            <div class="job-card" data-search="مساعد مبيعات متجر ميلاد الكترونيات حيدرة" data-sal="750" data-type="تجارة" data-period="عطلة" data-location="حيدرة" data-rating="4.6"><div class="jc-row"><div><div class="jc-title">مساعد مبيعات — نهاية الأسبوع</div><div class="jc-company">متجر ميلاد للإلكترونيات · حيدرة</div></div><span class="badge b-part">عطلة الأسبوع</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>6 ساعات · السبت–الأحد</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>حيدرة</span><span class="jc-m">⭐ 4.6</span></div><div class="jc-foot"><div><span class="jc-price">750 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('مساعد مبيعات','ميلاد إلكترونيات','750 دج/يوم','6 ساعات/يوم','حيدرة','مساعدة الزبائن وإتمام عمليات البيع في متجر الإلكترونيات.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'ميلاد إلكترونيات')">تقدّم</button></div></div></div>
-            <div class="job-card" data-search="نادل خدمة طاولات مطعم الأصالة" data-sal="700" data-type="مطاعم" data-period="مسائي" data-location="الأبيار" data-rating="4.7"><div class="jc-row"><div><div class="jc-title">نادل خدمة طاولات</div><div class="jc-company">مطعم الأصالة · الأبيار</div></div><span class="badge b-open">متاح</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>5 ساعات · مسائي</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>الأبيار</span><span class="jc-m">⭐ 4.7</span></div><div class="jc-foot"><div><span class="jc-price">700 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('نادل','مطعم الأصالة','700 دج/يوم','5 ساعات مسائية','الأبيار، الجزائر','خدمة طاولات في مطعم راقٍ، مطلوب لياقة جسدية وحسن المظهر.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'مطعم الأصالة')">تقدّم</button></div></div></div>
-            <div class="job-card" data-search="موزع منشورات اعلانات تسويق" data-sal="400" data-type="فعاليات" data-period="صباحي" data-location="الجزائر" data-rating="4.2"><div class="jc-row"><div><div class="jc-title">موزّع منشورات إعلانية</div><div class="jc-company">وكالة نجوم للإشهار · العاصمة</div></div><span class="badge b-open">متاح</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>3 ساعات · صباحي</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>الجزائر العاصمة</span><span class="jc-m">⭐ 4.2</span></div><div class="jc-foot"><div><span class="jc-price">400 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('موزع منشورات','وكالة نجوم','400 دج/يوم','3 ساعات صباحية','الجزائر العاصمة','توزيع منشورات في المناطق التجارية، عمل بسيط لا يتطلب خبرة.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'وكالة نجوم')">تقدّم</button></div></div></div>
-            <div class="job-card" data-search="مراقب امتحانات جامعي اشراف" data-sal="600" data-type="تعليم" data-period="صباحي" data-location="رويبة" data-rating="4.4"><div class="jc-row"><div><div class="jc-title">مراقب امتحانات</div><div class="jc-company">مركز التكوين المهني · رويبة</div></div><span class="badge b-part">مرن</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>4 ساعات · صباحي</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>رويبة</span><span class="jc-m">⭐ 4.4</span></div><div class="jc-foot"><div><span class="jc-price">600 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('مراقب امتحانات','مركز التكوين','600 دج/يوم','4 ساعات','رويبة','الإشراف على قاعات الامتحانات، يشترط مستوى جامعي.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'مركز التكوين')">تقدّم</button></div></div></div>
+            <!-- Dynamic jobs will be loaded here -->
+            <div style="text-align:center;padding:30px;color:var(--text3);font-size:13px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;">لا توجد وظائف متاحة تطابق بحثك</div>
           </div>
         </div>
       </div>
     </div>
     <div id="inner-requests" style="display:none;">
       <div style="background:var(--purple-pale);border:1px solid #E9D5FF;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--purple-dark);font-weight:600;">🎓 هذه طلبات نشرها طلاب آخرون يبحثون عن عمل جزئي — يمكنك التواصل أو الاستفادة</div>
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <div style="background:var(--white);border:1.5px solid #E9D5FF;border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);">
-          <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;justify-content:space-between;"><div style="display:flex;align-items:center;gap:9px;"><div style="width:38px;height:38px;border-radius:50%;background:var(--purple-pale);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--purple-dark);">ا</div><div><div style="font-size:13px;font-weight:700;">أمين بوعزيز</div><div style="font-size:11px;color:var(--text3);">USTHB · إعلام آلي · سنة 3</div></div></div><span class="badge b-req">طلب عمل جزئي</span></div>
-          <div style="font-size:13px;font-weight:700;margin-bottom:6px;">أبحث عن عمل جزئي في مجال البرمجة أو الدعم التقني</div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px;">طالب علوم الحاسوب لدي خبرة في Python وJS. أتوفر مساءً ويمكنني العمل عن بعد أو حضوراً. أبحث عن فرصة تفيدني مهنياً إلى جانب الدراسة.</div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;"><span style="background:var(--purple-pale);color:var(--purple-dark);border-radius:100px;padding:2px 9px;font-size:10px;font-weight:700;">Python</span><span style="background:var(--purple-pale);color:var(--purple-dark);border-radius:100px;padding:2px 9px;font-size:10px;font-weight:700;">JavaScript</span><span style="background:var(--purple-pale);color:var(--purple-dark);border-radius:100px;padding:2px 9px;font-size:10px;font-weight:700;">دعم تقني</span></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #E9D5FF;padding-top:9px;"><span style="font-size:11px;color:var(--text3);">مسائي · الجزائر العاصمة · 600–900 دج/يوم</span><button class="btn btn-sm" style="background:linear-gradient(135deg,var(--purple-dark),var(--purple));color:#fff;" onclick="showToast('تم إرسال طلب التواصل إلى أمين')">تواصل</button></div>
-        </div>
-        <div style="background:var(--white);border:1.5px solid #E9D5FF;border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);">
-          <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;justify-content:space-between;"><div style="display:flex;align-items:center;gap:9px;"><div style="width:38px;height:38px;border-radius:50%;background:var(--blue-pale);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--navy);">ن</div><div><div style="font-size:13px;font-weight:700;">نور الهدى سعيد</div><div style="font-size:11px;color:var(--text3);">UMMTO · إدارة أعمال · سنة 2</div></div></div><span class="badge b-req">طلب عمل جزئي</span></div>
-          <div style="font-size:13px;font-weight:700;margin-bottom:6px;">أبحث عن عمل جزئي في مجال الخدمة أو الإدارة</div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px;">طالبة إدارة، لدي خبرة في خدمة العملاء من تجربة سابقة في متجر ملابس. هادئة ومتعاملة جيداً مع الزبائن.</div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;"><span style="background:var(--purple-pale);color:var(--purple-dark);border-radius:100px;padding:2px 9px;font-size:10px;font-weight:700;">خدمة عملاء</span><span style="background:var(--purple-pale);color:var(--purple-dark);border-radius:100px;padding:2px 9px;font-size:10px;font-weight:700;">مبيعات</span></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #E9D5FF;padding-top:9px;"><span style="font-size:11px;color:var(--text3);">مسائي · تيزي وزو · 500–700 دج/يوم</span><button class="btn btn-sm" style="background:linear-gradient(135deg,var(--purple-dark),var(--purple));color:#fff;" onclick="showToast('تم إرسال طلب التواصل إلى نور')">تواصل</button></div>
-        </div>
+      <div style="display:flex;flex-direction:column;gap:10px;" id="requests-list">
+        <!-- Dynamic requests will be loaded here -->
+        <div style="text-align:center;padding:30px;color:var(--text3);font-size:13px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;">لا يوجد طلبات حالياً</div>
       </div>
       <div style="text-align:center;margin-top:14px;"><button class="btn btn-g" onclick="openModal('reqModal')">+ انشر طلبك أنت أيضاً</button></div>
     </div>
@@ -869,16 +851,14 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-bottom:3px;}
 <!-- ══ APPLICATIONS ══ -->
 <div class="page" id="page-apps">
   <div class="std-page">
-    <div class="sec-row" style="margin-bottom:16px;"><h3>طلباتي على وظائف جزئية</h3><span id="apps-status" style="font-size:12px;color:var(--text3);">3 طلبات نشطة</span></div>
+    <div class="sec-row" style="margin-bottom:16px;"><h3>طلباتي على وظائف جزئية</h3><span id="apps-status" style="font-size:12px;color:var(--text3);">0 طلبات نشطة</span></div>
     <div class="card">
       <div class="tbl-wrap">
         <table class="tbl">
           <thead><tr><th>الوظيفة</th><th>صاحب العمل</th><th>الأجر</th><th>تاريخ التقديم</th><th>الحالة</th><th>إجراء</th></tr></thead>
           <tbody id="apps-tbody">
-            <tr id="app-1"><td><strong>عامل كاشير</strong><div style="font-size:10px;color:var(--text3);">4 ساعات · مسائي</div></td><td>مقهى النجمة</td><td>800 دج/يوم</td><td>15 مارس 2025</td><td><span class="badge b-pend">قيد المراجعة</span></td><td style="display:flex;gap:5px;"><button class="btn btn-g btn-sm" onclick="cancelApp('app-1')">إلغاء</button><button class="btn btn-p btn-sm" onclick="showPage('messages')">محادثة</button></td></tr>
-            <tr id="app-2"><td><strong>موزّع طرود</strong><div style="font-size:10px;color:var(--text3);">5 ساعات · صباحي</div></td><td>شركة سريع</td><td>650 دج/يوم</td><td>13 مارس 2025</td><td><span class="badge b-pend">قيد المراجعة</span></td><td style="display:flex;gap:5px;"><button class="btn btn-g btn-sm" onclick="cancelApp('app-2')">إلغاء</button><button class="btn btn-p btn-sm" onclick="showPage('messages')">محادثة</button></td></tr>
-            <tr id="app-3"><td><strong>مساعد مبيعات</strong><div style="font-size:10px;color:var(--text3);">6 ساعات · عطلة الأسبوع</div></td><td>متجر ميلاد</td><td>750 دج/يوم</td><td>10 مارس 2025</td><td><span class="badge b-open">مقبول ✓</span></td><td style="display:flex;gap:5px;"><button class="btn btn-s btn-sm" onclick="confirmApp('app-3')">تأكيد البداية</button></td></tr>
-            <tr id="app-4"><td><strong>مشرف فعاليات</strong><div style="font-size:10px;color:var(--text3);">8 ساعات · السبت</div></td><td>قاعة الأمل</td><td>2,400 دج/يوم</td><td>5 مارس 2025</td><td><span class="badge b-rej">مرفوض</span></td><td style="display:flex;gap:5px;"><button class="btn btn-p btn-sm" onclick="applyJob(this,'قاعة الأمل')">تقديم مجدداً</button></td></tr>
+            <!-- Dynamic applications will be loaded here -->
+            <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">لا توجد طلبات تقديم حالياً</td></tr>
           </tbody>
         </table>
       </div>
@@ -899,11 +879,8 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-bottom:3px;}
     <div class="msb-search"><div class="msb-search-wrap"><span class="msb-sico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><input type="text" placeholder="بحث..." oninput="searchConvs(this.value)"></div></div>
     <div class="msb-tabs"><button class="msb-tab active" onclick="filterConvs('all',this)">الكل</button><button class="msb-tab" onclick="filterConvs('active',this)">نشطة</button><button class="msb-tab" onclick="filterConvs('done',this)">مكتملة</button></div>
     <div class="msg-list" id="conv-list">
-      <div class="mi active" data-id="1" data-status="active" onclick="openConvMobile(1)"><div class="mi-av" style="background:var(--green-pale);color:var(--green-dark);">م<div class="mi-dot"></div></div><div class="mi-body"><div class="mi-name">مطعم الأصالة</div><div class="mi-prev" id="prev-1">متى تبدأ العمل؟ 👍</div></div><div class="mi-meta"><span class="mi-time">10:42</span><span class="mi-unread" id="unread-1">2</span></div></div>
-      <div class="mi" data-id="2" data-status="active" onclick="openConvMobile(2)"><div class="mi-av" style="background:var(--blue-pale);color:var(--navy);">س</div><div class="mi-body"><div class="mi-name">شركة سريع</div><div class="mi-prev" id="prev-2">ابدأ الثلاثاء الصباح.</div></div><div class="mi-meta"><span class="mi-time">أمس</span><span class="mi-unread" id="unread-2">1</span></div></div>
-      <div class="mi" data-id="3" data-status="active" onclick="openConvMobile(3)"><div class="mi-av" style="background:var(--gold-pale);color:#92400E;">ن</div><div class="mi-body"><div class="mi-name">مقهى النجمة</div><div class="mi-prev" id="prev-3">أرسل لنا ملفك.</div></div><div class="mi-meta"><span class="mi-time">اليوم</span></div></div>
-      <div class="mi" data-id="4" data-status="done" onclick="openConvMobile(4)"><div class="mi-av" style="background:#F3E8FF;color:#6B21A8;">ق</div><div class="mi-body"><div class="mi-name">قاعة الأمل</div><div class="mi-prev" id="prev-4">كان العمل ممتازاً! شكراً.</div></div><div class="mi-meta"><span class="mi-time">20 فبراير</span><span class="mi-tag mtag-done">مكتملة</span></div></div>
-      <div class="mi" data-id="5" data-status="done" onclick="openConvMobile(5)"><div class="mi-av" style="background:var(--red-pale);color:var(--red);">م</div><div class="mi-body"><div class="mi-name">متجر ميلاد</div><div class="mi-prev" id="prev-5">استلمت. شكراً جزيلاً!</div></div><div class="mi-meta"><span class="mi-time">5 مارس</span><span class="mi-tag mtag-done">مكتملة</span></div></div>
+      <!-- Dynamic conversations will be loaded here -->
+      <div style="padding:40px 20px;text-align:center;color:var(--text3);font-size:13px;">لا توجد محادثات حالياً</div>
     </div>
   </div>
 
@@ -984,10 +961,7 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-bottom:3px;}
       </div>
     </div>
     <div class="card"><div class="sec-row" style="margin-bottom:12px;"><h3>آخر المعاملات</h3></div>
-      <div class="tx-row"><div class="tx-ico" style="background:var(--green-dark)"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div style="flex:1"><div class="tx-ttl">أجر — مطعم الأصالة (نادل 5 ساعات)</div><div class="tx-dt">20 مارس 2025</div></div><div class="tx-amt in">+3,500 دج</div></div>
-      <div class="tx-row"><div class="tx-ico" style="background:var(--green-dark)"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div style="flex:1"><div class="tx-ttl">أجر — شركة سريع (توصيل 3 أيام)</div><div class="tx-dt">14 مارس 2025</div></div><div class="tx-amt in">+5,000 دج</div></div>
-      <div class="tx-row"><div class="tx-ico" style="background:var(--red)"><svg viewBox="0 0 24 24"><polyline points="17 11 21 7 17 3"/><line x1="21" y1="7" x2="9" y2="7"/><path d="M3 21v-4a4 4 0 0 1 4-4h14"/></svg></div><div style="flex:1"><div class="tx-ttl">سحب إلى بطاقة Edahabia</div><div class="tx-dt">10 مارس 2025</div></div><div class="tx-amt out">−10,000 دج</div></div>
-      <div class="tx-row"><div class="tx-ico" style="background:var(--green-dark)"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div style="flex:1"><div class="tx-ttl">أجر — مقهى النجمة (كاشير أسبوع)</div><div class="tx-dt">3 مارس 2025</div></div><div class="tx-amt in">+3,200 دج</div></div>
+      <div style="text-align:center;padding:30px 20px;color:var(--text3);font-size:13px;">لا توجد معاملات حالياً</div>
     </div>
   </div>
 </div>
@@ -1006,10 +980,10 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-bottom:3px;}
         <div style="display:flex;align-items:center;gap:7px;"><span style="font-size:11px;width:14px;">1</span><div style="flex:1;height:5px;background:var(--border);border-radius:100px;overflow:hidden;"><div style="width:0%;height:100%;background:var(--gold);border-radius:100px;"></div></div><span style="font-size:10px;color:var(--text3);">0</span></div>
       </div>
     </div>
-    <div class="rev-card"><div class="rev-top"><div class="rev-av">م</div><div style="flex:1"><div class="rev-name">محمد بوطالبي</div><div class="rev-meta">مطعم الأصالة · وظيفة: نادل جزئي · 20 مارس 2025</div></div><div style="text-align:left"><span class="star">★★★★★</span><div style="font-size:11px;font-weight:700;">5.0</div></div></div><p class="rev-txt">طالب ممتاز ومنضبط. جاء في وقته كل يوم ولم يتأخر مرة واحدة. يتعامل مع الزبائن باحترافية. سأوظفه مجدداً في كل مناسبة.</p></div>
-    <div class="rev-card" style="margin-top:10px;"><div class="rev-top"><div class="rev-av" style="background:var(--blue-pale);">ن</div><div style="flex:1"><div class="rev-name">نذير بلحاج</div><div class="rev-meta">مقهى النجمة · وظيفة: كاشير جزئي · 10 مارس 2025</div></div><div style="text-align:left"><span class="star">★★★★★</span><div style="font-size:11px;font-weight:700;">5.0</div></div></div><p class="rev-txt">يوسف جدير بالثقة. يعمل بهدوء وكفاءة. المبالغ كانت دائماً صحيحة 100%. مرحب به في أي وقت.</p></div>
-    <div class="rev-card" style="margin-top:10px;"><div class="rev-top"><div class="rev-av" style="background:var(--gold-pale);color:#92400E;">ك</div><div style="flex:1"><div class="rev-name">كمال عزوز</div><div class="rev-meta">شركة سريع · وظيفة: توزيع طرود · 28 فبراير 2025</div></div><div style="text-align:left"><span class="star">★★★★</span><div style="font-size:11px;font-weight:700;">4.0</div></div></div><p class="rev-txt">عمل جيد في المجمل. أحياناً يتأخر قليلاً لكنه دائماً يكمل مهمته. يستحق الفرصة.</p></div>
-    <div class="rev-card" style="margin-top:10px;"><div class="rev-top"><div class="rev-av" style="background:var(--red-pale);color:var(--red);">ح</div><div style="flex:1"><div class="rev-name">حمزة قاسي</div><div class="rev-meta">قاعة الأمل · وظيفة: مشرف فعاليات · 20 فبراير 2025</div></div><div style="text-align:left"><span class="star">★★★★★</span><div style="font-size:11px;font-weight:700;">5.0</div></div></div><p class="rev-txt">مبادر ونشيط. أخذ مبادرات خارج نطاق مهمته وساعد في تنظيم القاعة. سيُعاد توظيفه بلا شك.</p></div>
+    <div id="reviews-list">
+      <!-- Dynamic reviews will be loaded here -->
+      <div style="text-align:center;padding:30px;color:var(--text3);font-size:13px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;">لا توجد تقييمات حالياً</div>
+    </div>
   </div>
 </div>
 
@@ -1095,13 +1069,7 @@ input[type=range]{width:100%;accent-color:var(--blue);margin-bottom:3px;}
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ═══ CONVERSATION DATA ═══
-var convData = {
-  1:{name:'مطعم الأصالة',av:'م',bg:'var(--green-pale)',col:'var(--green-dark)',online:true,job:'نادل — دوام جزئي مسائي',jobSub:'مطعم الأصالة · باب الزوار',price:'3,500 دج',days:'5 أيام',pct:60,msgs:[{mine:false,text:'أهلاً يوسف! شكراً على تقديمك. ملفك يبدو ممتازاً.',time:'09:20'},{mine:true,text:'شكراً جزيلاً! أنا متحمس للعمل معكم.',time:'09:25'},{mine:false,text:'العمل يبدأ الأحد. هل ساعات 16:00–21:00 تناسبك؟',time:'09:28'},{mine:true,text:'نعم تناسبني تماماً. سأكون حاضراً.',time:'09:30'}]},
-  2:{name:'شركة سريع',av:'س',bg:'var(--blue-pale)',col:'var(--navy)',online:false,job:'موزع طرود — صباحي',jobSub:'شركة سريع · بن عكنون',price:'5,000 دج',days:'3 أيام',pct:100,msgs:[{mine:true,text:'السلام عليكم، تقدمت للوظيفة. هل لا تزال متاحة؟',time:'أمس 11:00'},{mine:false,text:'وعليكم السلام! نعم. ابدأ الثلاثاء الصباح.',time:'أمس 11:10'}]},
-  3:{name:'مقهى النجمة',av:'ن',bg:'var(--gold-pale)',col:'#92400E',online:true,job:'كاشير جزئي — مسائي',jobSub:'مقهى النجمة · الأبيار',price:'3,200 دج',days:'4 أيام',pct:30,msgs:[{mine:true,text:'مرحباً، رأيت إعلان الكاشير. هل لا يزال متاحاً؟',time:'اليوم 08:00'},{mine:false,text:'نعم متاح! أرسل لنا ملفك.',time:'اليوم 08:15'}]},
-  4:{name:'قاعة الأمل',av:'ق',bg:'#F3E8FF',col:'#6B21A8',online:false,job:'مشرف فعاليات',jobSub:'قاعة الأمل · وسط المدينة',price:'2,400 دج',days:'مكتملة',pct:100,msgs:[{mine:false,text:'شكراً يوسف على مجهودك الرائع.',time:'20 فبراير'},{mine:true,text:'الشكر لكم! كانت تجربة رائعة.',time:'20 فبراير'}]},
-  5:{name:'متجر ميلاد',av:'م',bg:'var(--red-pale)',col:'var(--red)',online:false,job:'مساعد مبيعات',jobSub:'متجر ميلاد إلكترونيات',price:'4,500 دج',days:'مكتملة',pct:100,msgs:[{mine:false,text:'تم إرسال الأجر إلى محفظتك.',time:'5 مارس'},{mine:true,text:'استلمت. شكراً جزيلاً!',time:'5 مارس'}]}
-};
+var convData = {};
 
 // ═══ TOAST ═══
 var _tt;

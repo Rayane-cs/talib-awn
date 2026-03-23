@@ -488,7 +488,15 @@
 </div><!-- /page -->
 
 <script type="module">
-  import { supabase, signUpWithOtp, verifyEmailOtp, showAlert, setLoading } from './api.js';
+  import { API_BASE, showAlert, setLoading, redirectIfLoggedIn } from './api.js';
+
+  // redirect if already logged in
+  redirectIfLoggedIn();
+
+  // Helper to quickly clear alerts
+  window.clearAlert = function() {
+    showAlert('alertBox', '');
+  };
 
   let role = null;
   let pendingEmail = '', pendingMeta = {};
@@ -634,14 +642,22 @@
     if(pw!==pw2){ showAlert('alertBox','كلمتا المرور غير متطابقتين.'); return; }
     pendingEmail=email;
     pendingMeta={
-      firstname:fn||'طالب', lastname:ln, phone, role:'client', grade:'Student',
+      type:'student',
+      firstname:fn||'طالب', lastname:ln, phone, grade:'Student',
       domain:field.toLowerCase().slice(0,80)||'autre',
       institution:uni, field_of_study:field, student_id_number:sid,
+      password:pw,
     };
     setLoading('sRegBtn',true); clearAlert();
-    const {error}=await signUpWithOtp({email:pendingEmail,password:pw,metadata:pendingMeta});
+    try {
+      const res = await fetch(`${API_BASE}/auth/register/send-otp`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({...pendingMeta, email:pendingEmail})
+      });
+      const data = await res.json();
+      if(!data.ok){ showAlert('alertBox', data.error || 'حدث خطأ.'); setLoading('sRegBtn',false); return; }
+    } catch(e){ showAlert('alertBox','تعذّر الاتصال بالخادم.'); setLoading('sRegBtn',false); return; }
     setLoading('sRegBtn',false);
-    if(error){ showAlert('alertBox',error.message); return; }
     document.getElementById('sEmailDisplay').textContent=pendingEmail;
     goTo('sS3'); setupOtp('sOtpInputs'); startCountdown('s');
   };
@@ -650,17 +666,32 @@
     const otp=getOtp('sOtpInputs');
     if(otp.length<8){ showAlert('alertBox','أدخل جميع الأرقام الثمانية.'); return; }
     setLoading('sVerifyBtn',true); clearAlert();
-    const {error}=await verifyEmailOtp({email:pendingEmail,token:otp});
+    try {
+      const res = await fetch(`${API_BASE}/auth/register/verify-otp`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({email:pendingEmail, otp})
+      });
+      const data = await res.json();
+      if(!data.ok){ showAlert('alertBox', data.error?.includes('expired')?'انتهت صلاحية الرمز.':'الرمز غير صحيح.'); setLoading('sVerifyBtn',false); return; }
+      // Save tokens
+      localStorage.setItem('access_token',  data.data.access_token);
+      localStorage.setItem('refresh_token', data.data.refresh_token);
+      localStorage.setItem('user',          JSON.stringify(data.data.user));
+    } catch(e){ showAlert('alertBox','تعذّر التحقق.'); setLoading('sVerifyBtn',false); return; }
     setLoading('sVerifyBtn',false);
-    if(error){ showAlert('alertBox',error.message.includes('expired')?'انتهت صلاحية الرمز.':'الرمز غير صحيح.'); return; }
     clearInterval(sCountdownInterval);
     const a=document.getElementById('alertBox'); a.className='alert success show'; a.textContent='تم إنشاء الحساب! جاري التحويل…';
-    setTimeout(()=>window.location.href='login.html',1800);
+    setTimeout(()=>window.location.href='student.html',1800);
   };
 
   window.sResend=async()=>{
     document.getElementById('sResendBtn').disabled=true; clearAlert();
-    await signUpWithOtp({email:pendingEmail,password:document.getElementById('s_pw').value,metadata:pendingMeta});
+    try {
+      await fetch(`${API_BASE}/auth/register/send-otp`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({...pendingMeta, email:pendingEmail})
+      });
+    } catch(e){}
     setupOtp('sOtpInputs'); startCountdown('s');
     const a=document.getElementById('alertBox'); a.className='alert success show'; a.textContent='تم إرسال رمز جديد!';
   };
@@ -689,17 +720,25 @@
     if(pw!==pw2){ showAlert('alertBox','كلمتا المرور غير متطابقتين.'); return; }
     pendingEmail=email;
     pendingMeta={
+      type:'employer',
       firstname:document.getElementById('e_fn').value,
       lastname:document.getElementById('e_ln').value,
       phone:document.getElementById('e_phone').value,
-      role:'client', grade:'Company manager',
+      grade:'Company manager',
       domain:document.getElementById('e_sector').value||'autre',
       company_name:document.getElementById('e_company').value,
+      password:pw,
     };
     setLoading('eRegBtn',true); clearAlert();
-    const {error}=await signUpWithOtp({email:pendingEmail,password:pw,metadata:pendingMeta});
+    try {
+      const res = await fetch(`${API_BASE}/auth/register/send-otp`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({...pendingMeta, email:pendingEmail})
+      });
+      const data = await res.json();
+      if(!data.ok){ showAlert('alertBox', data.error || 'حدث خطأ.'); setLoading('eRegBtn',false); return; }
+    } catch(e){ showAlert('alertBox','تعذّر الاتصال بالخادم.'); setLoading('eRegBtn',false); return; }
     setLoading('eRegBtn',false);
-    if(error){ showAlert('alertBox',error.message); return; }
     document.getElementById('eEmailDisplay').textContent=pendingEmail;
     goTo('sE4'); setupOtp('eOtpInputs'); startCountdown('e');
   };
@@ -708,17 +747,31 @@
     const otp=getOtp('eOtpInputs');
     if(otp.length<8){ showAlert('alertBox','أدخل جميع الأرقام الثمانية.'); return; }
     setLoading('eVerifyBtn',true); clearAlert();
-    const {error}=await verifyEmailOtp({email:pendingEmail,token:otp});
+    try {
+      const res = await fetch(`${API_BASE}/auth/register/verify-otp`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({email:pendingEmail, otp})
+      });
+      const data = await res.json();
+      if(!data.ok){ showAlert('alertBox', data.error?.includes('expired')?'انتهت صلاحية الرمز.':'الرمز غير صحيح.'); setLoading('eVerifyBtn',false); return; }
+      localStorage.setItem('access_token',  data.data.access_token);
+      localStorage.setItem('refresh_token', data.data.refresh_token);
+      localStorage.setItem('user',          JSON.stringify(data.data.user));
+    } catch(e){ showAlert('alertBox','تعذّر التحقق.'); setLoading('eVerifyBtn',false); return; }
     setLoading('eVerifyBtn',false);
-    if(error){ showAlert('alertBox',error.message.includes('expired')?'انتهت صلاحية الرمز.':'الرمز غير صحيح.'); return; }
     clearInterval(eCountdownInterval);
     const a=document.getElementById('alertBox'); a.className='alert success show'; a.textContent='تم إنشاء الحساب! جاري التحويل…';
-    setTimeout(()=>window.location.href='login.html',1800);
+    setTimeout(()=>window.location.href='employer.html',1800);
   };
 
   window.eResend=async()=>{
     document.getElementById('eResendBtn').disabled=true; clearAlert();
-    await signUpWithOtp({email:pendingEmail,password:document.getElementById('e_pw').value,metadata:pendingMeta});
+    try {
+      await fetch(`${API_BASE}/auth/register/send-otp`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({...pendingMeta, email:pendingEmail})
+      });
+    } catch(e){}
     setupOtp('eOtpInputs'); startCountdown('e');
     const a=document.getElementById('alertBox'); a.className='alert success show'; a.textContent='تم إرسال رمز جديد!';
   };
@@ -746,7 +799,13 @@
   }
 
   /* init */
-  goTo('s0');
+  const urlParams = new URLSearchParams(window.location.search);
+  const r = urlParams.get('role');
+  if (r === 'student' || r === 'employer') {
+    window.pickRole(r);
+  } else {
+    window.goTo('s0');
+  }
 </script>
 </body>
 </html>

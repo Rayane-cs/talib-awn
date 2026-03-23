@@ -21,7 +21,8 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 from models import (
-    db, User, Project, ProjectLike, ProjectComment,
+    db, User, Student, Employer,
+    Project, ProjectLike, ProjectComment,
     Event, EventRegistration, Announcement, UserFollow,
     Wallet, Transaction, Escrow, Withdrawal,
 )
@@ -47,6 +48,7 @@ VALID_DOMAINS = [
 # In-memory OTP stores  { email: { otp, sent_at, data/verified } }
 _pending_registrations: dict = {}
 _pending_resets:         dict = {}
+_pending_logins:         dict = {}
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -74,21 +76,36 @@ def _err(msg, code=400):
 def _current_user():
     try:
         verify_jwt_in_request()
-        return User.query.get(get_jwt_identity())
+        uid = get_jwt_identity()
+        # polymorphic load: returns Student or Employer instance automatically
+        return db.session.get(User, uid)
     except Exception:
         return None
 
 def _user_dict(u: User) -> dict:
-    return {
-        'id': u.id, 'firstname': u.firstname, 'lastname': u.lastname,
+    base = {
+        'id': u.id, 'type': u.type,
+        'firstname': u.firstname, 'lastname': u.lastname,
         'email': u.email, 'phone': u.phone, 'image': u.image,
-        'role': u.role, 'grade': u.grade, 'domain': u.domain,
-        'institution': u.institution, 'field_of_study': u.field_of_study,
-        'student_id_number': u.student_id_number, 'company_name': u.company_name,
         'is_banned': u.is_banned, 'ban_reason': u.ban_reason,
         'warnings': u.warnings or 0, 'is_verified': u.is_verified,
         'created_at': u.created_at.isoformat() if u.created_at else None,
     }
+    if isinstance(u, Student):
+        base.update({
+            'role': 'student',
+            'grade': u.grade, 'domain': u.domain,
+            'institution': u.institution,
+            'field_of_study': u.field_of_study,
+            'student_id_number': u.student_id_number,
+        })
+    elif isinstance(u, Employer):
+        base.update({
+            'role': 'employer',
+            'company_name': u.company_name,
+            'domain': u.domain,
+        })
+    return base
 
 def _send_email(to: str, subject: str, html: str):
     msg = MIMEMultipart('alternative')
@@ -147,18 +164,21 @@ def _otp_html(otp: str) -> str:
 def register_send_otp():
     """Step 1 — validate + send OTP email."""
     d = get_json()
-    email     = str_field(d, 'email').lower()
-    password  = str_field(d, 'password')
-    firstname = str_field(d, 'firstname')
-    lastname  = str_field(d, 'lastname')
-    grade     = str_field(d, 'grade')
-    domain    = str_field(d, 'domain', 'autre').lower()
-    phone     = str_field(d, 'phone')
+    email      = str_field(d, 'email').lower()
+    password   = str_field(d, 'password')
+    firstname  = str_field(d, 'firstname')
+    lastname   = str_field(d, 'lastname')
+    user_type  = str_field(d, 'type', 'student').lower()   # 'student' | 'employer'
+    grade      = str_field(d, 'grade', 'Student')
+    domain     = str_field(d, 'domain', 'autre').lower()
+    phone      = str_field(d, 'phone')
 
+    if user_type not in ('student', 'employer'): user_type = 'student'
     if not email or '@' not in email: return _err('Valid email required.')
     if len(password) < 6:             return _err('Password must be at least 6 characters.')
     if not firstname:                 return _err('First name required.')
-    if grade not in VALID_GRADES:     return _err(f'Grade must be one of: {", ".join(VALID_GRADES)}')
+    if user_type == 'student' and grade not in VALID_GRADES:
+        return _err(f'Grade must be one of: {", ".join(VALID_GRADES)}')
     if domain not in VALID_DOMAINS:   domain = 'autre'
     if User.query.filter_by(email=email).first():
         return _err('An account with this email already exists.', 409)
@@ -167,6 +187,7 @@ def register_send_otp():
     _pending_registrations[email] = {
         'otp': otp, 'sent_at': time.time(),
         'data': {
+            'type':              user_type,
             'email':             email,
             'password_hash':     generate_password_hash(password),
             'firstname':         firstname,
@@ -209,14 +230,25 @@ def register_verify_otp():
     if User.query.filter_by(email=email).first():
         return _err('Account already exists.', 409)
 
-    user = User(
+    common = dict(
         email=reg['email'], password_hash=reg['password_hash'],
         firstname=reg['firstname'], lastname=reg['lastname'],
-        grade=reg['grade'], domain=reg['domain'], phone=reg['phone'],
-        institution=reg['institution'], field_of_study=reg['field_of_study'],
-        student_id_number=reg['student_id_number'], company_name=reg['company_name'],
-        role='client', is_verified=True, is_banned=False, warnings=0,
+        phone=reg['phone'], is_verified=True, is_banned=False, warnings=0,
     )
+    if reg['type'] == 'employer':
+        user = Employer(
+            **common,
+            company_name=reg['company_name'],
+            domain=reg['domain'],
+        )
+    else:
+        user = Student(
+            **common,
+            grade=reg['grade'], domain=reg['domain'],
+            institution=reg['institution'],
+            field_of_study=reg['field_of_study'],
+            student_id_number=reg['student_id_number'],
+        )
     db.session.add(user)
     db.session.flush()
     db.session.add(Wallet(user_id=user.id, balance=0.0))
@@ -239,6 +271,7 @@ def login():
     email    = str_field(d, 'email').lower()
     password = str_field(d, 'password')
 
+    # polymorphic query — finds Student or Employer automatically
     user = User.query.filter_by(email=email).first()
     if not user or not check_password_hash(user.password_hash, password):
         return _err('Invalid email or password.', 401)
@@ -246,6 +279,43 @@ def login():
         return _err(f'Account suspended. Reason: {user.ban_reason}', 403)
 
     access  = create_access_token(identity=user.id,  expires_delta=timedelta(days=7))
+    refresh = create_refresh_token(identity=user.id, expires_delta=timedelta(days=30))
+    return _ok({'user': _user_dict(user), 'access_token': access, 'refresh_token': refresh})
+
+
+@bp.post('/auth/login/send-otp')
+def login_send_otp():
+    """Send OTP for passwordless login."""
+    d = get_json()
+    contact = str_field(d, 'contact').lower()
+    type_ = str_field(d, 'type')
+    user = User.query.filter_by(email=contact).first() if type_ == 'email' else User.query.filter_by(phone=contact).first()  # polymorphic
+    if not user: return _err('User not found.', 404)
+    if user.is_banned: return _err(f'Account suspended. Reason: {user.ban_reason}', 403)
+    otp = _otp()
+    _pending_logins[contact] = {'otp': otp, 'sent_at': time.time(), 'user_id': user.id}
+    if type_ == 'email':
+        try: _send_email(contact, f'Login Code — {PLATFORM_NAME}', _otp_html(otp))
+        except Exception as e: return _err(f'Failed to send email: {e}')
+    # No actual SMS integration natively, we just pretend it succeeds.
+    return _ok(message='OTP sent.')
+
+
+@bp.post('/auth/login/verify-otp')
+def login_verify_otp():
+    """Verify OTP and return JWT for passwordless login."""
+    d = get_json()
+    contact = str_field(d, 'contact').lower()
+    otp = str_field(d, 'token')
+    p = _pending_logins.get(contact)
+    if not p: return _err('No pending login.')
+    if time.time() - p['sent_at'] > OTP_EXPIRY_SEC:
+        _pending_logins.pop(contact, None); return _err('OTP expired.')
+    if p['otp'] != otp: return _err('Incorrect OTP.')
+    user = db.session.get(User, p['user_id'])
+    _pending_logins.pop(contact, None)
+    if user.is_banned: return _err('Account suspended.', 403)
+    access = create_access_token(identity=user.id, expires_delta=timedelta(days=7))
     refresh = create_refresh_token(identity=user.id, expires_delta=timedelta(days=30))
     return _ok({'user': _user_dict(user), 'access_token': access, 'refresh_token': refresh})
 
@@ -274,7 +344,7 @@ def get_me():
 def reset_send_otp():
     email = str_field(get_json(), 'email').lower()
     # Always return OK (don't reveal if email exists)
-    user  = User.query.filter_by(email=email).first()
+    user  = User.query.filter_by(email=email).first()  # polymorphic
     if user:
         otp = _otp()
         _pending_resets[email] = {'otp': otp, 'sent_at': time.time(), 'verified': False}
@@ -309,7 +379,7 @@ def reset_set_password():
     if not p or not p.get('verified'): return _err('OTP not verified.')
     if p['otp'] != otp:                return _err('OTP mismatch.')
     if len(new_password) < 6:          return _err('Password too short (min 6 chars).')
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).first()  # polymorphic
     if not user:                       return _err('User not found.', 404)
     user.password_hash = generate_password_hash(new_password)
     db.session.commit()
@@ -353,7 +423,7 @@ def change_password():
 @jwt_required(optional=True)
 def get_user_info(uid):
     me   = _current_user()
-    user = User.query.get(uid)
+    user = db.session.get(User, uid)  # polymorphic
     if not user: return _err('User not found.', 404)
 
     projects       = Project.query.filter_by(owner_id=uid, is_visible=True).order_by(Project.created_at.desc()).all()
@@ -466,7 +536,7 @@ def create_project():
 def update_project(pid):
     me = _current_user(); p = Project.query.get(pid)
     if not p: return _err('Not found.', 404)
-    if p.owner_id != me.id and me.role != 'Admin': return _err('Forbidden.', 403)
+    if p.owner_id != me.id and me.type != 'admin': return _err('Forbidden.', 403)
     d = get_json()
     for f in ['title', 'description', 'image', 'category', 'status']:
         if f in d: setattr(p, f, d[f])
@@ -479,7 +549,7 @@ def update_project(pid):
 def delete_project(pid):
     me = _current_user(); p = Project.query.get(pid)
     if not p: return _err('Not found.', 404)
-    if p.owner_id != me.id and me.role != 'Admin': return _err('Forbidden.', 403)
+    if p.owner_id != me.id and me.type != 'admin': return _err('Forbidden.', 403)
     db.session.delete(p); db.session.commit()
     return _ok(message='Deleted.')
 
@@ -525,7 +595,7 @@ def add_comment(pid):
 def delete_comment(cid):
     me = _current_user(); c = ProjectComment.query.get(cid)
     if not c: return _err('Not found.', 404)
-    if c.user_id != me.id and me.role != 'Admin': return _err('Forbidden.', 403)
+    if c.user_id != me.id and me.type != 'admin': return _err('Forbidden.', 403)
     db.session.delete(c); db.session.commit()
     return _ok(message='Deleted.')
 
@@ -606,9 +676,11 @@ def get_announcements():
 @bp.get('/stats')
 def get_stats():
     return _ok({
-        'projects': Project.query.filter_by(is_visible=True).count(),
-        'events':   Event.query.filter_by(is_visible=True).count(),
-        'users':    User.query.filter(User.role != 'Admin').count(),
+        'projects':  Project.query.filter_by(is_visible=True).count(),
+        'events':    Event.query.filter_by(is_visible=True).count(),
+        'students':  Student.query.count(),
+        'employers': Employer.query.count(),
+        'users':     Student.query.count() + Employer.query.count(),
     })
 
 
@@ -805,14 +877,14 @@ def get_withdrawals():
 
 def _admin_only():
     me = _current_user()
-    return me if (me and me.role == 'Admin') else None
+    return me if (me and me.type == 'admin') else None
 
 
 @bp.get('/admin/users')
 @jwt_required()
 def admin_get_users():
     if not _admin_only(): return _err('Admin only.', 403)
-    users = User.query.filter(User.role != 'Admin').order_by(User.created_at.desc()).all()
+    users = User.query.filter(User.type != 'admin').order_by(User.created_at.desc()).all()
     return _ok([_user_dict(u) for u in users])
 
 
@@ -909,7 +981,7 @@ def admin_create_event():
               event_type=str_field(d,'event_type','other'), capacity=d.get('capacity'), is_visible=True)
     db.session.add(e); db.session.commit()
     try:
-        for u in User.query.filter(User.role!='Admin', User.is_banned==False).all():
+        for u in User.query.filter(User.type != 'admin', User.is_banned == False).all():
             if u.email: _send_event_email(u, e)
     except Exception: pass
     return _created(_event_dict(e))
@@ -949,3 +1021,7 @@ def admin_create_announcement():
                      is_visible=True, author_id=me.id)
     db.session.add(a); db.session.commit()
     return _created(_ann_dict(a))
+
+@bp.route('/')
+def api_root():
+    return {"ok": True, "message": "Talib-Awn API is running 🚀"}

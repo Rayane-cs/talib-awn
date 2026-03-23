@@ -1,6 +1,8 @@
 # ══════════════════════════════════════════════════════════════════════════════
 #  models.py  —  Talib-Awn · طالب عون
 #  All SQLAlchemy models in one file.
+#  Users table = shared identity base.
+#  Students / Employers = role-specific tables (Joined Table Inheritance).
 # ══════════════════════════════════════════════════════════════════════════════
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -8,44 +10,79 @@ from datetime import datetime
 db = SQLAlchemy()
 
 
+# ── Base User (identity + auth only) ─────────────────────────────────────────
+
 class User(db.Model):
     __tablename__ = 'users'
-    id                = db.Column(db.Integer,      primary_key=True)
-    email             = db.Column(db.String(120),  unique=True, nullable=False, index=True)
-    password_hash     = db.Column(db.String(256),  nullable=False)
-    firstname         = db.Column(db.String(80),   nullable=False)
-    lastname          = db.Column(db.String(80),   nullable=False, default='')
-    phone             = db.Column(db.String(30),   nullable=True)
-    image             = db.Column(db.Text,         nullable=True)
-    role              = db.Column(db.String(20),   nullable=False, default='client')
-    grade             = db.Column(db.String(40),   nullable=False, default='Student')
-    domain            = db.Column(db.String(80),   nullable=False, default='autre')
-    # Student fields
-    institution       = db.Column(db.String(120),  nullable=True)
-    field_of_study    = db.Column(db.String(120),  nullable=True)
-    student_id_number = db.Column(db.String(60),   nullable=True)
-    # Employer fields
-    company_name      = db.Column(db.String(120),  nullable=True)
-    # Account state
-    is_verified       = db.Column(db.Boolean,  default=True)
-    is_banned         = db.Column(db.Boolean,  default=False)
-    ban_reason        = db.Column(db.Text,     nullable=True)
-    warnings          = db.Column(db.Integer,  default=0)
-    created_at        = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at        = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    id            = db.Column(db.Integer,     primary_key=True)
+    type          = db.Column(db.String(20),  nullable=False, default='user')   # discriminator
+    email         = db.Column(db.String(120), unique=True, nullable=False, index=True)
+    password_hash = db.Column(db.String(256), nullable=False)
+    firstname     = db.Column(db.String(80),  nullable=False)
+    lastname      = db.Column(db.String(80),  nullable=False, default='')
+    phone         = db.Column(db.String(30),  nullable=True)
+    image         = db.Column(db.Text,        nullable=True)
+    # Account state
+    is_verified   = db.Column(db.Boolean,  default=True)
+    is_banned     = db.Column(db.Boolean,  default=False)
+    ban_reason    = db.Column(db.Text,     nullable=True)
+    warnings      = db.Column(db.Integer,  default=0)
+    created_at    = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at    = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'user',
+        'polymorphic_on':       type,
+    }
+
+
+# ── Student profile ───────────────────────────────────────────────────────────
+
+class Student(User):
+    __tablename__ = 'students'
+
+    id                = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    grade             = db.Column(db.String(40),  nullable=False, default='Student')
+    domain            = db.Column(db.String(80),  nullable=False, default='autre')
+    institution       = db.Column(db.String(120), nullable=True)
+    field_of_study    = db.Column(db.String(120), nullable=True)
+    student_id_number = db.Column(db.String(60),  nullable=True)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'student',
+    }
+
+
+# ── Employer profile ──────────────────────────────────────────────────────────
+
+class Employer(User):
+    __tablename__ = 'employers'
+
+    id           = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    company_name = db.Column(db.String(120), nullable=True)
+    domain       = db.Column(db.String(80),  nullable=False, default='autre')
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'employer',
+    }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Remaining models — all FKs still point to users.id (unchanged)
+# ─────────────────────────────────────────────────────────────────────────────
 
 class Project(db.Model):
     __tablename__ = 'projects'
-    id          = db.Column(db.Integer,    primary_key=True)
+    id          = db.Column(db.Integer,     primary_key=True)
     title       = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text,       nullable=True)
-    image       = db.Column(db.Text,       nullable=True)
-    category    = db.Column(db.String(60), default='autre')
-    status      = db.Column(db.String(30), default='open')
-    owner_id    = db.Column(db.Integer,    db.ForeignKey('users.id'), nullable=False, index=True)
-    is_visible  = db.Column(db.Boolean,   default=True)
-    created_at  = db.Column(db.DateTime,  default=datetime.utcnow)
+    description = db.Column(db.Text,        nullable=True)
+    image       = db.Column(db.Text,        nullable=True)
+    category    = db.Column(db.String(60),  default='autre')
+    status      = db.Column(db.String(30),  default='open')
+    owner_id    = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    is_visible  = db.Column(db.Boolean,  default=True)
+    created_at  = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class ProjectLike(db.Model):
@@ -68,17 +105,17 @@ class ProjectComment(db.Model):
 
 class Event(db.Model):
     __tablename__ = 'events'
-    id          = db.Column(db.Integer,    primary_key=True)
+    id          = db.Column(db.Integer,     primary_key=True)
     title       = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text,       nullable=True)
-    image       = db.Column(db.Text,       nullable=True)
+    description = db.Column(db.Text,        nullable=True)
+    image       = db.Column(db.Text,        nullable=True)
     location    = db.Column(db.String(200), nullable=True)
-    start_at    = db.Column(db.DateTime,   nullable=True)
-    end_at      = db.Column(db.DateTime,   nullable=True)
-    event_type  = db.Column(db.String(40), default='other')
-    capacity    = db.Column(db.Integer,    nullable=True)
-    is_visible  = db.Column(db.Boolean,   default=True)
-    created_at  = db.Column(db.DateTime,  default=datetime.utcnow)
+    start_at    = db.Column(db.DateTime,    nullable=True)
+    end_at      = db.Column(db.DateTime,    nullable=True)
+    event_type  = db.Column(db.String(40),  default='other')
+    capacity    = db.Column(db.Integer,     nullable=True)
+    is_visible  = db.Column(db.Boolean,    default=True)
+    created_at  = db.Column(db.DateTime,   default=datetime.utcnow)
 
 
 class EventRegistration(db.Model):
@@ -92,13 +129,13 @@ class EventRegistration(db.Model):
 
 class Announcement(db.Model):
     __tablename__ = 'announcements'
-    id         = db.Column(db.Integer,    primary_key=True)
+    id         = db.Column(db.Integer,     primary_key=True)
     title      = db.Column(db.String(200), nullable=False, default='')
     content    = db.Column(db.Text,        nullable=False)
     image      = db.Column(db.Text,        nullable=True)
     is_pinned  = db.Column(db.Boolean,    default=False)
     is_visible = db.Column(db.Boolean,    default=True)
-    author_id  = db.Column(db.Integer,    db.ForeignKey('users.id'), nullable=True)
+    author_id  = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     created_at = db.Column(db.DateTime,   default=datetime.utcnow)
 
 

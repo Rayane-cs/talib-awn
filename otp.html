@@ -310,18 +310,14 @@
   </div>
 
   <script type="module">
-    import { supabase, redirectByRole, showAlert, setLoading } from './supabase.js';
+    import { sendLoginOtp, verifyLoginOtp, redirectIfLoggedIn, redirectByRole, showAlert, setLoading } from './api.js';
 
     let channel = 'email';
     let contactValue = '';
     let countdownInterval = null;
 
     // redirect if already logged in
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      const { data: p } = await supabase.from('users').select('role').eq('auth_id', session.user.id).single();
-      redirectByRole(p?.role);
-    }
+    redirectIfLoggedIn();
 
     /* ── channel switch ── */
     window.switchChannel = (ch) => {
@@ -354,14 +350,8 @@
       setLoading('sendBtn', true);
       clearAlert();
 
-      let error;
-      if (channel === 'email') {
-        const res = await supabase.auth.signInWithOtp({ email: contactValue });
-        error = res.error;
-      } else {
-        const res = await supabase.auth.signInWithOtp({ phone: contactValue });
-        error = res.error;
-      }
+      const res = await sendLoginOtp({ contact: contactValue, type: channel });
+      let error = res.error;
 
       setLoading('sendBtn', false);
 
@@ -416,14 +406,9 @@
       setLoading('verifyBtn', true);
       clearAlert();
 
-      let error, data;
-      if (channel === 'email') {
-        const res = await supabase.auth.verifyOtp({ email: contactValue, token, type: 'magiclink' });
-        error = res.error; data = res.data;
-      } else {
-        const res = await supabase.auth.verifyOtp({ phone: contactValue, token, type: 'sms' });
-        error = res.error; data = res.data;
-      }
+      const res = await verifyLoginOtp({ contact: contactValue, token, type: channel });
+      let error = res.error;
+      let data = res.data;
 
       setLoading('verifyBtn', false);
 
@@ -439,8 +424,7 @@
       a.className = 'alert success show';
       a.textContent = 'تم التحقق! جاري الدخول…';
 
-      const { data: profile } = await supabase.from('users').select('role, grade').eq('auth_id', data.user.id).single();
-      redirectByRole(profile);
+      redirectByRole(data.user);
     };
 
     /* ── back to step 1 ── */
