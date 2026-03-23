@@ -20,6 +20,7 @@ from datetime import timedelta
 
 from models import db
 from routes import bp
+from middleware import log_request, log_response
 
 
 def create_app():
@@ -38,17 +39,41 @@ def create_app():
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'pool_recycle': 280,
         'pool_pre_ping': True,
+        'pool_size': 10,
+        'max_overflow': 20,
+        'pool_timeout': 30,
     }
 
     # ── JWT ────────────────────────────────────────────────────────────────────
-    app.config['JWT_SECRET_KEY']           = os.environ.get('JWT_SECRET', 'change-me')
+    jwt_secret = os.environ.get('JWT_SECRET', 'change-me')
+    if jwt_secret == 'change-me':
+        print('⚠️  WARNING: Using default JWT secret. Set JWT_SECRET in .env for production!')
+    app.config['JWT_SECRET_KEY'] = jwt_secret
     app.config['JWT_ACCESS_TOKEN_EXPIRES']  = timedelta(days=7)
     app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 
     # ── Extensions ─────────────────────────────────────────────────────────────
     db.init_app(app)
     JWTManager(app)
-    CORS(app, resources={r'/api/*': {'origins': '*'}}, supports_credentials=True)
+    
+    # CORS - Configured for production security
+    cors_origins = os.environ.get('CORS_ORIGINS', '*')
+    if cors_origins == '*':
+        print('⚠️  WARNING: CORS allowing all origins. Set CORS_ORIGINS in .env for production!')
+    
+    CORS(app, 
+         resources={r'/api/*': {
+             'origins': cors_origins.split(',') if cors_origins != '*' else '*',
+             'methods': ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+             'allow_headers': ['Content-Type', 'Authorization'],
+             'expose_headers': ['Content-Type', 'Authorization'],
+             'supports_credentials': cors_origins != '*',
+             'max_age': 3600
+         }})
+
+    # ── Request/Response Logging ───────────────────────────────────────────────
+    app.before_request(log_request)
+    app.after_request(log_response)
 
     # ── Blueprint ──────────────────────────────────────────────────────────────
     app.register_blueprint(bp, url_prefix='/api')
@@ -57,6 +82,17 @@ def create_app():
     with app.app_context():
         db.create_all()
         print('✅  Database tables ready.')
+        
+        # Log database initialization
+        try:
+            from db_logger import DatabaseLogger
+            DatabaseLogger.log_custom_change(
+                'Database Initialized',
+                'All tables created and database ready for use',
+                'System'
+            )
+        except Exception:
+            pass  # Don't fail if logging fails
 
     return app
 

@@ -6,7 +6,8 @@
 # ══════════════════════════════════════════════════════════════════════════════
 
 import os, random, string, time
-from datetime import datetime, timedelta
+import logging
+from datetime import datetime, timedelta, timezone
 
 from flask import Blueprint, request, jsonify
 from flask_cors import cross_origin
@@ -108,14 +109,29 @@ def _user_dict(u: User) -> dict:
     return base
 
 def _send_email(to: str, subject: str, html: str):
+    """Send email via Gmail SMTP with proper error handling."""
+    if not GMAIL_APP_PASS:
+        logger.error("GMAIL_APP_PASS not configured. Email not sent.")
+        raise Exception("Email service not configured")
+    
     msg = MIMEMultipart('alternative')
     msg['From']    = f'{PLATFORM_NAME} <{GMAIL_ADDRESS}>'
     msg['To']      = to
     msg['Subject'] = subject
     msg.attach(MIMEText(html, 'html'))
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as s:
-        s.login(GMAIL_ADDRESS, GMAIL_APP_PASS)
-        s.sendmail(GMAIL_ADDRESS, to, msg.as_string())
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=10) as s:
+            s.login(GMAIL_ADDRESS, GMAIL_APP_PASS)
+            s.sendmail(GMAIL_ADDRESS, to, msg.as_string())
+    except smtplib.SMTPAuthenticationError as e:
+        logger.error(f"SMTP Authentication failed: {e}")
+        raise Exception("Email authentication failed. Check GMAIL_APP_PASS.")
+    except smtplib.SMTPException as e:
+        logger.error(f"SMTP error: {e}")
+        raise Exception(f"Failed to send email: {e}")
+    except Exception as e:
+        logger.error(f"Unexpected email error: {e}")
+        raise
 
 def _otp_html(otp: str) -> str:
     cells = ''.join(
@@ -306,7 +322,7 @@ def login_verify_otp():
     """Verify OTP and return JWT for passwordless login."""
     d = get_json()
     contact = str_field(d, 'contact').lower()
-    otp = str_field(d, 'token')
+    otp = str_field(d, 'otp')  # Changed from 'token' to 'otp' for consistency
     p = _pending_logins.get(contact)
     if not p: return _err('No pending login.')
     if time.time() - p['sent_at'] > OTP_EXPIRY_SEC:
@@ -495,7 +511,7 @@ def _send_follow_email(follower: User, target: User):
 
 def _proj_dict(p: Project, me_id=None) -> dict:
     owner = User.query.get(p.owner_id)
-    return {
+    result = {
         'id': p.id, 'title': p.title, 'description': p.description,
         'image': p.image, 'category': p.category, 'status': p.status,
         'owner_id': p.owner_id,
@@ -504,8 +520,16 @@ def _proj_dict(p: Project, me_id=None) -> dict:
         'comment_count': ProjectComment.query.filter_by(project_id=p.id).count(),
         'is_liked': bool(me_id and ProjectLike.query.filter_by(project_id=p.id, user_id=me_id).first()),
         'owner': {'id': owner.id, 'firstname': owner.firstname, 'lastname': owner.lastname,
-                  'image': owner.image, 'grade': owner.grade, 'domain': owner.domain} if owner else None,
+                  'image': owner.image} if owner else None,
     }
+    # Add role-specific fields safely
+    if owner:
+        if isinstance(owner, Student):
+            result['owner']['grade'] = owner.grade
+            result['owner']['domain'] = owner.domain
+        elif isinstance(owner, Employer):
+            result['owner']['domain'] = owner.domain
+    return result
 
 
 @bp.get('/projects')
@@ -727,9 +751,9 @@ def request_deposit():
     amount = float_field(d, 'amount')
     if amount < 100:    return _err('Minimum deposit is 100 DZD.')
     if amount > 200000: return _err('Maximum deposit is 200,000 DZD.')
-    import random, string as _s
+    # Import moved to top of file
     tx = Transaction(user_id=me.id, type='deposit', amount=amount,
-                     status='pending', reference='manual-' + ''.join(random.choices(_s.digits, k=8)))
+                     status='pending', reference='manual-' + ''.join(random.choices(string.digits, k=8)))
     db.session.add(tx); db.session.commit()
     return _created(_tx_dict(tx))
 
@@ -749,7 +773,7 @@ def chargily_webhook():
     wallet = Wallet.query.filter_by(user_id=user_id).first()
     if not wallet:
         wallet = Wallet(user_id=user_id, balance=0.0); db.session.add(wallet)
-    wallet.balance += amount; wallet.updated_at = datetime.utcnow()
+    wallet.balance += amount; wallet.updated_at = datetime.now(timezone.utc)
     db.session.add(Transaction(user_id=user_id, type='deposit', amount=amount, status='completed', reference=ref))
     db.session.commit()
     return jsonify({'ok': True}), 200
@@ -779,7 +803,7 @@ def create_escrow():
     if amount <= 0:    return _err('amount must be positive.')
     wallet = Wallet.query.filter_by(user_id=me.id).first()
     if not wallet or float(wallet.balance) < amount: return _err('Insufficient balance.')
-    wallet.balance -= amount; wallet.updated_at = datetime.utcnow()
+    wallet.balance -= amount; wallet.updated_at = datetime.now(timezone.utc)
     escrow = Escrow(employer_id=me.id, student_id=student_id, amount=amount,
                     status='held', job_id=d.get('job_id'), note=d.get('note'))
     db.session.add(escrow)
@@ -798,7 +822,7 @@ def release_escrow(eid):
     escrow.status = 'released'
     sw = Wallet.query.filter_by(user_id=escrow.student_id).first()
     if not sw: sw = Wallet(user_id=escrow.student_id, balance=0.0); db.session.add(sw)
-    sw.balance += escrow.amount; sw.updated_at = datetime.utcnow()
+    sw.balance += escrow.amount; sw.updated_at = datetime.now(timezone.utc)
     db.session.add(Transaction(user_id=escrow.student_id, type='release', amount=escrow.amount, status='completed'))
     db.session.commit()
     return _ok(_escrow_dict(escrow))
@@ -813,7 +837,7 @@ def cancel_escrow(eid):
     if escrow.status != 'held':     return _err('Cannot cancel: not held.')
     escrow.status = 'cancelled'
     wallet = Wallet.query.filter_by(user_id=me.id).first()
-    wallet.balance += escrow.amount; wallet.updated_at = datetime.utcnow()
+    wallet.balance += escrow.amount; wallet.updated_at = datetime.now(timezone.utc)
     db.session.add(Transaction(user_id=me.id, type='refund', amount=escrow.amount, status='completed'))
     db.session.commit()
     return _ok(_escrow_dict(escrow))
@@ -855,7 +879,7 @@ def request_withdrawal():
     if not account:   return _err('Account number required.')
     wallet = Wallet.query.filter_by(user_id=me.id).first()
     if not wallet or float(wallet.balance) < amount: return _err('Insufficient balance.')
-    wallet.balance -= amount; wallet.updated_at = datetime.utcnow()
+    wallet.balance -= amount; wallet.updated_at = datetime.now(timezone.utc)
     wd = Withdrawal(user_id=me.id, amount=amount, payout_method=method,
                     account_number=account, status='pending')
     db.session.add(wd)
@@ -960,7 +984,7 @@ def admin_reject_withdrawal(wid):
     if wd.status != 'pending': return _err('Already processed.')
     wd.status = 'rejected'; wd.admin_note = str_field(get_json(), 'note') or None
     wallet = Wallet.query.filter_by(user_id=wd.user_id).first()
-    if wallet: wallet.balance += wd.amount; wallet.updated_at = datetime.utcnow()
+    if wallet: wallet.balance += wd.amount; wallet.updated_at = datetime.now(timezone.utc)
     tx = Transaction.query.filter_by(user_id=wd.user_id, type='withdraw', status='pending').first()
     if tx: tx.status = 'failed'
     db.session.add(Transaction(user_id=wd.user_id, type='refund', amount=wd.amount, status='completed'))
@@ -974,10 +998,24 @@ def admin_create_event():
     me = _admin_only()
     if not me: return _err('Admin only.', 403)
     d = get_json()
+    
+    # Safely parse datetime fields
+    start_at = None
+    end_at = None
+    if d.get('start_at'):
+        try:
+            start_at = datetime.fromisoformat(d['start_at'])
+        except (ValueError, TypeError):
+            return _err('Invalid start_at datetime format. Use ISO format (e.g., 2024-01-01T10:00:00).')
+    if d.get('end_at'):
+        try:
+            end_at = datetime.fromisoformat(d['end_at'])
+        except (ValueError, TypeError):
+            return _err('Invalid end_at datetime format. Use ISO format (e.g., 2024-01-01T10:00:00).')
+    
     e = Event(title=str_field(d,'title'), description=str_field(d,'description'),
               image=d.get('image'), location=d.get('location'),
-              start_at=datetime.fromisoformat(d['start_at']) if d.get('start_at') else None,
-              end_at  =datetime.fromisoformat(d['end_at'])   if d.get('end_at')   else None,
+              start_at=start_at, end_at=end_at,
               event_type=str_field(d,'event_type','other'), capacity=d.get('capacity'), is_visible=True)
     db.session.add(e); db.session.commit()
     try:

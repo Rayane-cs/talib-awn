@@ -5,9 +5,14 @@
 #  Students / Employers = role-specific tables (Joined Table Inheritance).
 # ══════════════════════════════════════════════════════════════════════════════
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timezone
 
 db = SQLAlchemy()
+
+
+def _now():
+    """Return timezone-aware UTC datetime."""
+    return datetime.now(timezone.utc)
 
 
 # ── Base User (identity + auth only) ─────────────────────────────────────────
@@ -28,8 +33,8 @@ class User(db.Model):
     is_banned     = db.Column(db.Boolean,  default=False)
     ban_reason    = db.Column(db.Text,     nullable=True)
     warnings      = db.Column(db.Integer,  default=0)
-    created_at    = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at    = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at    = db.Column(db.DateTime, default=_now)
+    updated_at    = db.Column(db.DateTime, default=_now, onupdate=_now)
 
     __mapper_args__ = {
         'polymorphic_identity': 'user',
@@ -82,7 +87,7 @@ class Project(db.Model):
     status      = db.Column(db.String(30),  default='open')
     owner_id    = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     is_visible  = db.Column(db.Boolean,  default=True)
-    created_at  = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at  = db.Column(db.DateTime, default=_now)
 
 
 class ProjectLike(db.Model):
@@ -91,7 +96,7 @@ class ProjectLike(db.Model):
     id         = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey('projects.id', ondelete='CASCADE'), index=True)
     user_id    = db.Column(db.Integer, db.ForeignKey('users.id',    ondelete='CASCADE'), index=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=_now)
 
 
 class ProjectComment(db.Model):
@@ -100,7 +105,7 @@ class ProjectComment(db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey('projects.id', ondelete='CASCADE'), index=True)
     user_id    = db.Column(db.Integer, db.ForeignKey('users.id',    ondelete='CASCADE'), index=True)
     content    = db.Column(db.Text,    nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=_now)
 
 
 class Event(db.Model):
@@ -115,7 +120,7 @@ class Event(db.Model):
     event_type  = db.Column(db.String(40),  default='other')
     capacity    = db.Column(db.Integer,     nullable=True)
     is_visible  = db.Column(db.Boolean,    default=True)
-    created_at  = db.Column(db.DateTime,   default=datetime.utcnow)
+    created_at  = db.Column(db.DateTime,   default=_now)
 
 
 class EventRegistration(db.Model):
@@ -124,7 +129,7 @@ class EventRegistration(db.Model):
     id         = db.Column(db.Integer, primary_key=True)
     event_id   = db.Column(db.Integer, db.ForeignKey('events.id', ondelete='CASCADE'), index=True)
     user_id    = db.Column(db.Integer, db.ForeignKey('users.id',  ondelete='CASCADE'), index=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=_now)
 
 
 class Announcement(db.Model):
@@ -136,7 +141,7 @@ class Announcement(db.Model):
     is_pinned  = db.Column(db.Boolean,    default=False)
     is_visible = db.Column(db.Boolean,    default=True)
     author_id  = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    created_at = db.Column(db.DateTime,   default=datetime.utcnow)
+    created_at = db.Column(db.DateTime,   default=_now)
 
 
 class UserFollow(db.Model):
@@ -145,7 +150,7 @@ class UserFollow(db.Model):
     id           = db.Column(db.Integer, primary_key=True)
     follower_id  = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), index=True)
     following_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), index=True)
-    created_at   = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at   = db.Column(db.DateTime, default=_now)
 
 
 # ── Wallet / Payments ─────────────────────────────────────────────────────────
@@ -155,7 +160,7 @@ class Wallet(db.Model):
     id         = db.Column(db.Integer, primary_key=True)
     user_id    = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
     balance    = db.Column(db.Numeric(12, 2), default=0.0)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=_now, onupdate=_now)
 
 
 class Transaction(db.Model):
@@ -168,7 +173,7 @@ class Transaction(db.Model):
     # status: pending | completed | failed
     status     = db.Column(db.String(20), nullable=False, default='pending')
     reference  = db.Column(db.String(120), nullable=True)
-    created_at = db.Column(db.DateTime,  default=datetime.utcnow)
+    created_at = db.Column(db.DateTime,  default=_now)
 
 
 class Escrow(db.Model):
@@ -181,7 +186,7 @@ class Escrow(db.Model):
     status      = db.Column(db.String(20), nullable=False, default='held')
     job_id      = db.Column(db.Integer, nullable=True)
     note        = db.Column(db.Text,    nullable=True)
-    created_at  = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at  = db.Column(db.DateTime, default=_now)
 
 
 class Withdrawal(db.Model):
@@ -195,4 +200,4 @@ class Withdrawal(db.Model):
     # status: pending | approved | rejected
     status         = db.Column(db.String(20), nullable=False, default='pending')
     admin_note     = db.Column(db.Text, nullable=True)
-    created_at     = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at     = db.Column(db.DateTime, default=_now)
