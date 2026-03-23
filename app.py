@@ -55,7 +55,17 @@ def create_app():
     # ── Extensions ─────────────────────────────────────────────────────────────
     db.init_app(app)
     JWTManager(app)
-    CORS(app, resources={r'/api/*': {'origins': '*'}}, supports_credentials=True)
+    
+    # CORS - Allow all origins for development
+    CORS(app, 
+         resources={r'/api/*': {
+             'origins': '*',
+             'methods': ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+             'allow_headers': ['Content-Type', 'Authorization'],
+             'expose_headers': ['Content-Type', 'Authorization'],
+             'supports_credentials': True,
+             'max_age': 3600
+         }})
 
     # ── Request/Response Logging ───────────────────────────────────────────────
     app.before_request(log_request)
