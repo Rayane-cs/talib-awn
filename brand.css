@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
-   TALIB-AWN  ·  طالب عون  —  BRAND PALETTE  v5
+   TALIB-AWN  ·  طالب عون  —  BRAND PALETTE  v6
    ─────────────────────────────────────────────────────────────
-   Brand:    Violet + Amber
+   Brand:    Violet + Teal (replaces amber)
    Earnings: Emerald + Mint
    Danger:   Red
    Dark BG:  Deep Plum Navy
@@ -18,13 +18,13 @@
   --violet-pale:     #EDE9FE;
   --violet-mid:      #8B5CF6;
 
-  /* ── AMBER — accent / highlights / CTAs on dark ── */
-  --amber:           #D97706;
-  --amber-dark:      #92400E;
-  --amber-deeper:    #78350F;
-  --amber-light:     #FCD34D;
-  --amber-pale:      #FEF3C7;
-  --amber-mid:       #F59E0B;
+  /* ── TEAL — accent / highlights / CTAs (replaces amber) ── */
+  --teal:            #0D9488;
+  --teal-dark:       #0F766E;
+  --teal-deeper:     #134E4A;
+  --teal-light:      #5EEAD4;
+  --teal-pale:       #CCFBF1;
+  --teal-mid:        #14B8A6;
 
   /* ── EMERALD — earnings / success / money ── */
   --emerald:         #059669;
@@ -81,23 +81,22 @@
   --font-mono:    'DM Mono', 'Courier New', monospace;
   --transition:   0.22s cubic-bezier(0.4,0,0.2,1);
 
-  /* ── Aliases for shared-dash / style.css compat ── */
+  /* ── Aliases ── */
   --blue:         var(--violet);
   --blue-dark:    var(--violet-dark);
   --blue-mid:     var(--violet-mid);
   --blue-light:   var(--violet-light);
   --blue-pale:    var(--violet-pale);
   --navy:         var(--dark-bg);
-  --gold:         var(--amber-mid);
-  --gold-pale:    var(--amber-pale);
-  --gold-light:   var(--amber-light);
-  --gold-deep:    var(--amber-dark);
+  --gold:         var(--teal-mid);
+  --gold-pale:    var(--teal-pale);
+  --gold-light:   var(--teal-light);
+  --gold-deep:    var(--teal-dark);
   --green:        var(--emerald-mid);
   --green-dark:   var(--emerald-dark);
   --green-pale:   var(--emerald-pale);
   --green-mid:    var(--mint);
 
-  /* style.css compat */
   --blue-deep:    var(--violet-deeper);
   --navy-mid:     var(--dark-surface);
   --bg2:          #EDE9FE;
@@ -130,7 +129,7 @@
   --shadow:    0 4px 18px rgba(0,0,0,0.6);
   --shadow-lg: 0 12px 44px rgba(0,0,0,0.7);
   --violet-pale: rgba(124,58,237,0.18);
-  --amber-pale:  rgba(245,158,11,0.14);
+  --teal-pale:   rgba(13,148,136,0.14);
   --emerald-pale:rgba(16,185,129,0.14);
   --mint-pale:   rgba(110,231,183,0.10);
   --red-pale:    rgba(220,38,38,0.14);
@@ -182,7 +181,7 @@ nav, .navbar, .topbar {
   color: var(--violet-light) !important;
 }
 .nav-item.active .nav-icon svg { stroke: var(--violet-light) !important; }
-.nav-badge { background: var(--amber-mid) !important; color: var(--dark-bg) !important; }
+.nav-badge { background: var(--teal-mid) !important; color: #fff !important; }
 .sb-foot { border-color: rgba(167,139,250,0.12) !important; }
 .sb-user-name { color: #F5F0FF !important; }
 .sb-user-role { color: rgba(245,240,255,0.45) !important; }
@@ -194,8 +193,8 @@ nav, .navbar, .topbar {
 
 /* ── Admin badge ── */
 .admin-badge {
-  background: rgba(245,158,11,0.18) !important;
-  color: var(--amber-mid) !important;
+  background: rgba(13,148,136,0.18) !important;
+  color: var(--teal-mid) !important;
 }
 
 /* ── Hero / dark sections ── */
@@ -223,15 +222,12 @@ nav, .navbar, .topbar {
   filter: brightness(1.08);
 }
 
-/* Deposit button — EMERALD (money coming in) */
+/* Deposit button — EMERALD */
 .btn-deposit {
   background: linear-gradient(135deg, var(--emerald-dark), var(--emerald)) !important;
   color: #ffffff !important;
   box-shadow: 0 4px 18px rgba(5,150,105,0.40) !important;
   border: none !important;
-}
-.btn-deposit:hover {
-  box-shadow: 0 8px 28px rgba(5,150,105,0.55) !important;
 }
 
 /* White buttons on dark backgrounds */
@@ -258,9 +254,6 @@ nav, .navbar, .topbar {
   color: #fff !important;
   border-color: rgba(255,255,255,0.35) !important;
 }
-.btn-white-outline:hover, .btn-wb-outline:hover {
-  background: rgba(255,255,255,0.22) !important;
-}
 .btn-login {
   color: var(--text) !important;
   border-color: rgba(124,58,237,0.30) !important;
@@ -285,16 +278,15 @@ nav, .navbar, .topbar {
 
 /* ── STAT ICONS ── */
 .stat-icon, .ov-ico { background: var(--violet) !important; }
-/* Earnings stat icons get emerald */
 .stat-icon.earn, .ov-ico.earn { background: var(--emerald) !important; }
 
 /* ── BADGES ── */
 .badge-open,  .b-open  { background: var(--emerald-pale) !important; color: var(--emerald-dark)  !important; }
-.badge-pending,.b-pend  { background: var(--amber-pale)   !important; color: var(--amber-dark)    !important; }
-.badge-closed, .b-rej   { background: var(--red-pale)      !important; color: var(--red)           !important; }
-.badge-part,   .b-part  { background: var(--violet-pale)   !important; color: var(--violet-dark)   !important; }
+.badge-pending,.b-pend  { background: var(--teal-pale)    !important; color: var(--teal-dark)     !important; }
+.badge-closed, .b-rej   { background: var(--red-pale)     !important; color: var(--red)            !important; }
+.badge-part,   .b-part  { background: var(--violet-pale)  !important; color: var(--violet-dark)   !important; }
 .job-badge.badge-open    { background: var(--emerald-pale) !important; color: var(--emerald-dark)  !important; }
-.job-badge.badge-pending { background: var(--amber-pale)   !important; color: var(--amber-dark)    !important; }
+.job-badge.badge-pending { background: var(--teal-pale)   !important; color: var(--teal-dark)     !important; }
 
 /* ── INPUTS ── */
 input:focus, select:focus, textarea:focus,
@@ -314,13 +306,13 @@ input:focus, select:focus, textarea:focus,
 .notif-panel { border-color: rgba(124,58,237,0.18) !important; }
 .notif-item.unread { background: var(--violet-pale) !important; }
 
-/* ── HERO PILL / EYEBROW — amber accent ── */
+/* ── HERO PILL / EYEBROW — teal accent (replaces amber) ── */
 .hero-pill, .brand-eyebrow, .abadge {
-  background: rgba(245,158,11,0.15) !important;
-  border-color: rgba(245,158,11,0.35) !important;
-  color: var(--amber-mid) !important;
+  background: rgba(13,148,136,0.15) !important;
+  border-color: rgba(13,148,136,0.35) !important;
+  color: var(--teal-mid) !important;
 }
-.hero h1 em, .ah2 em, .ctah em { color: var(--amber-mid) !important; }
+.hero h1 em, .ah2 em, .ctah em { color: var(--teal-mid) !important; }
 
 /* ── STEP DOTS ── */
 .step-dot.active {
@@ -337,7 +329,7 @@ input:focus, select:focus, textarea:focus,
   box-shadow: 0 0 0 4px rgba(124,58,237,0.18) !important;
 }
 
-/* ── OTP / TIMER ── */
+/* ── OTP ── */
 .otp-inputs input:focus {
   border-color: var(--violet) !important;
   box-shadow: 0 0 0 3px rgba(124,58,237,0.15) !important;
@@ -370,7 +362,6 @@ input:focus, select:focus, textarea:focus,
 .jc-price, .job-price, .wl-amt, .balance-amount, .pb-amt {
   color: var(--emerald-light) !important;
 }
-/* Price on light bg */
 .jc-price { color: var(--emerald-dark) !important; }
 
 /* ── TRANSACTIONS ── */
@@ -398,14 +389,14 @@ input:focus, select:focus, textarea:focus,
 .settings-link:hover .settings-link-title { color: var(--violet-dark) !important; }
 .settings-link:hover .settings-link-arrow { stroke: var(--violet) !important; }
 
-/* ── ESCROW / WITHDRAWAL ── */
-.escrow-status.held  { background: var(--amber-pale) !important; color: var(--amber-dark) !important; }
-.wd-status.pending   { background: var(--amber-pale) !important; color: var(--amber-dark) !important; }
+/* ── ESCROW / WITHDRAWAL — teal replaces amber ── */
+.escrow-status.held  { background: var(--teal-pale) !important; color: var(--teal-dark) !important; }
+.wd-status.pending   { background: var(--teal-pale) !important; color: var(--teal-dark) !important; }
 
-/* ── ADMIN WARNING ── */
-.admin-badge { background: rgba(245,158,11,0.16) !important; color: var(--amber-mid) !important; }
-.tahdir-1    { background: var(--amber-pale) !important; border-color: var(--amber-mid) !important; }
-.nav-badge   { background: var(--amber-mid)  !important; color: var(--dark-bg) !important; }
+/* ── ADMIN WARNING — teal replaces amber ── */
+.admin-badge { background: rgba(13,148,136,0.16) !important; color: var(--teal-mid) !important; }
+.tahdir-1    { background: var(--teal-pale) !important; border-color: var(--teal-mid) !important; }
+.nav-badge   { background: var(--teal-mid)  !important; color: #fff !important; }
 
 /* ── CHAT BUBBLES ── */
 .bwrap.mine .bubble, .msg-mine .mb {
@@ -440,19 +431,19 @@ input:focus, select:focus, textarea:focus,
 footer { background: var(--white) !important; border-color: rgba(124,58,237,0.14) !important; }
 .nav-name span, .logo span { color: var(--violet) !important; }
 
-/* ── WALLET-SPECIFIC EMERALD THEMING ── */
+/* ── WALLET-SPECIFIC TEAL THEMING ── */
 .stat-pill.approved-pill .sv { color: var(--emerald-dark) !important; }
 .stat-pill.total-pill .sv    { color: var(--emerald) !important; }
 .tx-type-pill.green  { background: var(--emerald-pale) !important; color: var(--emerald-dark) !important; }
-.tx-type-pill.amber  { background: var(--amber-pale) !important;   color: var(--amber-dark) !important; }
+.tx-type-pill.amber  { background: var(--teal-pale) !important;    color: var(--teal-dark) !important; }
 .tx-type-pill.blue   { background: var(--violet-pale) !important;  color: var(--violet-dark) !important; }
 .tx-amount.credit::before { content: '+'; }
 .tx-amount.debit::before  { content: '−'; }
 
-/* ── STARS = AMBER ── */
-.star { color: var(--amber-mid) !important; }
-.stars { color: var(--amber-mid) !important; }
-[data-theme="dark"] .star, [data-theme="dark"] .stars { color: var(--amber-light) !important; }
+/* ── STARS = TEAL ── */
+.star { color: var(--teal-mid) !important; }
+.stars { color: var(--teal-mid) !important; }
+[data-theme="dark"] .star, [data-theme="dark"] .stars { color: var(--teal-light) !important; }
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar        { width: 5px; height: 5px; }

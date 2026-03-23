@@ -1479,17 +1479,28 @@ showPage('home');
 openConv(1);
 </script>
 <script type="module">
-import { supabase, requireProfile } from './api.js';
+import { supabase, requireProfile, apiCall } from './api.js';
+
 window._supabaseSignOut = async () => {
   await supabase.auth.signOut();
   window.location.href = 'login.html';
 };
+
 (async () => {
   const profile = await requireProfile();
   if (!profile) return;
-  const initials = (profile.firstname?.[0] ?? '?').toUpperCase();
+
   const fullName = `${profile.firstname ?? ''} ${profile.lastname ?? ''}`.trim();
+  const initials = (profile.firstname?.[0] ?? '?').toUpperCase();
   const subInfo  = profile.company_name ?? profile.domain ?? '';
+
+  // Helper
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (el && val != null) el.textContent = val;
+  };
+
+  // ── Navbar / drawer ──
   const navAv = document.getElementById('navAv');
   if (navAv) navAv.textContent = initials;
   const avHname = document.querySelector('.av-hname');
@@ -1502,14 +1513,125 @@ window._supabaseSignOut = async () => {
   if (drawerUname) drawerUname.textContent = fullName;
   const drawerUsub = document.querySelector('.drawer-usub');
   if (drawerUsub) drawerUsub.textContent = subInfo;
+
+  // ── Welcome banner ──
   const wName = document.querySelector('.w-name');
   if (wName) wName.textContent = `أهلاً ${profile.firstname ?? 'صاحب العمل'} 👋`;
-  const pname = document.getElementById('prof-name');
-  if (pname) pname.textContent = fullName;
-  const pphone = document.getElementById('prof-phone');
-  if (pphone && profile.phone) pphone.textContent = profile.phone;
-  const pemail = document.getElementById('prof-email');
-  if (pemail && profile.email) pemail.textContent = profile.email;
+
+  // ── Profile page fields ──
+  set('prof-name',    fullName);
+  set('prof-type',    profile.domain       || '—');
+  set('prof-company', profile.company_name || '—');
+  set('prof-state',   profile.domain       || '—');
+  set('prof-area',    profile.institution  || '—');
+  set('prof-phone',   profile.phone        || '—');
+  set('prof-email',   profile.email        || '—');
+
+  // ── Profile hero ──
+  const phAv = document.querySelector('.ph-av');
+  if (phAv) phAv.textContent = initials;
+  const phName = document.querySelector('.ph-name');
+  if (phName) phName.textContent = fullName;
+  const phSub = document.querySelector('.ph-sub');
+  if (phSub) phSub.textContent = [profile.company_name, profile.domain].filter(Boolean).join(' · ');
+
+  window._profileData = profile;
+
+  // ── Fetch live stats from API ──
+  try {
+    const [walletRes, txRes, escrowRes] = await Promise.all([
+      apiCall('GET', '/wallet'),
+      apiCall('GET', '/wallet/transactions?limit=100'),
+      apiCall('GET', '/escrow/as-employer'),
+    ]);
+
+    const balance  = walletRes.ok  ? parseFloat(walletRes.data.balance) : 0;
+    const txs      = txRes.ok      ? txRes.data      : [];
+    const escrows  = escrowRes.ok  ? escrowRes.data  : [];
+
+    const fmt = n => n.toLocaleString('fr-DZ');
+
+    const heldAmount   = escrows.filter(e => e.status === 'held').reduce((s, e) => s + parseFloat(e.amount), 0);
+    const totalSpent   = escrows.filter(e => e.status === 'released').reduce((s, e) => s + parseFloat(e.amount), 0);
+    const activeJobs   = escrows.filter(e => e.status === 'held').length;
+    const completedJobs= escrows.filter(e => e.status === 'released').length;
+
+    // Overview stat cards
+    const ovVals = document.querySelectorAll('#page-home .ov-val');
+    if (ovVals[0]) ovVals[0].textContent = completedJobs;
+    if (ovVals[1]) ovVals[1].textContent = fmt(totalSpent);
+    if (ovVals[2]) ovVals[2].textContent = activeJobs;
+    if (ovVals[3]) ovVals[3].textContent = txs.filter(t => t.status === 'pending').length;
+
+    // Wallet amount on earnings page
+    const wlAmt = document.querySelector('#page-earnings .wl-amt');
+    if (wlAmt) wlAmt.textContent = fmt(balance) + ' دج';
+
+    // Earnings summary
+    const earningsIvs = document.querySelectorAll('#page-earnings .info-row .iv');
+    if (earningsIvs[0]) earningsIvs[0].textContent = fmt(totalSpent) + ' دج';
+    if (earningsIvs[1]) earningsIvs[1].textContent = fmt(heldAmount) + ' دج';
+    if (earningsIvs[2]) earningsIvs[2].textContent = fmt(balance) + ' دج';
+    if (earningsIvs[3]) earningsIvs[3].textContent = completedJobs + ' وظيفة';
+
+    // Transaction list
+    const txContainer = document.querySelector('#page-earnings .card:last-child');
+    if (txContainer && txs.length > 0) {
+      const txRows = txContainer.querySelectorAll('.tx-row');
+      txRows.forEach(r => r.remove());
+
+      const iconMap = {
+        escrow:  {bg:'#6D5B9E',           dir:'out', label:'حجز أموال للعمل'},
+        release: {bg:'var(--emerald-dark)',dir:'out', label:'دفع أجر للطالب'},
+        deposit: {bg:'var(--blue)',        dir:'in',  label:'إيداع'},
+        withdraw:{bg:'var(--red)',         dir:'out', label:'سحب'},
+        refund:  {bg:'var(--teal-dark)',   dir:'in',  label:'استرداد'},
+      };
+
+      const svgMoney = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>';
+
+      txs.slice(0, 6).forEach(t => {
+        const m    = iconMap[t.type] || iconMap.deposit;
+        const sign = m.dir === 'in' ? '+' : '−';
+        const cls  = m.dir === 'in' ? 'in' : 'out';
+        const date = new Date(t.created_at).toLocaleDateString('ar-DZ', {day:'numeric', month:'long', year:'numeric'});
+        const row  = document.createElement('div');
+        row.className = 'tx-row';
+        row.innerHTML = `
+          <div class="tx-ico" style="background:${m.bg}">${svgMoney}</div>
+          <div style="flex:1">
+            <div class="tx-ttl">${m.label}</div>
+            <div class="tx-dt">${date}</div>
+          </div>
+          <div class="tx-amt ${cls}">${sign}${fmt(parseFloat(t.amount))} دج</div>`;
+        txContainer.appendChild(row);
+      });
+    }
+
+  } catch (e) {
+    console.error('Stats fetch error:', e);
+  }
+
+  // ── Patch openEditModal to prefill from real profile ──
+  const origOpenEdit = window.openEditModal;
+  window.openEditModal = function() {
+    origOpenEdit && origOpenEdit();
+    setTimeout(() => {
+      const p = window._profileData;
+      if (!p) return;
+      const g = id => document.getElementById(id);
+      if (g('em-name'))    g('em-name').value    = p.firstname || '';
+      if (g('em-company')) g('em-company').value = p.company_name || '';
+      if (g('em-phone'))   g('em-phone').value   = p.phone || '';
+      if (g('em-email'))   g('em-email').value   = p.email || '';
+      const typeSel = g('em-type');
+      if (typeSel && p.domain) {
+        [...typeSel.options].forEach(o => {
+          if (o.value === p.domain || o.textContent === p.domain) o.selected = true;
+        });
+      }
+    }, 100);
+  };
 })();
 </script>
 </body>
