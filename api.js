@@ -9,7 +9,13 @@
 //  Set API_BASE to your Flask server URL (with no trailing slash).
 // ══════════════════════════════════════════════════════════════════════════════
 
-export const API_BASE = "http://127.0.0.1:5000/api";
+// Auto-detect API URL based on environment
+const PRODUCTION_API = "https://api.talibawn.com/api";  // Update with your production URL
+const DEVELOPMENT_API = "http://localhost:5000/api";
+
+export const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? DEVELOPMENT_API
+  : PRODUCTION_API;
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  TOKEN STORAGE  (localStorage — no Supabase session needed)
@@ -48,7 +54,13 @@ export async function apiCall(method, path, body = null, retry = true) {
   const opts = { method, headers };
   if (body) opts.body = JSON.stringify(body);
 
-  let res = await fetch(`${API_BASE}${path}`, opts);
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, opts);
+  } catch (error) {
+    console.error('Network error:', error);
+    return { ok: false, error: 'تعذّر الاتصال بالخادم. تأكد من تشغيل الخادم.' };
+  }
 
   // Auto-refresh on 401
   if (res.status === 401 && retry) {
@@ -59,7 +71,13 @@ export async function apiCall(method, path, body = null, retry = true) {
     return { ok: false, error: 'Session expired.' };
   }
 
-  const json = await res.json().catch(() => ({ ok: false, error: 'Invalid server response.' }));
+  let json;
+  try {
+    json = await res.json();
+  } catch (error) {
+    console.error('JSON parse error:', error);
+    return { ok: false, error: 'استجابة غير صالحة من الخادم.' };
+  }
   return json;
 }
 
