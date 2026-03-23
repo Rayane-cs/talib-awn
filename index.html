@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Talib-Awn</title>
+  <title>طالب-عون</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="brand.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800&display=swap" rel="stylesheet">
   <style>
-    :root{--blue:#1a6ef5;--blue-mid:#2980f5;--blue-light:#5ba3f8;--blue-pale:#e8f0fe;--navy:#0d1b3e;--gold:#f5a623;--gold-pale:#fef3dc;--bg:#f0f4ff;--white:#ffffff;--text:#0d1b3e;--text2:#3a4a6b;--text3:#7a8aaa;--border:#dbe3f5;--fh:'Playfair Display',serif;--fb:'Inter',sans-serif;--fm:'Inter',sans-serif}
+    :root{--blue:#7C3AED;--blue-mid:#A78BFA;--blue-light:#DDD6FE;--blue-pale:#EDE9FE;--navy:#10202d;--gold:#D97706;--gold-pale:#FEF3C7;--green:#5a9e6f;--green-dark:#3d7a52;--green-pale:#e4f2e8;--green-mid:#b8ddc4;--bg:#f7f7f7;--white:#ffffff;--text:#10202d;--text2:#2a3d4d;--text3:#6b7c8a;--border:rgba(124,58,237,0.18);--fh:'Cairo',sans-serif;--fb:'Cairo',sans-serif;--fm:'Cairo',sans-serif}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
     body{font-family:var(--fb);background:var(--white);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
@@ -27,20 +28,35 @@
     .nav-acts{display:flex;align-items:center;gap:10px}
     .btn-login{padding:8px 20px;border-radius:100px;font-size:14px;font-weight:600;color:var(--navy);border:1.5px solid var(--border);background:transparent;cursor:pointer;transition:all .2s;font-family:var(--fb)}
     .btn-login:hover{border-color:var(--blue);color:var(--blue)}
-    .btn-signup{padding:9px 22px;border-radius:100px;font-size:14px;font-weight:700;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border:none;cursor:pointer;transition:all .2s;font-family:var(--fb);box-shadow:0 2px 12px rgba(26,110,245,.3);display:inline-block}
-    .btn-signup:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(26,110,245,.4)}
+    .btn-signup{padding:9px 22px;border-radius:100px;font-size:14px;font-weight:700;background:linear-gradient(135deg,#5B21B6,#7C3AED);color:#fff;border:none;cursor:pointer;transition:all .2s;font-family:var(--fb);box-shadow:0 2px 12px rgba(124,58,237,.35);display:inline-block}
+    .btn-signup:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(124,58,237,.50)}
     @media(max-width:375px){.btn-signup{font-size:12px;padding:9px 15px}.nav-brand{gap:6px}.nav-logo-box{height:32px}.nav-name{font-size:15px}}
 
     /* HERO */
-    .hero{min-height:100vh;background:linear-gradient(160deg,var(--navy) 0%,#1a3a8f 45%,#1654cc 75%,var(--blue) 100%);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;padding:120px 5% 80px 6%;position:relative;overflow:hidden}
-    .hero>*{max-width:52%;position:relative;z-index:3}
+    .hero{min-height:100vh;background:#07101f;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;padding:120px 6% 80px;position:relative;overflow:hidden}
+    .hero>*{max-width:100%;position:relative;z-index:2}
     .hero .hero-cta{justify-content:flex-start}
-    .hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:80px 80px;-webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,black 30%,transparent 100%);mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,black 30%,transparent 100%);pointer-events:none}
-    .hero-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.3);color:var(--gold);padding:6px 16px;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:.08em;font-family:var(--fb);margin-bottom:28px;animation:fu .6s ease both}
-    .hero h1{font-family:var(--fh);font-size:clamp(42px,7vw,86px);font-weight:900;line-height:1.08;letter-spacing:-.01em;color:#fff;margin-bottom:24px;animation:fu .7s .1s ease both}
-    .hero h1 em{font-style:italic;color:var(--gold)}
-    .hero-sub{font-size:clamp(15px,2vw,19px);font-weight:400;color:rgba(255,255,255,.65);line-height:1.8;max-width:560px;margin:0 auto 40px;animation:fu .7s .2s ease both}
-    .hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:60px;animation:fu .7s .3s ease both}
+
+    /* bg layers — pure CSS divs, no canvas sizing bugs */
+    .hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden}
+    .hero-sphere{position:absolute;border-radius:50%;filter:blur(72px);will-change:transform}
+    .hero-sphere-1{width:70vw;height:70vw;background:linear-gradient(40deg,rgba(15,10,30,.98),rgba(44,25,80,.65));top:-15%;left:-15%;animation:hs1 16s ease-in-out infinite alternate}
+    .hero-sphere-2{width:75vw;height:75vw;background:linear-gradient(220deg,rgba(10,21,32,.98),rgba(124,58,237,.30));bottom:-25%;right:-18%;animation:hs2 20s ease-in-out infinite alternate}
+    .hero-sphere-3{width:50vw;height:50vw;background:linear-gradient(120deg,rgba(124,58,237,.25),rgba(26,47,64,.18));top:40%;left:20%;animation:hs3 22s ease-in-out infinite alternate}
+    @keyframes hs1{0%{transform:translate(0,0) scale(1)}100%{transform:translate(6%,8%) scale(1.10)}}
+    @keyframes hs2{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-7%,-5%) scale(1.16)}}
+    @keyframes hs3{0%{transform:translate(0,0) scale(1);opacity:.35}100%{transform:translate(-4%,7%) scale(1.07);opacity:.70}}
+    .hero-glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(124,58,237,.18),transparent 65%);animation:hglow 9s ease-in-out infinite alternate}
+    @keyframes hglow{0%{opacity:.4;transform:scale(.90)}100%{opacity:.85;transform:scale(1.08)}}
+    .hero-grid{position:absolute;inset:0;background-size:44px 44px;background-image:linear-gradient(to right,rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.03) 1px,transparent 1px)}
+    .hero-noise{position:absolute;inset:0;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+    .hero-particles{position:absolute;inset:0;overflow:hidden}
+    .hero-particle{position:absolute;background:#fff;border-radius:50%;opacity:0;pointer-events:none}
+    .hero-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.35);color:#D97706;padding:6px 16px;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:.08em;font-family:var(--fb);margin-bottom:28px;animation:fu .6s ease both}
+    .hero h1{font-family:var(--fh);font-size:clamp(42px,6.5vw,84px);font-weight:900;line-height:1.05;letter-spacing:-.035em;color:#fff;margin-bottom:24px;animation:fu .7s .1s ease both}
+    .hero h1 em{font-style:italic;color:#D97706}
+    .hero-sub{font-size:clamp(15px,1.8vw,18px);font-weight:400;color:rgba(255,255,255,.65);line-height:1.8;max-width:480px;margin:0 0 40px;animation:fu .7s .2s ease both}
+    .hero-cta{display:flex;gap:14px;justify-content:flex-start;flex-wrap:wrap;margin-bottom:60px;animation:fu .7s .3s ease both}
     .btn-hp{display:inline-flex;align-items:center;gap:10px;padding:16px 32px;border-radius:100px;background:#fff;color:var(--navy);font-family:var(--fb);font-size:15px;font-weight:600;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 24px rgba(0,0,0,.2)}
     .btn-hp:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(0,0,0,.3)}
     .btn-ho{display:inline-flex;align-items:center;gap:10px;padding:16px 32px;border-radius:100px;background:transparent;color:#fff;font-family:var(--fb);font-size:15px;font-weight:500;border:2px solid rgba(255,255,255,.35);cursor:pointer;transition:all .2s}
@@ -50,17 +66,19 @@
     /* SECTIONS */
     section{padding:100px 5%}
     .si{max-width:1200px;margin:0 auto;position:relative;z-index:3}
+    .si strong{color: var(--gold)}
     .stag{display:inline-flex;align-items:center;gap:8px;font-family:var(--fb);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:16px}
     .stag::before{content:'';width:24px;height:1.5px;background:var(--blue)}
     .sh2{font-family:var(--fh);font-size:clamp(28px,4.5vw,50px);font-weight:800;color:var(--navy);line-height:1.18;letter-spacing:-.01em;margin-bottom:18px}
     .sd{font-size:17px;font-weight:400;color:var(--text2);max-width:520px;line-height:1.75}
 
     /* FEATURES BG */
-    .offer-bg{position:relative;background:radial-gradient(1200px 600px at 20% 10%,rgba(59,130,246,.20),transparent 55%),radial-gradient(900px 600px at 90% 70%,rgba(168,85,247,.18),transparent 55%),linear-gradient(180deg,#070d1f 0%,#060a16 100%);overflow:hidden}
-    .offer-bg::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:120px 120px;opacity:.22;pointer-events:none;-webkit-mask-image:radial-gradient(80% 70% at 35% 40%,#000 45%,transparent 72%);mask-image:radial-gradient(80% 70% at 35% 40%,#000 45%,transparent 72%)}
+    .offer-bg{position:relative;background:linear-gradient(160deg,var(--navy) 0%,var(--blue) 55%,var(--blue-mid) 100%);overflow:hidden}
+    .offer-bg::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 15% 20%,rgba(0,0,0,.35),transparent 60%),radial-gradient(ellipse 70% 60% at 85% 80%,rgba(0,0,0,.30),transparent 60%);pointer-events:none;z-index:1}
+    .offer-bg::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:120px 120px;opacity:.3;pointer-events:none;z-index:1;-webkit-mask-image:radial-gradient(80% 70% at 35% 40%,#000 45%,transparent 72%);mask-image:radial-gradient(80% 70% at 35% 40%,#000 45%,transparent 72%)}
     .offer-bg .stag{color:rgba(255,255,255,.70)}.offer-bg .stag::before{background:rgba(255,255,255,.50)}
     .offer-bg .sh2,.offer-bg .sd{color:#fff}.offer-bg .sd{color:rgba(255,255,255,.72)}
-    .features-hero-inner{position:relative;z-index:3;display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
+    .features-hero-inner{position:relative;z-index:5;display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
     .features-h{font-family:var(--fh);font-size:clamp(34px,5.2vw,60px);font-weight:900;letter-spacing:-.01em;line-height:1.1;margin:10px 0 20px;color:#fff}
     .features-p{font-size:16px;font-weight:400;line-height:1.85;color:rgba(255,255,255,.65);max-width:520px;margin:0}
 
@@ -69,24 +87,24 @@
     .opacity-0{opacity:0!important}
     .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
     .carousel{height:clamp(240px,28vw,340px);border-radius:24px;overflow:hidden;box-shadow:0 26px 80px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.10);background:radial-gradient(120% 120% at 20% 0%,rgba(255,255,255,.18),transparent 60%),linear-gradient(145deg,rgba(15,23,42,1),rgba(15,23,42,.95))}
-    .carousel-body{display:flex;height:100%;width:calc(var(--carousel-count,3)*100%);transform:translateX(calc(var(--carousel-index,0)*calc(-100%/var(--carousel-count,3))));transition:transform .65s cubic-bezier(.22,1,.36,1),opacity .4s ease;will-change:transform}
+    .carousel-body{display:flex;height:100%;width:calc(var(--carousel-count,3)*100%);transform:translateX(calc(var(--carousel-index,0)*calc(100%/var(--carousel-count,3))));transition:transform .65s cubic-bezier(.22,1,.36,1),opacity .4s ease;will-change:transform;direction:rtl;}
     .carousel-slide{flex:0 0 calc(100%/var(--carousel-count,3));min-width:calc(100%/var(--carousel-count,3));height:100%;display:flex;align-items:center;justify-content:center}
     .carousel-slide>div{width:88%;height:88%;margin:0 auto;border-radius:20px;overflow:hidden;position:relative;box-shadow:0 18px 55px rgba(0,0,0,.35);background:radial-gradient(120% 120% at 20% 10%,rgba(255,255,255,.18) 0%,rgba(255,255,255,0) 55%),linear-gradient(135deg,rgba(59,130,246,.35),rgba(168,85,247,.22)),linear-gradient(180deg,rgba(15,23,42,.25),rgba(15,23,42,.65))}
     .carousel-slide img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05) contrast(1.02);transform:scale(1.02)}
     .carousel-prev,.carousel-next{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.10);color:#fff;cursor:pointer;display:grid;place-items:center;box-shadow:0 10px 25px rgba(0,0,0,.45);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:transform .2s ease,background .2s ease;z-index:2}
     .carousel-prev:hover,.carousel-next:hover{background:rgba(255,255,255,.18);transform:translateY(-50%) scale(1.05)}
     .carousel-prev:active,.carousel-next:active{transform:translateY(-50%) scale(.98)}
-    .carousel-prev{left:14px}
-    .carousel-next{right:14px}
+    .carousel-prev{right:14px}
+    .carousel-next{left:14px}
 
     /* WHO USES */
     /* who-uses removed */
 
     /* APP */
-    .app-bg{background:linear-gradient(135deg,var(--navy) 0%,#1a3a8f 50%,#0d1b3e 100%);color:#fff;position:relative;overflow:hidden}
-    .app-bg::before{content:'';position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(26,110,245,.25) 0%,transparent 70%);top:-200px;right:-100px;pointer-events:none}
+    .app-bg{background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 50%,var(--navy) 100%);color:#fff;position:relative;overflow:hidden}
+    .app-bg::before{content:'';position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.25) 0%,transparent 70%);top:-200px;right:-100px;pointer-events:none}
     .ai{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:80px;position:relative;z-index:3}
-    .abadge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:6px 16px;font-size:11px;font-weight:600;color:var(--gold);font-family:var(--fb);letter-spacing:.1em;text-transform:uppercase;margin-bottom:24px}
+    .abadge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:6px 16px;font-size:11px;font-weight:600;color:#D97706;font-family:var(--fb);letter-spacing:.1em;text-transform:uppercase;margin-bottom:24px}
     .ah2{font-family:var(--fh);font-size:clamp(30px,4.5vw,50px);font-weight:800;line-height:1.18;letter-spacing:-.01em;margin-bottom:20px;color:#fff}
     .ah2 em{font-style:italic;color:var(--gold)}
     .adesc{font-size:16px;font-weight:400;color:rgba(255,255,255,.6);line-height:1.8;margin-bottom:36px;max-width:460px}
@@ -101,46 +119,46 @@
     .pc{display:flex;justify-content:center;position:relative}
     .pf{animation:pf 5s ease-in-out infinite;display:flex;justify-content:center;position:relative}
     @keyframes pf{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-18px) rotate(-1deg)}}
-    .pg{position:absolute;width:100px;height:1000px;border-radius:50%;background:radial-gradient(circle,rgba(26,110,245,.5) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);filter:blur(40px);animation:gp 3s ease-in-out infinite alternate}
+    .pg{position:absolute;width:100px;height:1000px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.55) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);filter:blur(40px);animation:gp 3s ease-in-out infinite alternate}
     @keyframes gp{from{opacity:.5;transform:translate(-50%,-50%) scale(.9)}to{opacity:1;transform:translate(-50%,-50%) scale(1.1)}}
-    .pframe{width:315px;height:630px;background:linear-gradient(160deg,#1a1a2e,#2a2a4e);border-radius:46px;border:8px solid rgba(255,255,255,.12);box-shadow:0 40px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05),inset 0 1px 0 rgba(255,255,255,.1);position:relative;overflow:hidden;z-index:1}
+    .pframe{width:315px;height:630px;background:linear-gradient(160deg,#0a1a18,#0d2e28);border-radius:46px;border:8px solid rgba(255,255,255,.12);box-shadow:0 40px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05),inset 0 1px 0 rgba(255,255,255,.1);position:relative;overflow:hidden;z-index:1}
     .pn{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:80px;height:22px;background:#0d0d1a;border-radius:100px;z-index:3}
-    .pscr{width:100%;height:100%;background:linear-gradient(160deg,var(--navy) 0%,#1a398fd2 60%,#1a2a5eb4 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:44px 14px 20px}
+    .pscr{width:100%;height:100%;background:linear-gradient(160deg,#0F0A1E 0%,#1A113040 60%,#26194090 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:44px 14px 20px}
     .pname{font-family:var(--fb);font-size:17px;font-weight:800;color:#fff}
     .psub{font-size:11px;font-weight:400;color:rgba(255,255,255,.45);font-family:var(--fb)}
-    .pbadge{position:absolute;right:-32px;top:70px;background:rgba(13,27,62,.95);border:1px solid rgba(91,163,248,.3);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:8px;min-width:160px;animation:bff 4s ease-in-out infinite;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:2}
+    .pbadge{position:absolute;right:-32px;top:70px;background:rgba(13,50,46,.96);border:1px solid rgba(124,58,237,.40);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:8px;min-width:160px;animation:bff 4s ease-in-out infinite;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:2}
     @keyframes bff{0%,100%{transform:translateY(0) rotate(1deg)}50%{transform:translateY(-10px) rotate(0)}}
     .bdot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;flex-shrink:0}
-    .btxt{font-size:12px;font-weight:400;color:rgba(255,255,255,.85);line-height:1.45}.btxt strong{display:block;font-size:13px;font-weight:600;color:#fff}
+    .btxt{font-size:12px;font-weight:400;color:rgba(255,255,255,.85);line-height:1.45}.btxt strong{display:block;font-size:13px;font-weight:600;color:#A78BFA}
 
     /* TRUST */
     .trust-bg{background:var(--white);border-top:1px solid var(--border)}
     .tg{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:52px;position:relative;z-index:3}
     .tc{background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:32px 28px;transition:all .2s;position:relative;overflow:hidden}
     .tc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--navy),var(--white),var(--blue));transform:scaleX(0);transform-origin:left;transition:transform .4s}
-    .tc:hover{box-shadow:0 12px 40px rgba(26,110,245,.1);transform:translateY(-3px)}.tc:hover::after{transform:scaleX(1)}
+    .tc:hover{box-shadow:0 12px 40px rgba(124,58,237,.10);transform:translateY(-3px)}.tc:hover::after{transform:scaleX(1)}
     .ti-img{width:44px;height:44px;object-fit:contain;display:block;margin-bottom:18px;filter:invert(30%) sepia(90%) saturate(1200%) hue-rotate(205deg) brightness(95%)}
     .tt{font-family:var(--fh);font-size:19px;font-weight:700;color:var(--navy);margin-bottom:10px;line-height:1.25}
     .td{font-size:14px;font-weight:400;color:var(--text2);line-height:1.75}
 
     /* PAYMENT */
     .payment-sec{background:#fff;overflow:hidden;position:relative}
-    .payment-sec::before{content:'';position:absolute;top:-50%;right:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(33,150,243,.12) 0%,transparent 70%);pointer-events:none}
+    .payment-sec::before{content:'';position:absolute;top:-50%;right:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(124,58,237,.10) 0%,transparent 70%);pointer-events:none}
     .pay-layout{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;position:relative;z-index:3}
     .pay-text{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
     .pay-text.visible{opacity:1;transform:translateY(0)}
-    .pay-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(33,150,243,.15);border:1px solid rgba(33,150,243,.25);border-radius:99px;padding:5px 14px;font-family:var(--fb);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#1565C0;margin-bottom:18px}
+    .pay-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);border-radius:99px;padding:5px 14px;font-family:var(--fb);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5B21B6;margin-bottom:18px}
     .pay-title{font-family:var(--fh);font-size:clamp(26px,4vw,42px);font-weight:800;color:var(--navy);line-height:1.18;letter-spacing:-.01em;margin-bottom:16px}
     .pay-desc{font-family:var(--fb);font-size:16px;font-weight:400;color:var(--text2);line-height:1.8;max-width:440px}
     .pay-card-wrap{display:flex;justify-content:center;align-items:center;position:relative;perspective:800px}
-    .pay-card-img{width:100%;max-width:460px;border-radius:16px;transform:rotate(-6deg) translateX(20px);box-shadow:0 20px 60px rgba(0,0,0,.18),0 0 80px rgba(33,150,243,.10);transition:transform .7s cubic-bezier(.22,1,.36,1),opacity .7s ease,box-shadow .4s ease;opacity:0;position:relative;z-index:2}
+    .pay-card-img{width:100%;max-width:460px;border-radius:16px;transform:rotate(-6deg) translateX(20px);box-shadow:0 20px 60px rgba(0,0,0,.18),0 0 80px rgba(124,58,237,.12);transition:transform .7s cubic-bezier(.22,1,.36,1),opacity .7s ease,box-shadow .4s ease;opacity:0;position:relative;z-index:2}
     .pay-card-img.visible{opacity:1}
-    .pay-card-img:hover{transform:rotate(-2deg) translateX(20px) translateY(-8px);box-shadow:0 30px 80px rgba(0,0,0,.22),0 0 120px rgba(33,150,243,.15)}
-    .pay-card-glow{position:absolute;width:84%;height:100%;border-radius:22px;background:linear-gradient(135deg,var(--navy) 0%,#1a3a8f 60%,#0d1b3e 100%);top:50%;left:50%;transform:translate(-50%,-50%) rotate(10deg);pointer-events:none;z-index:1;box-shadow:0 12px 40px rgba(10,22,40,.35)}
+    .pay-card-img:hover{transform:rotate(-2deg) translateX(20px) translateY(-8px);box-shadow:0 30px 80px rgba(0,0,0,.22),0 0 120px rgba(124,58,237,.18)}
+    .pay-card-glow{position:absolute;width:84%;height:100%;border-radius:22px;background:linear-gradient(135deg,#10202d 0%,#1a3d38 50%,#7C3AED 100%);top:50%;left:50%;transform:translate(-50%,-50%) rotate(10deg);pointer-events:none;z-index:1;box-shadow:0 12px 40px rgba(16,32,45,.35)}
 
     /* CTA */
-    .cta-sec{background:linear-gradient(135deg,var(--navy) 0%,#1a3a8f 60%,#0d1b3e 100%);text-align:center;position:relative;overflow:hidden}
-    .cta-sec::before{content:'';position:absolute;width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(26,110,245,.2) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+    .cta-sec{background:linear-gradient(135deg,#10202d 0%,#1a3d38 50%,#7C3AED 100%);text-align:center;position:relative;overflow:hidden}
+    .cta-sec::before{content:'';position:absolute;width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.2) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
     .ctaw{position:absolute;font-family:var(--fh);font-size:220px;font-weight:900;opacity:.03;top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;color:#fff;pointer-events:none;letter-spacing:-.02em}
     .ctah{font-family:var(--fh);font-size:clamp(34px,5vw,62px);font-weight:800;letter-spacing:-.01em;margin-bottom:20px;color:#fff;position:relative;z-index:1;line-height:1.15}
     .ctah em{font-style:italic;color:var(--gold)}
@@ -167,10 +185,10 @@
     /* RESPONSIVE */
     @media(max-width:960px){
       section{padding:72px 6%}
-      .hero{min-height:auto;padding:110px 6% 72px;align-items:center;text-align:center}
-      .hero>*{max-width:100%;position:relative;z-index:3}
-      .hero .hero-cta{justify-content:center}
-      .hero-sub{max-width:520px;margin:0 auto 28px}
+      .hero{min-height:auto;padding:110px 6% 72px;align-items:flex-start;text-align:left}
+      .hero>*{max-width:80%;position:relative;z-index:3}
+      .hero .hero-cta{justify-content:flex-start}
+      .hero-sub{max-width:520px;margin:0 0 28px}
       .pay-card-glow{width:60%;height:95%;border-radius:16px}
       .ai,.tg{grid-template-columns:1fr}
       .pc{order:-1}
@@ -189,7 +207,9 @@
     @media(max-width:600px){
       section{padding:56px 7%}
       .hero{padding:92px 7% 60px;align-items:center;text-align:center}
-      .hero-cta{flex-direction:column;gap:10px}
+      .hero>*{max-width:100%}
+      .hero .hero-cta{justify-content:center}
+      .hero-sub{margin:0 auto 28px}
       .carousel{height:220px}
       .tg{grid-template-columns:1fr}
       .fg{grid-template-columns:1fr}
@@ -206,31 +226,40 @@
 <!-- NAV -->
 <nav id="nb">
   <div class="nav-brand">
-    <img src="logo-07.svg" class="nav-logo-box" alt="Talib-Awn">
-    <span class="nav-name">Talib<span>-Awn</span></span>
     <span class="nav-sep"></span>
+    <span class="nav-name">Talib<span> Awn</span></span>
+    <img src="logo-07.svg" class="nav-logo-box" alt="Talib-Awn" style="filter:hue-rotate(160deg) saturate(1.2);">
   </div>
   <div class="nav-links">
-    <a href="#offer">Features</a>
-    <a href="#how">How it works</a>
-    <a href="#app">App</a>
-    <a href="#trust">Why us</a>
-    <a href="#faq">FAQ</a>
+    <a href="#offer">الميزات</a>
+    <a href="#how">كيف يعمل</a>
+    <a href="#app">التطبيق</a>
+    <a href="#trust">لماذا نحن</a>
+    <a href="#faq">الأسئلة الشائعة</a>
   </div>
   <div class="nav-acts">
-    <a href="login.html" class="btn-login hide-m">Sign in</a>
-    <a href="register.html" class="btn-signup">Get started</a>
+    <a href="login.html" class="btn-login hide-m">تسجيل الدخول</a>
+    <a href="register.html" class="btn-signup">ابدأ الآن</a>
   </div>
 </nav>
 
 <!-- HERO -->
 <section id="hero" class="hero">
-  <div class="hero-pill">🇩🇿 Built for Algerian university students</div>
-  <h1>Study hard.<br><em>Earn smart</em></h1>
-  <p class="hero-sub">Talib-Awn connects university students with part-time jobs — find work easily and get paid locally</p>
+  <div class="hero-bg">
+    <div class="hero-sphere hero-sphere-1"></div>
+    <div class="hero-sphere hero-sphere-2"></div>
+    <div class="hero-sphere hero-sphere-3"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-noise"></div>
+    <div class="hero-particles" id="heroParticles"></div>
+  </div>
+  <div class="hero-pill">مُصمَّم لطلاب الجامعات الجزائرية</div>
+  <h1>ادرس بجدّ<br><em>اكسب بذكاء</em></h1>
+  <p class="hero-sub">طالب-عون يربط طلاب الجامعات بوظائف بدوام جزئي - ابحث عن عمل بسهولة واحصل على أجرك محلياً</p>
   <div class="hero-cta">
-    <a href="register.html?role=student" class="btn-hp">I need a job</a>
-    <a href="register.html?role=employer" class="btn-ho">I need staff</a>
+    <a href="register.html?role=student" class="btn-hp">أحتاج وظيفة</a>
+    <a href="register.html?role=employer" class="btn-ho">أحتاج موظفين</a>
   </div>
 </section>
 
@@ -238,12 +267,12 @@
 <section id="offer" class="offer-bg features-hero">
   <div class="si features-hero-inner">
     <div class="reveal">
-      <div class="stag">Features</div>
-      <h2 class="features-h">We're changing the way<br>people connect</h2>
-      <p class="features-p">Talib-Awn is redefining how students and employers connect in Algeria.<br>We're not just connecting people — we're building a smarter way to work, earn, and grow.</p>
+      <div class="stag">الميزات</div>
+      <h2 class="features-h">نغيّر طريقة تواصل الناس</h2>
+      <p class="features-p">طالب-عون يُعيد تعريف طريقة تواصل الطلاب وأصحاب العمل في الجزائر. لسنا فقط نربط الناس — بل نبني طريقة أذكى للعمل والكسب والنمو</p>
     </div>
 
-    <div id="auto-play" data-carousel='{"isAutoPlay":true,"speed":4000}'>
+    <div id="auto-play" data-carousel='{"isAutoPlay":true,"speed":1000}'>
       <div class="carousel">
         <div class="carousel-body opacity-0">
           <div class="carousel-slide"><div><img src="img_1.png" alt="Feature 1"></div></div>
@@ -253,12 +282,12 @@
         </div>
       </div>
       <button type="button" class="carousel-prev">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        <span class="sr-only">Previous</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        <span class="sr-only">السابق</span>
       </button>
       <button type="button" class="carousel-next">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-        <span class="sr-only">Next</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <span class="sr-only">التالي</span>
       </button>
     </div>
   </div>
@@ -267,64 +296,77 @@
 <!-- PROBLEM → SOLUTION -->
 <section id="problem" class="ps-sec">
   <div class="si">
+    <p class="ps-intro">هذا هو الواقع الذي يعيشه معظم الطلاب الجزائريين —</p>
+    <div class="ps-row-list" id="psRowList">
 
-    <!-- Intro line -->
-    <p class="ps-intro">Here's the reality for most Algerian students —</p>
-
-    <!-- Two-column: Problem | Solution -->
-    <div class="ps-grid">
-
-      <!-- Problem side -->
-      <div class="ps-col ps-col--problem reveal">
-        <div class="ps-badge ps-badge--problem">The Problem</div>
-        <h2 class="ps-h2">Students want to earn.<br>The system makes it hard.</h2>
-        <div class="ps-items">
-          <div class="ps-item">
+      <div class="ps-row">
+        <div class="ps-half ps-half--problem">
+          <span class="ps-badge ps-badge--problem">المشكلة</span>
+          <div class="ps-half-body">
             <span class="ps-dot ps-dot--red"></span>
-            <p>No central place to find student-friendly, part-time work in Algeria</p>
+            <p>لا يوجد مكان مركزي للعثور على وظائف بدوام جزئي مناسبة للطلاب في الجزائر</p>
           </div>
-          <div class="ps-item">
-            <span class="ps-dot ps-dot--red"></span>
-            <p>Word-of-mouth hiring is unreliable — opportunities vanish before most students hear about them</p>
-          </div>
-          <div class="ps-item">
-            <span class="ps-dot ps-dot--red"></span>
-            <p>No payment protection — students work and risk never getting paid</p>
-          </div>
-          <div class="ps-item">
-            <span class="ps-dot ps-dot--red"></span>
-            <p>Employers have no way to verify they're hiring a real, enrolled student</p>
+        </div>
+        <div class="ps-arrow-col"><div class="ps-arrow-circle">←</div></div>
+        <div class="ps-half ps-half--solution">
+          <span class="ps-badge ps-badge--solution">الحل</span>
+          <div class="ps-half-body">
+            <span class="ps-dot ps-dot--green"></span>
+            <p>سوق مخصص للوظائف بدوام جزئي يتناسب مع جداول الطلاب ومواقعهم</p>
           </div>
         </div>
       </div>
 
-      <!-- Divider -->
-      <div class="ps-divider" aria-hidden="true">
-        <div class="ps-divider-line"></div>
-        <div class="ps-divider-arrow">→</div>
-        <div class="ps-divider-line"></div>
+      <div class="ps-row">
+        <div class="ps-half ps-half--problem">
+          <span class="ps-badge ps-badge--problem">المشكلة</span>
+          <div class="ps-half-body">
+            <span class="ps-dot ps-dot--red"></span>
+            <p>التوظيف عبر المعارف غير موثوق — تختفي الفرص قبل أن يسمع بها معظم الطلاب</p>
+          </div>
+        </div>
+        <div class="ps-arrow-col"><div class="ps-arrow-circle">←</div></div>
+        <div class="ps-half ps-half--solution">
+          <span class="ps-badge ps-badge--solution">الحل</span>
+          <div class="ps-half-body">
+            <span class="ps-dot ps-dot--green"></span>
+            <p>إعلانات موثّقة ينشرها أصحاب العمل مباشرةً — تقدّم في ثوانٍ واحصل على رد سريع</p>
+          </div>
+        </div>
       </div>
 
-      <!-- Solution side -->
-      <div class="ps-col ps-col--solution reveal rd2">
-        <div class="ps-badge ps-badge--solution">The Solution</div>
-        <h2 class="ps-h2">One platform built<br>for both sides.</h2>
-        <div class="ps-items">
-          <div class="ps-item">
-            <span class="ps-dot ps-dot--blue"></span>
-            <p>A dedicated marketplace for part-time jobs matched to student schedules and locations</p>
+      <div class="ps-row">
+        <div class="ps-half ps-half--problem">
+          <span class="ps-badge ps-badge--problem">المشكلة</span>
+          <div class="ps-half-body">
+            <span class="ps-dot ps-dot--red"></span>
+            <p>لا حماية للمدفوعات — يعمل الطلاب ويخاطرون بعدم الحصول على أجرهم</p>
           </div>
-          <div class="ps-item">
-            <span class="ps-dot ps-dot--blue"></span>
-            <p>Verified listings posted directly by employers — apply in seconds, hear back fast</p>
+        </div>
+        <div class="ps-arrow-col"><div class="ps-arrow-circle">←</div></div>
+        <div class="ps-half ps-half--solution">
+          <span class="ps-badge ps-badge--solution">الحل</span>
+          <div class="ps-half-body">
+            <span class="ps-dot ps-dot--green"></span>
+            <p>مدفوعات محمية عبر نظام الضمان من Chargily — تُحتجز الأموال حتى تأكيد إتمام العمل</p>
           </div>
-          <div class="ps-item">
-            <span class="ps-dot ps-dot--blue"></span>
-            <p>Escrow-backed payments via Chargily — money is held until the job is confirmed done</p>
+        </div>
+      </div>
+
+      <div class="ps-row">
+        <div class="ps-half ps-half--problem">
+          <span class="ps-badge ps-badge--problem">المشكلة</span>
+          <div class="ps-half-body">
+            <span class="ps-dot ps-dot--red"></span>
+            <p>لا يمكن لأصحاب العمل التحقق من أنهم يوظفون طالباً جامعياً حقيقياً ومسجّلاً</p>
           </div>
-          <div class="ps-item">
-            <span class="ps-dot ps-dot--blue"></span>
-            <p>Gemini AI verifies student cards instantly — only real students access the platform</p>
+        </div>
+        <div class="ps-arrow-col"><div class="ps-arrow-circle">←</div></div>
+        <div class="ps-half ps-half--solution">
+          <span class="ps-badge ps-badge--solution">الحل</span>
+          <div class="ps-half-body">
+            <span class="ps-dot ps-dot--green"></span>
+            <p>الذكاء الاصطناعي Gemini يتحقق من بطاقات الطلاب فوراً — فقط الطلاب الحقيقيون يصلون للمنصة</p>
           </div>
         </div>
       </div>
@@ -334,40 +376,115 @@
 </section>
 
 <style>
+  /* ── SECTION SHELL ── */
   .ps-sec{background:var(--bg);padding:100px 5%;overflow:hidden}
-  .ps-intro{font-family:var(--fh);font-size:clamp(16px,2vw,20px);font-style:italic;color:var(--text3);margin-bottom:52px;text-align:center}
-  .ps-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:48px;align-items:start;position:relative;z-index:3}
-  .ps-col{background:var(--white);border:1.5px solid var(--border);border-radius:24px;padding:36px 32px;position:relative}
-  .ps-col--problem{border-color:#fca5a5}
-  .ps-col--solution{border-color:var(--blue-light)}
-  .ps-badge{display:inline-flex;align-items:center;font-family:var(--fb);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:20px}
+  .ps-intro{font-family:var(--fb);font-size:clamp(16px,2vw,20px);font-style:italic;color:var(--text3);margin-bottom:52px;text-align:center}
+
+  /* ── ROW LIST ── */
+  .ps-row-list{display:flex;flex-direction:column;gap:12px;max-width:980px;margin:0 auto}
+
+  /* ── EACH ROW ── */
+  .ps-row{
+    display:grid;grid-template-columns:1fr 44px 1fr;
+    align-items:stretch;
+    background:var(--white);
+    border:1.5px solid var(--border);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 2px 10px rgba(0,0,0,.04);
+    opacity:0;
+    transform:translateY(28px);
+    transition:box-shadow .25s,transform .25s;
+  }
+  .ps-row.ps-visible{
+    animation:psIn .52s cubic-bezier(.22,1,.36,1) forwards;
+  }
+  @keyframes psIn{
+    from{opacity:0;transform:translateY(28px)}
+    to  {opacity:1;transform:translateY(0)}
+  }
+  .ps-row.ps-done{opacity:1;transform:translateY(0)}
+  .ps-row:hover{box-shadow:0 8px 28px rgba(124,58,237,.08);transform:translateY(-2px)}
+  .ps-row.ps-visible:hover,.ps-row.ps-done:hover{transform:translateY(-2px)}
+
+  /* ── HALF PANELS ── */
+  .ps-half{padding:26px 30px;display:flex;flex-direction:column;gap:14px}
+  .ps-half--problem{background:#FFFBFB;border-right:1.5px solid #fde8e8}
+  .ps-half--solution{background:#F6FEF9;border-left:1.5px solid var(--green-mid)}
+
+  .ps-half-body{display:flex;align-items:flex-start;gap:12px}
+  .ps-half-body p{font-family:var(--fb);font-size:14.5px;font-weight:400;color:var(--text2);line-height:1.75;margin:0}
+
+  /* ── CENTRE ARROW COL ── */
+  .ps-arrow-col{
+    display:flex;align-items:center;justify-content:center;
+    background:var(--white);position:relative;
+  }
+  .ps-arrow-col::before{
+    content:'';position:absolute;top:0;bottom:0;left:50%;
+    width:1px;background:var(--border);transform:translateX(-50%);
+  }
+  .ps-arrow-circle{
+    width:30px;height:30px;border-radius:50%;
+    background:var(--white);border:1.5px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;color:var(--blue);font-weight:700;
+    position:relative;z-index:1;
+    box-shadow:0 2px 8px rgba(124,58,237,.10);
+  }
+
+  /* ── BADGES ── */
+  .ps-badge{
+    display:inline-flex;align-items:center;
+    font-family:var(--fb);font-size:10px;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;
+    padding:4px 12px;border-radius:100px;width:fit-content;
+  }
   .ps-badge--problem{background:#fef2f2;color:#b91c1c;border:1px solid #fca5a5}
-  .ps-badge--solution{background:var(--blue-pale);color:var(--blue);border:1px solid var(--blue-light)}
-  .ps-h2{font-family:var(--fh);font-size:clamp(22px,2.8vw,30px);font-weight:800;color:var(--navy);line-height:1.2;letter-spacing:-.01em;margin-bottom:28px}
-  .ps-items{display:flex;flex-direction:column;gap:18px}
-  .ps-item{display:flex;align-items:flex-start;gap:14px}
-  .ps-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px}
-  .ps-dot--red{background:#ef4444;box-shadow:0 0 0 3px #fee2e2}
-  .ps-dot--blue{background:var(--blue);box-shadow:0 0 0 3px var(--blue-pale)}
-  .ps-item p{font-family:var(--fb);font-size:14px;font-weight:400;color:var(--text2);line-height:1.75;margin:0}
-  /* centre divider */
-  .ps-divider{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding-top:80px}
-  .ps-divider-line{width:1.5px;height:80px;background:var(--border)}
-  .ps-divider-arrow{font-family:var(--fb);font-size:22px;font-weight:700;color:var(--blue);line-height:1;transform:rotate(90deg)}
+  .ps-badge--solution{background:var(--green-pale);color:var(--green-dark);border:1px solid var(--green-mid)}
+
+  /* ── DOTS ── */
+  .ps-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:7px}
+  .ps-dot--red  {background:#ef4444;box-shadow:0 0 0 3px #fee2e2}
+  .ps-dot--green{background:var(--green);box-shadow:0 0 0 3px var(--green-pale)}
+
+  /* ── BRIDGE (used by HOW section) ── */
   .ps-bridge{display:flex;align-items:center;gap:16px;margin-bottom:40px;margin-top:20px}
   .ps-bridge-line{flex:1;height:1px;background:var(--border)}
   .ps-bridge-label{font-family:var(--fb);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap}
-  @media(max-width:960px){
-    .ps-grid{grid-template-columns:1fr;gap:0}
-    .ps-divider{flex-direction:row;padding-top:0;margin:24px 0}
-    .ps-divider-line{width:80px;height:1.5px}
-    .ps-divider-arrow{transform:rotate(0deg)}
-  }
-  @media(max-width:600px){
-    .ps-col{padding:24px 20px}
-    .ps-h2{font-size:22px}
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:700px){
+    .ps-row{grid-template-columns:1fr}
+    .ps-half--problem{border-right:none;border-bottom:1.5px solid #fde8e8}
+    .ps-half--solution{border-left:none}
+    .ps-arrow-col{display:none}
+    .ps-half{padding:20px 18px}
   }
 </style>
+
+<script>
+(function(){
+  var rows = document.querySelectorAll('#psRowList .ps-row');
+  if(!rows.length) return;
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        var row = e.target;
+        var idx = Array.prototype.indexOf.call(rows, row);
+        setTimeout(function(){
+          row.classList.add('ps-visible');
+          row.addEventListener('animationend', function(){
+            row.classList.add('ps-done');
+          }, {once:true});
+        }, idx * 150);
+        obs.unobserve(row);
+      }
+    });
+  }, {threshold:0.1});
+  rows.forEach(function(r){ obs.observe(r); });
+})();
+</script>
 
 <!-- HOW IT WORKS -->
 <section id="how" class="mflow-section">
@@ -375,11 +492,11 @@
     <div class="mflow-hdr">
       <div class="ps-bridge reveal">
         <div class="ps-bridge-line"></div>
-        <span class="ps-bridge-label">So here's exactly how it works</span>
+        <span class="ps-bridge-label">إليك كيف يعمل بالضبط</span>
         <div class="ps-bridge-line"></div>
       </div>
-      <h2 class="sh2 mflow-h2">Start earning in 3 simple steps</h2>
-      <p class="mflow-sub">From browsing to payday — see how it flows.</p>
+      <h2 class="sh2 mflow-h2">ابدأ الكسب في 3 خطوات بسيطة</h2>
+      <p class="mflow-sub">من التصفح إلى يوم الراتب — شاهد كيف يسير كل شيء.</p>
     </div>
     <div class="mflow-canvas-wrap">
       <div class="mflow-canvas" id="mflowCanvas">
@@ -394,9 +511,9 @@
 
         <div class="mf-node mf-node--1" id="mfn1">
           <div class="mf-sticky mf-sticky--green">
-            <div class="mf-sticky-label">STEP 01</div>
-            <h3>Browse Jobs</h3>
-            <p>Discover part-time gigs near you, filtered by schedule, location &amp; pay.</p>
+            <div class="mf-sticky-label">الخطوة 01</div>
+            <h3>تصفّح الوظائف</h3>
+            <p>اكتشف وظائف بدوام جزئي قريبة منك، مصفّاة حسب الجدول والموقع والأجر.</p>
           </div>
           <div class="mf-mockup mf-mockup--jobs">
             <div class="mf-mockup-bar"><span class="mf-dot mf-dot--r"></span><span class="mf-dot mf-dot--y"></span><span class="mf-dot mf-dot--g"></span><span class="mf-mock-title">Listings</span></div>
@@ -404,40 +521,40 @@
             <div class="mf-mock-row mf-mock-row--b"></div>
             <div class="mf-mock-row mf-mock-row--a" style="width:70%"></div>
           </div>
-          <div class="mf-badge mf-badge--1"><span>Student</span></div>
+          <div class="mf-badge mf-badge--1"><span>الطالب</span></div>
         </div>
 
         <div class="mf-node mf-node--2" id="mfn2">
           <div class="mf-sticky mf-sticky--yellow">
-            <div class="mf-sticky-label">STEP 02</div>
-            <h3>Apply &amp; Work</h3>
-            <p>Connect with the employer, chat in-app, and complete the task.</p>
+            <div class="mf-sticky-label">الخطوة 02</div>
+            <h3>تقدّم واعمل</h3>
+            <p>تواصل مع صاحب العمل، تحدّث داخل التطبيق، وأنجز المهمة.</p>
           </div>
           <div class="mf-mockup mf-mockup--chat">
-            <div class="mf-chat-bubble mf-chat-bubble--in">Available this Saturday?</div>
-            <div class="mf-chat-bubble mf-chat-bubble--out">Yes, Saturday works!</div>
-            <div class="mf-chat-bubble mf-chat-bubble--in">Great, you're hired!</div>
+            <div class="mf-chat-bubble mf-chat-bubble--in">هل أنت متاح هذا السبت؟</div>
+            <div class="mf-chat-bubble mf-chat-bubble--out">نعم، السبت مناسب!</div>
+            <div class="mf-chat-bubble mf-chat-bubble--in">رائع، أنت محدد للوظيفة!</div>
           </div>
-          <div class="mf-badge mf-badge--2"><span>Employer</span></div>
+          <div class="mf-badge mf-badge--2"><span>صاحب العمل</span></div>
         </div>
 
         <div class="mf-node mf-node--3" id="mfn3">
           <div class="mf-sticky mf-sticky--orange">
-            <div class="mf-sticky-label">STEP 03</div>
-            <h3>Get Paid</h3>
-            <p>Funds land in your account instantly — Edahabia &amp; CCP ready.</p>
+            <div class="mf-sticky-label">الخطوة 03</div>
+            <h3>استلم أجرك</h3>
+            <p>تصل الأموال إلى حسابك فوراً — جاهزة لإيداهبية وCCP.</p>
           </div>
           <div class="mf-mockup mf-mockup--wallet">
-            <div class="mf-wallet-label">BALANCE</div>
+            <div class="mf-wallet-label">الرصيد</div>
             <div class="mf-wallet-amount">12,500 <span>DZD</span></div>
             <div class="mf-wallet-bar"><div class="mf-wallet-fill" id="mfWalletFill"></div></div>
             <div class="mf-wallet-chips"><span class="mf-chip mf-chip--g">Edahabia</span><span class="mf-chip mf-chip--b">CCP</span></div>
           </div>
         </div>
 
-        <div class="mf-label mf-label--1">BROWSE</div>
-        <div class="mf-label mf-label--2">CHAT & WORK</div>
-        <div class="mf-label mf-label--3">WITHDRAW</div>
+        <div class="mf-label mf-label--1">تصفّح</div>
+        <div class="mf-label mf-label--2">تحدّث واعمل</div>
+        <div class="mf-label mf-label--3">اسحب أموالك</div>
       </div>
     </div>
   </div>
@@ -450,7 +567,7 @@
   .mflow-h2{margin-bottom:12px}
   .mflow-sub{font-family:var(--fb);font-size:16px;font-weight:400;color:var(--text3);letter-spacing:.01em;line-height:1.7}
   .mflow-canvas-wrap{position:relative;width:100%;max-width:1000px;margin:0 auto}
-  .mflow-canvas{position:relative;width:100%;min-height:420px;background:#f7f8fa;border:1.5px solid rgba(21,101,192,.12);border-radius:20px;overflow:hidden;background-image:radial-gradient(circle,rgba(21,101,192,.12) 1px,transparent 1px);background-size:24px 24px;box-shadow:0 4px 40px rgba(21,101,192,.06),0 1px 6px rgba(0,0,0,.04)}
+  .mflow-canvas{position:relative;width:100%;min-height:420px;background:#f7f8fa;border:1.5px solid rgba(124,58,237,.12);border-radius:20px;overflow:hidden;background-image:radial-gradient(circle,rgba(124,58,237,.12) 1px,transparent 1px);background-size:24px 24px;box-shadow:0 4px 40px rgba(124,58,237,.06),0 1px 6px rgba(0,0,0,.04)}
   .mflow-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
   .mf-node{position:absolute;display:flex;flex-direction:column;gap:10px;opacity:0;transform:translateY(18px) scale(.96);transition:opacity .55s cubic-bezier(.2,.8,.2,1),transform .55s cubic-bezier(.2,.8,.2,1);z-index:3}
   .mf-node.mf-visible{opacity:1;transform:translateY(0) scale(1)}
@@ -472,19 +589,19 @@
   .mf-mockup--chat{display:flex;flex-direction:column;gap:5px;padding:10px}
   .mf-chat-bubble{font-family:var(--fb);font-size:10.5px;font-weight:400;padding:5px 9px;border-radius:10px;max-width:90%;line-height:1.45}
   .mf-chat-bubble--in{background:#f0f0f0;color:#333;align-self:flex-start;border-bottom-left-radius:3px}
-  .mf-chat-bubble--out{background:#2196F3;color:#fff;align-self:flex-end;border-bottom-right-radius:3px}
+  .mf-chat-bubble--out{background:#5B21B6;color:#fff;align-self:flex-end;border-bottom-right-radius:3px}
   .mf-mockup--wallet{padding:12px 14px}
   .mf-wallet-label{font-family:var(--fb);font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:3px}
   .mf-wallet-amount{font-family:var(--fb);font-size:22px;font-weight:800;color:#0D1B2A;letter-spacing:-.03em;margin-bottom:10px}
   .mf-wallet-amount span{font-size:12px;font-weight:500;color:#6B7C93}
   .mf-wallet-bar{height:5px;background:#e8f4fe;border-radius:3px;overflow:hidden;margin-bottom:10px}
-  .mf-wallet-fill{height:100%;width:0%;background:linear-gradient(90deg,#2196F3,#7C6FF7);border-radius:3px;transition:width 1.2s cubic-bezier(.2,.8,.2,1) .3s}
+  .mf-wallet-fill{height:100%;width:0%;background:linear-gradient(90deg,#5B21B6,#7C3AED);border-radius:3px;transition:width 1.2s cubic-bezier(.2,.8,.2,1) .3s}
   .mf-wallet-chips{display:flex;gap:5px}
   .mf-chip{font-size:9.5px;font-weight:600;padding:2px 8px;border-radius:99px;letter-spacing:.04em}
-  .mf-chip--g{background:#e8f7ef;color:#2d8a56}.mf-chip--b{background:#e3f2fd;color:#1565C0}
-  .mf-badge{display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid rgba(21,101,192,.15);border-radius:99px;padding:4px 10px 4px 4px;box-shadow:0 2px 10px rgba(0,0,0,.08);width:fit-content;font-family:var(--fb);font-size:12px;font-weight:600;color:var(--navy);position:absolute}
+  .mf-chip--g{background:#e8f7ef;color:#2d8a56}.mf-chip--b{background:#EDE9FE;color:#5B21B6}
+  .mf-badge{display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid rgba(124,58,237,.15);border-radius:99px;padding:4px 10px 4px 4px;box-shadow:0 2px 10px rgba(0,0,0,.08);width:fit-content;font-family:var(--fb);font-size:12px;font-weight:600;color:var(--navy);position:absolute}
   .mf-badge--1{bottom:-14px;left:50px}.mf-badge--2{bottom:-14px;right:-10px}
-  .mf-label{position:absolute;font-family:var(--fb);font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(21,101,192,.45);z-index:2}
+  .mf-label{position:absolute;font-family:var(--fb);font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(124,58,237,.45);z-index:2}
   .mf-label--1{top:88px;left:5.8%}.mf-label--2{top:38px;left:40.7%}.mf-label--3{top:88px;left:74.9%}
   #mfp1{transition:stroke-dashoffset .7s cubic-bezier(.4,0,.2,1)}
   #mfp2{transition:stroke-dashoffset .7s cubic-bezier(.4,0,.2,1) .25s}
@@ -519,21 +636,21 @@
 <section id="app" class="app-bg">
   <div class="ai">
     <div>
-      <div class="abadge">Mobile App</div>
-      <h2 class="ah2">Find and manage jobs<br><em>straight from your phone</em></h2>
-      <p class="adesc">Browse offers, accept jobs, and manage your earnings from your phone. Students can scan their university card to register in seconds.</p>
+      <div class="abadge">تطبيق الجوال</div>
+      <h2 class="ah2">ابحث عن وظائف وأدِرها<br><em>مباشرةً من هاتفك</em></h2>
+      <p class="adesc">تصفّح العروض، اقبل الوظائف، وأدِر أرباحك من هاتفك. يمكن للطلاب مسح بطاقتهم الجامعية للتسجيل في ثوانٍ.</p>
       <div class="afs">
-        <div class="af"><div class="afi"><img src="https://img.icons8.com/?size=100&id=7E1LwVS6HB4t&format=png&color=000000" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);"></div><div><div class="aft">Easy access</div><div class="afs2">Browse and accept job offers on the go</div></div></div>
-        <div class="af"><div class="afi"><img src="https://img.icons8.com/?size=100&id=9xjQNFjDCyFj&format=png&color=000000" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);"></div><div><div class="aft">Real-time notifications</div><div class="afs2">Get alerts for new offers instantly</div></div></div>
-        <div class="af"><div class="afi"><img src="https://img.icons8.com/?size=100&id=qEK2pqenBa22&format=png&color=000000" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);"></div><div><div class="aft">Card scanner</div><div class="afs2">Snap your student card to register in seconds</div></div></div>
+        <div class="af"><div class="afi"><img src="https://img.icons8.com/?size=100&id=7E1LwVS6HB4t&format=png&color=000000" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);"></div><div><div class="aft">وصول سهل</div><div class="afs2">تصفّح عروض العمل واقبلها أينما كنت</div></div></div>
+        <div class="af"><div class="afi"><img src="https://img.icons8.com/?size=100&id=9xjQNFjDCyFj&format=png&color=000000" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);"></div><div><div class="aft">إشعارات فورية</div><div class="afs2">احصل على تنبيهات للعروض الجديدة لحظياً</div></div></div>
+        <div class="af"><div class="afi"><img src="https://img.icons8.com/?size=100&id=qEK2pqenBa22&format=png&color=000000" alt="" style="width:20px;height:20px;filter:brightness(0) invert(1);"></div><div><div class="aft">ماسح البطاقة</div><div class="afs2">صوّر بطاقتك الجامعية للتسجيل في ثوانٍ</div></div></div>
       </div>
       <div class="sbs">
-        <div class="sb-store"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" height="40" style="display:block;"><div class="sb-coming">Not available yet</div></div>
-        <div class="sb-store"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" height="40" style="display:block;"><div class="sb-coming">Not available yet</div></div>
+        <div class="sb-store"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" height="40" style="display:block;"><div class="sb-coming">غير متاح بعد</div></div>
+        <div class="sb-store"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" height="40" style="display:block;"><div class="sb-coming">غير متاح بعد</div></div>
       </div>
       <style>
         .sb-store{position:relative;padding:2px 5px;cursor:default;overflow:hidden}
-        .sb-coming{position:absolute;inset:0;background:rgba(13,27,62,.88);color:#fff;font-size:12px;font-weight:600;font-family:var(--fh);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s ease;border-radius:12px}
+        .sb-coming{position:absolute;inset:0;background:rgba(16,32,45,.88);color:#fff;font-size:12px;font-weight:600;font-family:var(--fh);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s ease;border-radius:12px}
         .sb-store:hover .sb-coming{opacity:1}
       </style>
     </div>
@@ -542,9 +659,9 @@
         <div class="pg"></div>
         <div class="pbadge">
           <div class="bdot"></div>
-          <div class="btxt"><strong>New job offer!</strong><span>Cashier small shop · 90 DA</span></div>
+          <div class="btxt"><strong>عرض وظيفة جديد!</strong><span>أمين صندوق · 90 دج</span></div>
         </div>
-        <div class="pframe"><div class="pn"></div><div class="pscr"><img src="logo-07.svg" alt="Talib-Awn" style="background:transparent;box-shadow:none;width:80px;height:80px;"><div class="pname">Talib-Awn</div><div class="psub">طالب عون</div></div></div>
+        <div class="pframe"><div class="pn"></div><div class="pscr"><img src="logo-07.svg" alt="Talib-Awn" style="background:transparent;box-shadow:none;width:80px;height:80px;filter:hue-rotate(160deg) saturate(1.3) brightness(1.1);"><div class="pname">Talib-Awn</div><div class="psub">طالب عون</div></div></div>
       </div>
     </div>
   </div>
@@ -553,12 +670,12 @@
 <!-- TRUST -->
 <section id="trust" class="trust-bg">
   <div class="si">
-    <div class="stag">Why trust us</div>
-    <h2 class="sh2">Built on security<br>and fairness</h2>
+    <div class="stag">لماذا تثق بنا</div>
+    <h2 class="sh2">مبنيٌّ على الأمان<br>والعدالة</h2>
     <div class="tg">
-      <div class="tc reveal"><img src="https://img.icons8.com/?size=100&id=eoxMN35Z6JKg&format=png&color=000000" class="ti-img" alt="AI Verification"><div class="tt">AI Student Verification</div><p class="td">Every student uploads their university card. Gemini AI reads and verifies it automatically — only real students get access.</p></div>
-      <div class="tc reveal rd1"><img src="https://img.icons8.com/?size=100&id=68930&format=png&color=000000" class="ti-img" alt="Secure Payments"><div class="tt">Secure Escrow Payments</div><p class="td">Money is held safely by Chargily until the job is done. Neither side can lose. Employers pay, students earn — 100% protected.</p></div>
-      <div class="tc reveal rd2"><img src="https://img.icons8.com/?size=100&id=wmiQxNp3EVI7&format=png&color=000000" class="ti-img" alt="Honest Reviews"><div class="tt">Honest Reviews</div><p class="td">Only people who actually worked together can leave reviews. No fake ratings — real feedback that matters.</p></div>
+      <div class="tc reveal"><img src="https://img.icons8.com/?size=100&id=eoxMN35Z6JKg&format=png&color=000000" class="ti-img" alt="AI Verification"><div class="tt">التحقق بالذكاء الاصطناعي</div><p class="td">كل طالب يرفع صورة بطاقته الجامعية. يقرأها Gemini AI ويتحقق منها تلقائياً — فقط الطلاب الحقيقيون يحصلون على وصول.</p></div>
+      <div class="tc reveal rd1"><img src="https://img.icons8.com/?size=100&id=68930&format=png&color=000000" class="ti-img" alt="Secure Payments"><div class="tt">مدفوعات ضمان آمنة</div><p class="td">تُحتجز الأموال بأمان عبر Chargily حتى إتمام العمل. لا أحد يخسر. أصحاب العمل يدفعون والطلاب يكسبون — محمي 100%.</p></div>
+      <div class="tc reveal rd2"><img src="https://img.icons8.com/?size=100&id=wmiQxNp3EVI7&format=png&color=000000" class="ti-img" alt="Honest Reviews"><div class="tt">تقييمات صادقة</div><p class="td">فقط من عملوا معاً يمكنهم التقييم. لا تقييمات مزيفة — ملاحظات حقيقية تعني شيئاً.</p></div>
     </div>
   </div>
 </section>
@@ -568,9 +685,9 @@
   <div class="si">
     <div class="pay-layout">
       <div class="pay-text reveal">
-        <div class="pay-badge">Payment</div>
-        <h2 class="pay-title">Easy Financial<br>Transactions</h2>
-        <p class="pay-desc">The easiest way to pay and get paid — powered by <strong>Edahabia</strong> &amp; <strong>Algérie Poste</strong>. No foreign bank, no complications. Fast, secure, and 100% local.</p>
+        <div class="pay-badge">الدفع</div>
+        <h2 class="pay-title">معاملات مالية<br>سهلة</h2>
+        <p class="pay-desc">الطريقة الأسهل للدفع والاستلام — مدعومة بـ<strong>إيداهبية</strong> وـ<strong>بريد الجزائر</strong>. لا بنك أجنبي، لا تعقيدات. سريع، آمن، و100% محلي.</p>
       </div>
       <div class="pay-card-wrap reveal rd2"><div class="pay-card-glow"></div><img class="pay-card-img" src="edahabia.png" alt="Edahabia payment card"></div>
     </div>
@@ -580,69 +697,59 @@
 <!-- FAQ -->
 <section id="faq" class="faq-sec">
   <div class="si">
-    <div class="stag">FAQ</div>
-    <h2 class="sh2">Common questions,<br>honest answers.</h2>
+    <div class="stag">الأسئلة الشائعة</div>
+    <h2 class="sh2">أسئلة شائعة،<br>إجابات صريحة.</h2>
     <div class="faq-list">
 
       <div class="faq-item">
         <button class="faq-q" aria-expanded="false">
-          <span>Is Talib-Awn free to join?</span>
+          <span>هل التسجيل في طالب-عون مجاني؟</span>
           <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="faq-a">
-          <p>Yes — signing up is completely free for both students and employers. Students browse and apply to jobs at no cost. Employers only pay a small service fee when they successfully hire someone.</p>
+          <p>نعم — التسجيل مجاني تماماً للطلاب وأصحاب العمل على حدٍّ سواء. يتصفح الطلاب ويتقدمون للوظائف دون أي تكلفة. أصحاب العمل يدفعون رسوم خدمة صغيرة فقط عند التوظيف الناجح.</p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-q" aria-expanded="false">
-          <span>How does student verification work?</span>
+          <span>كيف يعمل التحقق من هوية الطالب؟</span>
           <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="faq-a">
-          <p>After registering, you upload a photo of your university student card. Our Gemini AI reads the card automatically and verifies your enrollment. The process takes under a minute and you only need to do it once.</p>
+          <p>بعد التسجيل، ترفع صورة بطاقة الطالب الجامعية. يقرأها ذكاؤنا الاصطناعي Gemini تلقائياً ويتحقق من تسجيلك. تستغرق العملية أقل من دقيقة ولا تحتاجها إلا مرة واحدة.</p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-q" aria-expanded="false">
-          <span>How and when do I get paid?</span>
+          <span>كيف ومتى أستلم أجري؟</span>
           <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="faq-a">
-          <p>Once a job is marked complete, the funds held in escrow by Chargily are released to your Talib-Awn wallet immediately. From there you can withdraw to Edahabia, CCP, or BaridiMob — no foreign bank required.</p>
+          <p>بمجرد تأكيد اكتمال الوظيفة، تُفرَج الأموال المحتجزة في نظام الضمان عبر Chargily فوراً إلى محفظتك في طالب-عون. ومنها يمكنك السحب عبر إيداهبية أو CCP أو بريدي موب — دون الحاجة لأي بنك أجنبي.</p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-q" aria-expanded="false">
-          <span>What kinds of jobs are available?</span>
+          <span>ما أنواع الوظائف المتاحة؟</span>
           <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="faq-a">
-          <p>Talib-Awn is focused exclusively on part-time jobs — think cashiering, warehouse shifts, event staffing, tutoring, delivery, and similar roles with fixed hours. All listings are screened to fit around a student schedule.</p>
+          <p>طالب-عون مخصص حصرياً للوظائف بدوام جزئي — كأمين الصندوق، وورديات المستودعات، وطاقم الفعاليات، والتدريس الخصوصي، والتوصيل، وما شابه ذلك من أدوار ذات ساعات محددة. جميع الإعلانات منقّاة لتناسب جدول الطالب.</p>
         </div>
       </div>
 
       <div class="faq-item">
         <button class="faq-q" aria-expanded="false">
-          <span>What if there's a dispute between a student and an employer?</span>
+          <span>ماذا يحدث في حال حدوث نزاع بين الطالب وصاحب العمل؟</span>
           <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="faq-a">
-          <p>Because all payments go through our escrow system, no money moves until both parties confirm the job is done. If a dispute arises, our support team reviews the case and mediates a fair resolution before releasing any funds.</p>
+          <p>نظراً لأن جميع المدفوعات تمر عبر نظام الضمان الخاص بنا، لا تُحرَّك الأموال حتى يؤكد الطرفان إتمام العمل. في حال نشوء نزاع، يراجع فريق الدعم الحالة ويتوسط في إيجاد حل عادل قبل الإفراج عن أي مبالغ.</p>
         </div>
       </div>
-
-      <!-- <div class="faq-item">
-        <button class="faq-q" aria-expanded="false">
-          <span>Is the mobile app available now?</span>
-          <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="faq-a">
-          <p>The web platform is live and fully functional right now. Native iOS and Android apps are in development and will be available on the App Store and Google Play soon — stay tuned.</p>
-        </div>
-      </div> -->
 
     </div>
   </div>
@@ -689,12 +796,11 @@
 <section id="cta" class="cta-sec">
   <div class="ctaw">Talib-Awn</div>
   <div class="si" style="text-align:center;position:relative;z-index:3">
-    <div class="stag" style="justify-content:center;color:rgba(255,255,255,.4)">Ready to start?</div>
-    <h2 class="ctah">Your first opportunity<br><em>is waiting.</em></h2>
-    <p class="ctad">Join students already earning on Talib-Awn. Free to join, no complicated setup.</p>
+    <h2 class="ctah">فرصتك الأولى<br><em>في انتظارك.</em></h2>
+    <p class="ctad">انضم إلى الطلاب الذين يكسبون بالفعل عبر طالب-عون. مجاني للانضمام، بدون إعداد معقد.</p>
     <div class="ctabs">
-      <a href="register.html?role=student" class="btn-hp">Join as a student →</a>
-      <a href="register.html?role=employer" class="btn-ho">Post a job</a>
+      <a href="register.html?role=student" class="btn-hp">انضم كطالب ←</a>
+      <a href="register.html?role=employer" class="btn-ho">انشر وظيفة</a>
     </div>
   </div>
 </section>
@@ -704,19 +810,19 @@
   <div class="fi">
     <div class="fg">
       <div class="fb">
-        <div class="nav-brand"><img src="logo-07.svg" class="nav-logo-box" alt="Talib-Awn" style="background:transparent;box-shadow:none;"><span class="nav-name">Talib<span>-Awn</span></span><span class="nav-sep"></span></div>
-        <p>Connecting Algerian university students with part-time work.</p>
+        <div class="nav-brand"><span class="nav-sep"></span><span class="nav-name">Talib<span>-Awn</span></span><img src="logo-07.svg" class="nav-logo-box" alt="Talib-Awn" style="background:transparent;box-shadow:none;filter:hue-rotate(160deg) saturate(1.2);"></div>
+        <p>نربط طلاب الجامعات الجزائرية بفرص العمل بدوام جزئي.</p>
         <div class="fsoc"><a href="#" class="fsb">𝕏</a><a href="#" class="fsb">in</a><a href="#" class="fsb">f</a></div>
       </div>
-      <div class="fc"><h5>Platform</h5><a href="#">Browse jobs</a><a href="#">Post a job</a><a href="#">Pricing</a></div>
-      <div class="fc"><h5>Company</h5><a href="#">About us</a><a href="#how">How it works</a><a href="#">Blog</a><a href="#">Contact</a></div>
-      <div class="fc"><h5>Legal</h5><a href="#">Terms of service</a><a href="#">Privacy policy</a><a href="#">Community rules</a></div>
+      <div class="fc"><h5>المنصة</h5><a href="#">تصفّح الوظائف</a><a href="#">انشر وظيفة</a><a href="#">الأسعار</a></div>
+      <div class="fc"><h5>الشركة</h5><a href="#">من نحن</a><a href="#how">كيف يعمل</a><a href="#">المدونة</a><a href="#">تواصل معنا</a></div>
+      <div class="fc"><h5>القانونية</h5><a href="#">شروط الخدمة</a><a href="#">سياسة الخصوصية</a><a href="#">قواعد المجتمع</a></div>
     </div>
   </div>
 </footer>
 
 <script>
-  window.addEventListener('scroll',()=>{document.getElementById('nb').style.boxShadow=scrollY>10?'0 4px 24px rgba(13,27,62,.08)':'none';},{passive:true});
+  window.addEventListener('scroll',()=>{document.getElementById('nb').style.boxShadow=scrollY>10?'0 4px 24px rgba(16,32,45,.08)':'none';},{passive:true});
 
   const ro=new IntersectionObserver((e)=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');ro.unobserve(x.target);}});},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
   document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
@@ -782,11 +888,20 @@
   scene.add(new THREE.AmbientLight(0xffffff, 0.55));
   var sun = new THREE.DirectionalLight(0xffffff, 1.1);
   sun.position.set(2, 3, 4); scene.add(sun);
-  var rim = new THREE.DirectionalLight(0x5ba3f8, 0.5);
+  var rim = new THREE.DirectionalLight(0xF59E0B, 0.90);
   rim.position.set(-3, -1, 2); scene.add(rim);
+  var fill = new THREE.DirectionalLight(0x8B5CF6, 0.45);
+  fill.position.set(1, -2, -1); scene.add(fill);
 
   /* ---- Material ---- */
-  var mat = new THREE.MeshPhongMaterial({color: 0xf5a623, specular: 0xf2b85c, shininess: 40});
+  /* Copper/bronze material — warm metallic accent color */
+  var mat = new THREE.MeshPhongMaterial({
+    color: 0x4C1D95,
+    specular: 0xA78BFA,
+    shininess: 70,
+    emissive: 0x1A0A2E,
+    emissiveIntensity: 0.15
+  });
     
   /* ---- Load .obj ---- */
   var mesh = null;
@@ -818,15 +933,15 @@
   /* ---- Section targets ---- */
   /* [id, normX 0-1, normY 0-1, sizeFraction of viewport height, restRY] */
   var TARGETS = [
-    ['hero',    0.8, 0.5, 0.02,  0.3],
+    ['hero',    0.3, 0.5, 0.03,  0.3],
     ['offer',   0.1, 0.2, 0.01,  0.4],
     ['problem', 0.9, 0.2, 0.01, -0.2],
     ['how',     0.9, 0.2, 0.01, -0.2],
     ['app',     1.3, 0.5, 0.0, -0.3],
     ['trust',   0.9, 0.2, 0.01,  0.2],
     ['payment', 0.1, 0.5, 0.01, -0.4],
-    ['faq',     0.7, 0.5, 0.01,  0.1],
-    ['cta',     0.5, 0.45, 0.025,  0.0]
+    ['faq',     0.9, 0.5, 0.01,  0.1],
+    ['cta',     0.5, 0.42, 0.025,  0.3]
   ];
 
   var secEls = TARGETS.map(function(t){ return document.getElementById(t[0]); });
@@ -894,5 +1009,64 @@
 })();
 </script>
 
+<script>
+/* ── HERO PARTICLES + MOUSE ── */
+(function(){
+  var container = document.getElementById('heroParticles');
+  if(!container) return;
+
+  for(var i=0; i<72; i++) spawnAmbient();
+
+  function spawnAmbient(){
+    var p = document.createElement('div');
+    p.className = 'hero-particle';
+    var sz = Math.random()*2.4+0.8;
+    p.style.width = sz+'px'; p.style.height = sz+'px';
+    container.appendChild(p);
+    animAmbient(p);
+  }
+
+  function animAmbient(p){
+    var sx = Math.random()*100, sy = Math.random()*100;
+    var dur = Math.random()*12+10, delay = Math.random()*8;
+    p.style.transition = 'none';
+    p.style.left = sx+'%'; p.style.top = sy+'%'; p.style.opacity = '0';
+    setTimeout(function(){
+      p.style.transition = 'all '+dur+'s linear';
+      p.style.opacity = (Math.random()*.25+.05).toFixed(3);
+      p.style.left = (sx+(Math.random()*16-8))+'%';
+      p.style.top  = (sy-Math.random()*26)+'%';
+      setTimeout(function(){ animAmbient(p); }, dur*1000);
+    }, delay*1000);
+  }
+
+  var hero = document.getElementById('hero');
+  hero.addEventListener('mousemove', function(e){
+    var rect = hero.getBoundingClientRect();
+    var mx = (e.clientX-rect.left)/rect.width*100;
+    var my = (e.clientY-rect.top)/rect.height*100;
+
+    var p = document.createElement('div');
+    p.className = 'hero-particle';
+    var sz = Math.random()*3+1.5;
+    p.style.width = sz+'px'; p.style.height = sz+'px';
+    p.style.left = mx+'%'; p.style.top = my+'%'; p.style.opacity = '.5';
+    container.appendChild(p);
+    setTimeout(function(){
+      p.style.transition = 'all 1.8s ease-out';
+      p.style.left  = (mx+(Math.random()*10-5))+'%';
+      p.style.top   = (my+(Math.random()*10-5))+'%';
+      p.style.opacity = '0';
+      setTimeout(function(){ p.remove(); }, 1800);
+    }, 10);
+
+    var dx = (e.clientX/window.innerWidth-.5)*5;
+    var dy = (e.clientY/window.innerHeight-.5)*5;
+    document.querySelectorAll('.hero-sphere').forEach(function(s){
+      s.style.transform = 'translate('+dx+'px,'+dy+'px)';
+    });
+  });
+})();
+</script>
 </body>
 </html>

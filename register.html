@@ -1,578 +1,752 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Account · Talib-Awn طالب عون</title>
+  <title>إنشاء حساب · طالب عون</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="auth.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="brand.css">
   <style>
-    :root{ --fh:'Playfair Display',serif; --fb:'Inter',sans-serif; }
-    body { font-family: var(--fb); }
-    h1,h2,.brand-logo-name { font-family: var(--fh); }
-
-    /* ── animations ── */
-    @keyframes fadeUp   { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
-    @keyframes slideIn  { from{opacity:0;transform:translateX(32px)} to{opacity:1;transform:translateX(0)} }
-    @keyframes floatBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-    @keyframes pulseRing{ 0%{box-shadow:0 0 0 0 rgba(26,110,245,.4)} 70%{box-shadow:0 0 0 10px rgba(26,110,245,0)} 100%{box-shadow:0 0 0 0 rgba(26,110,245,0)} }
-
-    .brand-side { animation: fadeIn .9s ease both; }
-    .brand-eyebrow { animation: fadeUp .6s .1s ease both; }
-    .brand-side h1 { animation: fadeUp .7s .2s ease both; font-family: var(--fh); }
-    .brand-side h1 em { font-style: italic; }
-    .brand-side p  { animation: fadeUp .7s .3s ease both; }
-    .form-box { animation: slideIn .65s .15s ease both; }
-    .brand-logo { animation: floatBob 5s ease-in-out infinite; }
-
-    .btn-submit { transition: transform .2s, box-shadow .2s; }
-    .btn-submit:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(26,110,245,.35);
+    :root{
+      --blue:#7C3AED; --blue-dark:#5B21B6; --blue-pale:#EDE9FE; --blue-mid:#A78BFA;
+      --green:#5a9e6f; --green-dark:#3d7a52; --green-pale:#e4f2e8; --green-mid:#b8ddc4;
+      --bg:#f7f7f7; --white:#ffffff;
+      --text:#10202d; --text2:#2a3d4d; --text3:#6b7c8a;
+      --border:rgba(124,58,237,0.20); --red:#EF4444;
+      --ff:'Cairo',sans-serif;
     }
-    .form-group input:focus {
-      outline: none;
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(26,110,245,.12);
-      transition: box-shadow .2s, border-color .2s;
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--ff);background:var(--bg);min-height:100vh;position:relative;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(circle,rgba(124,58,237,.10) 1.5px,transparent 1.5px);background-size:48px 48px;}
+    a{text-decoration:none;color:inherit;}
+
+    nav{display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:64px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+    .nav-logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;color:var(--text);}
+    .nav-logo-img{height:36px;width:auto;object-fit:contain;}
+    .nav-logo span{color:var(--blue);}
+    .nav-actions{display:flex;align-items:center;gap:12px;font-size:14px;}
+    .nav-actions a{color:var(--text2);font-weight:500;}
+
+    .page{max-width:660px;margin:0 auto;padding:40px 20px 80px;position:relative;z-index:1;}
+
+    /* STEP BAR */
+    .step-bar-wrap{margin-bottom:36px;}
+    .step-bar{display:flex;align-items:flex-start;max-width:560px;margin:0 auto;}
+    .step-col{display:flex;flex-direction:column;align-items:center;}
+    .sdot{width:34px;height:34px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--text3);background:var(--white);flex-shrink:0;transition:all .3s;}
+    .sdot.active{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 0 5px rgba(124,58,237,.18);}
+    .sdot.done{background:var(--green);border-color:var(--green);color:#fff;}
+    .slbl{font-size:10px;font-weight:600;color:var(--text3);text-align:center;margin-top:5px;white-space:nowrap;}
+    .slbl.active{color:var(--blue);}.slbl.done{color:var(--green-dark);}
+    .sline{flex:1;height:2px;background:var(--border);transition:background .3s;margin-top:17px;}
+    .sline.done{background:var(--green);}
+
+    /* ALERT */
+    .alert{display:none;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:600;margin-bottom:20px;background:#FEF2F2;color:var(--red);border:1px solid #FECACA;}
+    .alert.show{display:block;}.alert.success{background:var(--green-pale);color:var(--green-dark);border-color:var(--green-mid);}
+
+    /* CARD */
+    .card{background:var(--white);border-radius:20px;border:1.5px solid var(--border);padding:36px 40px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.05);animation:fadeUp .4s ease both;}
+    .card-title{font-size:22px;font-weight:800;color:var(--text);text-align:center;margin-bottom:8px;}
+    .card-sub{font-size:14px;color:var(--text3);text-align:center;margin-bottom:28px;line-height:1.65;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ROLE PICKER */
+    .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px;}
+    .role-card{border:2px solid var(--border);border-radius:18px;padding:32px 24px 28px;cursor:pointer;background:var(--white);text-align:center;transition:all .22s;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;}
+    .role-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--blue-pale),transparent);opacity:0;transition:opacity .22s;pointer-events:none;}
+    .role-card:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,.12);}
+    .role-card:hover::after{opacity:1;}
+    .role-card.selected{border-color:var(--blue);box-shadow:0 0 0 4px rgba(124,58,237,.15);}
+    .role-card.selected::after{opacity:1;}
+    .role-icon{width:80px;height:80px;object-fit:contain;margin-bottom:16px;display:block;position:relative;z-index:1;}
+    .role-title{font-size:17px;font-weight:800;color:var(--text);margin-bottom:6px;position:relative;z-index:1;}
+    .role-desc{font-size:13px;color:var(--text3);line-height:1.55;position:relative;z-index:1;}
+    .role-check{position:absolute;top:12px;left:12px;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;display:none;align-items:center;justify-content:center;font-size:11px;font-weight:700;z-index:2;}
+    .role-card.selected .role-check{display:flex;}
+
+    /* UPLOAD */
+    .upload-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin-bottom:20px;}
+    .upload-or{display:flex;align-items:center;justify-content:center;padding:0 14px;font-size:13px;color:var(--text3);font-weight:600;}
+    .upload-box{border:2px dashed var(--border);border-radius:16px;padding:28px 16px;text-align:center;cursor:pointer;background:var(--bg);transition:border-color .2s,background .2s;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+    .upload-box:hover{border-color:var(--blue);background:var(--blue-pale);}
+    .upload-box input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+    .upload-box-icon{width:56px;height:56px;border-radius:14px;background:var(--blue-pale);border:1.5px solid rgba(124,58,237,.30);display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+    .upload-box-icon img{width:28px;height:28px;object-fit:contain;filter:invert(33%) sepia(90%) saturate(1400%) hue-rotate(210deg) brightness(95%);}
+    .upload-box-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px;}
+    .upload-box-sub{font-size:12px;color:var(--text3);margin-bottom:12px;}
+    .btn-upload{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:100px;background:var(--blue);color:#fff;border:none;font-family:var(--ff);font-size:12px;font-weight:700;box-shadow:0 3px 12px rgba(124,58,237,.32);pointer-events:none;}
+    .upload-box-hint{font-size:10px;color:var(--text3);margin-top:8px;line-height:1.5;}
+
+    .scan-status{display:none;align-items:center;gap:10px;padding:12px 16px;background:var(--blue-pale);border:1px solid rgba(124,58,237,.22);border-radius:10px;margin:12px 0;font-size:14px;color:var(--blue-dark);}
+    .scan-status.show{display:flex;}
+    .scan-spinner{width:18px;height:18px;border:2px solid rgba(124,58,237,.30);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .prefill-notice{display:none;padding:10px 14px;background:var(--green-pale);border:1px solid rgba(34,197,94,.25);border-radius:10px;margin-bottom:14px;font-size:13px;color:var(--green-dark);font-weight:700;}
+    .prefill-notice.show{display:block;}
+    .card-preview{display:none;margin-bottom:14px;}.card-preview.show{display:block;}
+    .card-preview img{width:100%;border-radius:12px;object-fit:cover;max-height:130px;}
+
+    .privacy-notice{background:var(--green-pale);border:1px solid var(--green-mid);border-radius:12px;padding:12px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;font-size:13px;}
+    .privacy-notice strong{display:block;color:var(--text);font-weight:700;margin-bottom:2px;}
+    .privacy-notice p{color:var(--text2);line-height:1.5;}
+    .privacy-notice a{color:var(--blue);font-weight:600;}
+
+    /* SKIP BANNER */
+    .skip-banner{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;}
+    .skip-banner-text{font-size:13px;color:var(--text2);}
+    .skip-banner-text strong{display:block;font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;}
+    .btn-skip{padding:8px 20px;border-radius:100px;border:1.5px solid var(--border);background:var(--white);font-family:var(--ff);font-size:13px;font-weight:700;color:var(--text3);cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;}
+    .btn-skip:hover{border-color:var(--blue);color:var(--blue);}
+
+    /* FORM */
+    .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;position:relative;}
+    .fg label{font-size:12px;font-weight:700;color:var(--text2);}
+    .fg label .opt{font-weight:400;color:var(--text3);}
+    .fg input,.fg select{height:46px;padding:0 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--ff);font-size:14px;color:var(--text);background:var(--bg);transition:border-color .2s,box-shadow .2s;appearance:none;}
+    .fg input:focus,.fg select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(124,58,237,.15);}
+    .fg input.prefilled{background:var(--blue-pale);border-color:rgba(124,58,237,.40);}
+    .pwd-toggle{position:absolute;left:12px;bottom:12px;background:none;border:none;cursor:pointer;font-size:16px;}
+    .sec-divider{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin:20px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+
+    /* VERIFIED FIELDS */
+    .verified-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+    .vf{background:var(--green-pale);border:1.5px solid var(--green-mid);border-radius:10px;padding:10px 14px;position:relative;}
+    .vf-label{font-size:10px;font-weight:700;color:var(--green-dark);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em;}
+    .vf-value{font-size:14px;font-weight:600;color:var(--text);}
+    .vf-badge{position:absolute;top:8px;left:8px;width:16px;height:16px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;}
+
+    /* BUTTONS */
+    .btn-primary{width:100%;height:52px;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,#5B21B6,#7C3AED);color:#fff;font-family:var(--ff);font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 20px rgba(124,58,237,.40);transition:transform .18s,box-shadow .18s;}
+    .btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 28px rgba(124,58,237,.55);}
+    .btn-primary:disabled{opacity:.6;cursor:not-allowed;}
+    .btn-secondary{background:transparent;border:1.5px solid var(--border);border-radius:10px;padding:0 22px;height:52px;font-family:var(--ff);font-size:14px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+    .btn-secondary:hover{border-color:var(--blue);color:var(--blue);}
+    .spinner{width:20px;height:20px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;display:none;animation:spin .7s linear infinite;}
+    .btn-primary.loading .spinner{display:block;}.btn-primary.loading .btn-label{display:none;}
+    .action-row{display:flex;gap:12px;margin-top:8px;}.action-row .btn-primary{flex:1;}
+
+    /* OTP */
+    .otp-inputs{display:flex;gap:8px;justify-content:center;margin-bottom:24px;}
+    .otp-inputs input{width:44px;height:52px;border:2px solid var(--border);border-radius:10px;text-align:center;font-family:var(--ff);font-size:22px;font-weight:800;color:var(--text);background:var(--bg);transition:all .2s;}
+    .otp-inputs input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(124,58,237,.15);outline:none;}
+    .otp-inputs input.filled{border-color:var(--blue);background:var(--blue-pale);color:var(--blue-dark);}
+    .timer-badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:6px 16px;border-radius:100px;background:var(--blue-pale);color:var(--blue-dark);margin-bottom:20px;}
+    .timer-badge.expired{background:#FEF2F2;color:var(--red);}
+    .resend-btn{background:none;border:none;font-family:var(--ff);font-size:14px;font-weight:700;color:var(--blue);cursor:pointer;opacity:.5;}
+    .resend-btn:not(:disabled){opacity:1;}
+    .form-foot{text-align:center;font-size:14px;color:var(--text3);margin-top:16px;}
+    .form-foot a{color:var(--blue);font-weight:700;}
+
+    .step-panel{animation:fadeUp .35s ease both;}
+
+    /* scan failed banner */
+    .scan-fail-banner{display:none;align-items:flex-start;gap:12px;padding:14px 16px;background:#FEF2F2;border:1.5px solid #FECACA;border-radius:12px;margin-bottom:20px;}
+    .scan-fail-banner.show{display:flex;}
+    .scan-fail-icon{width:32px;height:32px;border-radius:50%;background:#FEE2E2;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:700;color:#991B1B;}
+    .scan-fail-text strong{display:block;font-size:13px;font-weight:700;color:#991B1B;margin-bottom:3px;}
+    .scan-fail-text p{font-size:12px;color:#B91C1C;line-height:1.55;}
+
+    @media(max-width:640px){
+      .card{padding:24px 18px;}
+      .role-grid{grid-template-columns:1fr;}
+      .upload-grid{grid-template-columns:1fr;gap:12px;}
+      .upload-or{display:none;}
+      .form-grid-2,.verified-fields{grid-template-columns:1fr;}
+      .page{padding:24px 12px 60px;}
     }
-
-    /* type cards */
-    .user-type-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:8px }
-    .utc {
-      border:2px solid var(--border); border-radius:16px; padding:22px 18px;
-      cursor:pointer; transition:all .25s; text-align:center;
-      background:#f8faff; position:relative; overflow:hidden;
-    }
-    .utc::before { content:''; position:absolute; inset:0; background:var(--blue-pale); opacity:0; transition:opacity .2s }
-    .utc:hover { border-color:var(--blue-light); transform:translateY(-2px); box-shadow:0 6px 20px rgba(26,110,245,.1) }
-    .utc:hover::before { opacity:1 }
-    .utc.selected { border-color:var(--blue); box-shadow:0 0 0 3px rgba(26,110,245,.12); animation:pulseRing .4s ease; }
-    .utc.selected::before { opacity:1 }
-    .utc-icon { font-size:36px; margin-bottom:10px; display:block; position:relative; z-index:1 }
-    .utc-title { font-family:var(--fh); font-size:16px; font-weight:700; color:var(--text); margin-bottom:4px; position:relative; z-index:1 }
-    .utc-sub { font-size:12px; font-family:var(--fb); color:var(--text3); line-height:1.4; position:relative; z-index:1 }
-    .utc.selected .utc-title { color:var(--blue) }
-    .check-badge {
-      position:absolute; top:10px; right:10px; width:22px; height:22px;
-      border-radius:50%; background:var(--blue); color:#fff; font-size:12px;
-      display:none; align-items:center; justify-content:center; z-index:1
-    }
-    .utc.selected .check-badge { display:flex }
-
-    /* ── upload area — supports camera capture ── */
-    .card-upload-area {
-      border: 2px dashed var(--border);
-      border-radius: 16px;
-      padding: 28px 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color .2s, background .2s;
-      background: #f8faff;
-      position: relative;
-      margin-bottom: 16px;
-    }
-    .card-upload-area:hover { border-color: var(--blue); background: var(--blue-pale); }
-    /* hidden real inputs */
-    .card-upload-area input[type="file"] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-    }
-    .card-upload-icon { font-size: 36px; display: block; margin-bottom: 10px; }
-    .card-upload-text { font-family: var(--fb); font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-    .card-upload-sub  { font-family: var(--fb); font-size: 12px; color: var(--text3); }
-
-    /* two source buttons below the drop zone */
-    .upload-actions {
-      display: flex; gap: 10px; margin-bottom: 16px;
-    }
-    .upload-btn {
-      flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--border);
-      background: #fff; cursor: pointer; font-family: var(--fb); font-size: 13px;
-      font-weight: 600; color: var(--text2); transition: all .2s; position: relative; overflow: hidden;
-    }
-    .upload-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-pale); }
-    .upload-btn input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
-
-    label { font-family:var(--fb); font-size:13px; font-weight:600; }
-    .form-header h2 { font-family:var(--fh); font-weight:800; letter-spacing:-.02em; }
-    .form-header p  { font-family:var(--fb); font-weight:400; }
-    .btn-submit .btn-label { font-family:var(--fb); font-weight:700; letter-spacing:.02em; }
-    .form-footer { font-family:var(--fb); font-size:14px; }
-    .brand-logo-name { font-family:var(--fh); font-size:20px; font-weight:800; letter-spacing:-.02em; }
-    .brand-logo-arabic { font-family:var(--fh); }
-
-    /* step dots */
-    .step-indicator { display:flex; align-items:center; gap:6px; margin-bottom:28px; }
-    .step-dot { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--fb); font-size:12px; font-weight:700; transition:all .3s; flex-shrink:0; }
-    .step-dot.active  { background:var(--blue); color:#fff; box-shadow:0 0 0 4px rgba(26,110,245,.2); }
-    .step-dot.done    { background:#22c55e; color:#fff; }
-    .step-dot.pending { background:var(--border); color:var(--text3); }
-    .step-label { font-family:var(--fb); font-size:12px; font-weight:600; transition:color .3s; white-space:nowrap; }
-    .step-label.active { color:var(--blue); }
-    .step-label.done   { color:#22c55e; }
-    .step-label.pending{ color:var(--text3); }
-    .step-line { flex:1; height:2px; background:var(--border); border-radius:2px; transition:background .3s; }
-    .step-line.done { background:#22c55e; }
-
-    /* otp inputs */
-    .otp-inputs { display:flex; gap:8px; justify-content:center; margin-bottom:24px; }
-    .otp-inputs input { width:40px; height:48px; border:2px solid var(--border); border-radius:10px; text-align:center; font-family:var(--fh); font-size:22px; font-weight:700; color:var(--text); background:#f8faff; transition:all .2s; }
-    .otp-inputs input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(26,110,245,.12); outline:none; }
-    .otp-inputs input.filled { border-color:var(--blue); background:#fff; }
-
-    /* timer */
-    .timer-badge { display:inline-flex; align-items:center; gap:6px; font-family:var(--fb); font-size:13px; font-weight:600; padding:6px 14px; border-radius:100px; background:#f0f4ff; color:var(--blue); margin-bottom:20px; }
-    .timer-badge.expired { background:#fef2f2; color:#b91c1c; }
-
-    /* step transition */
-    .step-panel { animation: fadeUp .4s ease both; }
-
-    .btn-secondary { background:transparent; border:1.5px solid var(--border); border-radius:10px; padding:10px 20px; font-family:var(--fb); font-size:14px; font-weight:600; color:var(--text2); cursor:pointer; transition:all .2s; }
-    .btn-secondary:hover { border-color:var(--blue); color:var(--blue); }
-    .resend-btn { background:none; border:none; font-family:var(--fb); font-size:14px; font-weight:600; color:var(--blue); cursor:pointer; opacity:.5; transition:opacity .2s; }
-    .resend-btn:not(:disabled) { opacity:1; }
-
-    .scan-status,.prefill-notice,.card-preview { display:none; }
-    .scan-status.show  { display:flex; align-items:center; gap:10px; padding:12px 16px; background:#f0f4ff; border-radius:10px; margin-bottom:12px; font-family:var(--fb); font-size:14px; color:var(--blue); }
-    .prefill-notice.show { display:block; padding:10px 14px; background:#f0fdf4; border-radius:10px; margin-bottom:12px; font-family:var(--fb); font-size:13px; color:#15803d; font-weight:600; }
-    .card-preview.show { display:block; margin-bottom:14px; }
-    .card-preview img { width:100%; border-radius:12px; object-fit:cover; max-height:160px; }
-    .scan-spinner { width:18px; height:18px; border:2px solid rgba(26,110,245,.3); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite; }
-    @keyframes spin { to{transform:rotate(360deg)} }
-    input.prefilled { background:#f0fdf4; border-color:#86efac; }
   </style>
 </head>
 <body>
-  <div class="page-wrap">
-    <div class="brand-side">
-      <div class="brand-logo">
-        <img src="logo-07.svg" class="brand-logo-icon" alt="Talib-Awn" style="background:transparent;box-shadow:none;">
-        <div class="brand-logo-text">
-          <span class="brand-logo-name">Talib-Awn</span>
-          <span class="brand-logo-arabic">طالب عون</span>
+
+<nav>
+  <div class="nav-logo">
+    <img src="logo-07.svg" class="nav-logo-img" alt="Talib-Awn">
+    طالب<span>عون</span>
+  </div>
+  <div class="nav-actions">
+    <span>لديك حساب؟</span>
+    <a href="login.html">تسجيل الدخول</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- STEP BAR -->
+  <div class="step-bar-wrap" id="stepBarWrap" style="display:none">
+    <div class="step-bar" id="stepBar"></div>
+  </div>
+
+  <div id="alertBox" class="alert"></div>
+
+  <!-- ═══════ STEP 0 — اختر دورك ═══════ -->
+  <div id="s0" class="step-panel">
+    <div class="card">
+      <h2 class="card-title">مرحباً</h2>
+      <p class="card-sub">اختر نوع حسابك للبدء — كل دور له مساره الخاص</p>
+      <div class="role-grid">
+
+        <div class="role-card" id="roleStudent" onclick="pickRole('student')">
+          <div class="role-check">✓</div>
+          <img src="icons/student.png" alt="طالب" class="role-icon">
+          <div class="role-title">طالب جامعي</div>
+          <div class="role-desc">ابحث عن عمل جزئي وكسب دخل إضافي مع الدراسة</div>
         </div>
-      </div>
-      <div class="brand-headline">
-        <div class="brand-eyebrow">Join today — it's free</div>
-        <h1>Find work that<br>fits your <em>schedule.</em></h1>
-        <p>Create your account in minutes. Students upload their card — Gemini AI fills everything automatically.</p>
+
+        <div class="role-card" id="roleEmployer" onclick="pickRole('employer')">
+          <div class="role-check">✓</div>
+          <img src="icons/employer.png" alt="صاحب عمل" class="role-icon">
+          <div class="role-title">صاحب عمل</div>
+          <div class="role-desc">انشر عروض العمل وابحث عن طلاب موثوقين لمهامك</div>
+        </div>
+
       </div>
     </div>
+    <div class="form-foot"><a href="login.html">لديك حساب؟ سجّل الدخول </a></div>
+  </div>
 
-    <div class="form-side">
-      <div class="form-box">
-
-        <!-- STEP INDICATOR -->
-        <div class="step-indicator" id="stepIndicator">
-          <div class="step-dot active" id="dot1">1</div>
-          <span class="step-label active" id="lbl1">Account type</span>
-          <div class="step-line" id="line1"></div>
-          <div class="step-dot pending" id="dot2">2</div>
-          <span class="step-label pending" id="lbl2">Your details</span>
-          <div class="step-line" id="line2"></div>
-          <div class="step-dot pending" id="dot3">3</div>
-          <span class="step-label pending" id="lbl3">Verify email</span>
+  <!-- ═══════ STUDENT S1 — بطاقة الطالب ═══════ -->
+  <div id="sS1" style="display:none" class="step-panel">
+    <div class="card">
+      <h2 class="card-title">ارفع بطاقة الطالب</h2>
+      <p class="card-sub">مطلوب للتحقق من هويتك — سنملأ بياناتك تلقائياً بالذكاء الاصطناعي</p>
+      <div class="upload-grid">
+        <div class="upload-box">
+          <input type="file" id="cardFile" accept="image/*" onchange="handleCard(event)">
+          <div class="upload-box-icon"><img src="icons/upload.png" alt="upload" width="28" height="28"></div>
+          <div class="upload-box-title">رفع صورة البطاقة</div>
+          <div class="upload-box-sub">اسحب الملف هنا أو</div>
+          <div class="btn-upload">تصفح الملفات</div>
+          <div class="upload-box-hint">JPG, PNG — 5MB بحد أقصى</div>
         </div>
-
-        <div id="alertBox" class="alert"></div>
-
-        <!-- ── STEP 1 ── -->
-        <div id="step1" class="step-panel">
-          <div class="form-header">
-            <h2>Who are you?</h2>
-            <p>This determines what you can do on the platform.</p>
-          </div>
-          <div class="user-type-grid">
-            <div class="utc" id="cardStudent" onclick="selectType('student')">
-              <div class="check-badge">✓</div>
-              <span class="utc-icon">🎓</span>
-              <div class="utc-title">Student</div>
-              <div class="utc-sub">Find part-time jobs &amp; offer mini services</div>
-            </div>
-            <div class="utc" id="cardEmployer" onclick="selectType('employer')">
-              <div class="check-badge">✓</div>
-              <span class="utc-icon">🧑‍💼</span>
-              <div class="utc-title">Employer</div>
-              <div class="utc-sub">Post jobs &amp; hire talented students</div>
-            </div>
-          </div>
-          <div style="margin-top:24px;">
-            <button class="btn-submit" id="step1Btn" onclick="goStep2()" disabled>
-              <span class="btn-label">Continue →</span>
-            </button>
-          </div>
-          <div class="form-footer">Already have an account? <a href="login.html">Sign in</a></div>
+        <div class="upload-or">أو</div>
+        <div class="upload-box">
+          <input type="file" accept="image/*" capture="environment" onchange="handleCard(event)">
+          <div class="upload-box-icon"><img src="icons/camera.png" alt="camera" width="28" height="28"></div>
+          <div class="upload-box-title">التقاط صورة</div>
+          <div class="upload-box-sub">استخدم كاميرا هاتفك أو</div>
+          <div class="btn-upload">فتح الكاميرا</div>
+          <div class="upload-box-hint">تأكد من الإضاءة الجيدة</div>
         </div>
-
-        <!-- ── STEP 2A: Student ── -->
-        <div id="step2Student" style="display:none">
-          <div class="form-header">
-            <h2>Upload your student card</h2>
-            <p>Gemini AI will read it and fill in your info automatically.</p>
-          </div>
-
-          <!-- Drop zone (gallery / files) -->
-          <div class="card-upload-area" id="uploadArea">
-            <input type="file" id="cardFile" accept="image/*" onchange="handleCard(event)">
-            <span class="card-upload-icon">🪪</span>
-            <div class="card-upload-text">Drop your student card here</div>
-            <div class="card-upload-sub">or choose an option below</div>
-          </div>
-
-          <!-- Two explicit buttons: gallery vs camera -->
-          <div class="upload-actions">
-            <label class="upload-btn">
-              <span>📁</span> Choose from gallery
-              <input type="file" accept="image/*" onchange="handleCard(event)">
-            </label>
-            <label class="upload-btn">
-              <span>📷</span> Take a photo
-              <!-- capture="environment" opens rear camera on mobile -->
-              <input type="file" accept="image/*" capture="environment" onchange="handleCard(event)">
-            </label>
-          </div>
-
-          <div class="card-preview" id="cardPreview"><img id="cardImg" src="" alt=""></div>
-          <div class="scan-status" id="scanStatus">
-            <div class="scan-spinner"></div><span>Scanning with Gemini AI…</span>
-          </div>
-          <div class="prefill-notice" id="prefillNotice">✅ Card scanned — fields pre-filled below.</div>
-
-          <div id="studentFields" style="display:none" class="step-panel">
-            <div class="form-row">
-              <div class="form-group"><label>First name *</label><input type="text" id="s_fn" placeholder="Ahmed"></div>
-              <div class="form-group"><label>Last name *</label><input type="text" id="s_ln" placeholder="Benali"></div>
-            </div>
-            <div class="form-group"><label>University</label><input type="text" id="s_uni" placeholder="University of Chlef"></div>
-            <div class="form-row">
-              <div class="form-group"><label>Field of study</label><input type="text" id="s_field" placeholder="Computer Science"></div>
-              <div class="form-group"><label>Student ID</label><input type="text" id="s_sid" placeholder="2023XXXXX"></div>
-            </div>
-            <div class="form-group"><label>Email address *</label><input type="email" id="s_email" placeholder="you@univ.dz"></div>
-            <div class="form-group"><label>Phone number</label><input type="tel" id="s_phone" placeholder="+213 6XX XXX XXX"></div>
-            <div class="form-group">
-              <label>Password *</label>
-              <input type="password" id="s_pw" placeholder="Min. 6 characters">
-              <button type="button" class="password-toggle" onclick="togglePwd('s_pw',this)">👁️</button>
-            </div>
-            <div class="form-group">
-              <label>Confirm password *</label>
-              <input type="password" id="s_pw2" placeholder="Repeat password">
-              <button type="button" class="password-toggle" onclick="togglePwd('s_pw2',this)">👁️</button>
-            </div>
-            <button class="btn-submit" id="sRegBtn" onclick="doStudentRegister()">
-              <div class="spinner"></div><span class="btn-label">Send verification code →</span>
-            </button>
-          </div>
-          <div style="margin-top:12px;"><button class="btn-secondary" onclick="goStep1()">← Back</button></div>
-        </div>
-
-        <!-- ── STEP 2B: Employer ── -->
-        <div id="step2Employer" style="display:none" class="step-panel">
-          <div class="form-header">
-            <h2>Create your account</h2>
-            <p>Fill in your details to get started.</p>
-          </div>
-          <div class="form-row">
-            <div class="form-group"><label>First name *</label><input type="text" id="e_fn" placeholder="Sara"></div>
-            <div class="form-group"><label>Last name *</label><input type="text" id="e_ln" placeholder="Meziane"></div>
-          </div>
-          <div class="form-group"><label>Company / Business name</label><input type="text" id="e_company" placeholder="Acme SARL (optional)"></div>
-          <div class="form-group"><label>Email address *</label><input type="email" id="e_email" placeholder="you@company.dz"></div>
-          <div class="form-group"><label>Phone number</label><input type="tel" id="e_phone" placeholder="+213 6XX XXX XXX"></div>
-          <div class="form-group">
-            <label>Password *</label>
-            <input type="password" id="e_pw" placeholder="Min. 6 characters">
-            <button type="button" class="password-toggle" onclick="togglePwd('e_pw',this)">👁️</button>
-          </div>
-          <div class="form-group">
-            <label>Confirm password *</label>
-            <input type="password" id="e_pw2" placeholder="Repeat password">
-            <button type="button" class="password-toggle" onclick="togglePwd('e_pw2',this)">👁️</button>
-          </div>
-          <button class="btn-submit" id="eRegBtn" onclick="doEmployerRegister()">
-            <div class="spinner"></div><span class="btn-label">Send verification code →</span>
-          </button>
-          <div style="margin-top:12px;"><button class="btn-secondary" onclick="goStep1()">← Back</button></div>
-        </div>
-
-        <!-- ── STEP 3: OTP ── -->
-        <div id="step3" style="display:none" class="step-panel">
-          <div class="form-header">
-            <h2>Check your email</h2>
-            <p>We sent an 8-digit code to <strong id="emailDisplay" style="color:var(--blue)"></strong></p>
-          </div>
-          <div style="text-align:center;margin-bottom:8px;">
-            <div class="timer-badge" id="timerBadge">⏳ Expires in <span id="countdown">2:00</span></div>
-          </div>
-          <div class="otp-inputs" id="otpInputs">
-            <input type="text" maxlength="1" inputmode="numeric">
-            <input type="text" maxlength="1" inputmode="numeric">
-            <input type="text" maxlength="1" inputmode="numeric">
-            <input type="text" maxlength="1" inputmode="numeric">
-            <input type="text" maxlength="1" inputmode="numeric">
-            <input type="text" maxlength="1" inputmode="numeric">
-            <input type="text" maxlength="1" inputmode="numeric">
-            <input type="text" maxlength="1" inputmode="numeric">
-          </div>
-          <button class="btn-submit" id="verifyBtn" onclick="doVerify()">
-            <div class="spinner"></div><span class="btn-label">Verify &amp; create account →</span>
-          </button>
-          <div style="text-align:center;margin-top:18px;">
-            <button class="resend-btn" id="resendBtn" onclick="resend()" disabled>Resend code</button>
-          </div>
-          <div class="form-footer"><a href="#" onclick="goBack()">← Change details</a></div>
-        </div>
-
       </div>
+      <div class="card-preview" id="cardPreview"><img id="cardImg" src="" alt=""></div>
+      <div class="scan-status" id="scanStatus"><div class="scan-spinner"></div><span>جاري المسح بالذكاء الاصطناعي…</span></div>
+      <div class="prefill-notice" id="prefillNotice">تمت قراءة البطاقة — راجع بياناتك في الخطوة التالية</div>
+      <!-- <div class="privacy-notice">
+        <div>
+          <strong>بياناتك محمية بتشفير كامل</strong>
+          <p>نستخدم البطاقة فقط للتحقق ولن تُشارك مع أي طرف ثالث.</p>
+        </div>
+        <a href="privacy.html" style="white-space:nowrap;font-size:13px;color:var(--blue);font-weight:600;">سياسة الخصوصية</a>
+      </div> -->
+    </div>
+    <div class="action-row">
+      <button class="btn-secondary" onclick="goTo('s0')"> رجوع</button>
+      <button class="btn-primary" id="s1NextBtn" onclick="goToS2()" disabled>
+        <div class="spinner"></div><span class="btn-label">التالي </span>
+      </button>
     </div>
   </div>
 
-  <!-- 3D Logo -->
-  <canvas id="logo3d" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
-  <script>
-  (function(){
-    var canvas=document.getElementById('logo3d');
-    if(!canvas||typeof THREE==='undefined') return;
-    var renderer=new THREE.WebGLRenderer({canvas:canvas,alpha:true,antialias:true});
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-    renderer.setClearColor(0x000000,0);
-    var scene=new THREE.Scene();
-    var W=window.innerWidth, H=window.innerHeight;
-    var camera=new THREE.OrthographicCamera(-W/2,W/2,H/2,-H/2,-2000,2000);
-    camera.position.z=800;
-    scene.add(new THREE.AmbientLight(0xffffff,0.55));
-    var sun=new THREE.DirectionalLight(0xffffff,1.1); sun.position.set(2,3,4); scene.add(sun);
-    var rim=new THREE.DirectionalLight(0x5ba3f8,0.5); rim.position.set(-3,-1,2); scene.add(rim);
-    var mat=new THREE.MeshPhongMaterial({color:0xf5a623,specular:0xf2b85c,shininess:40});
-    var mesh=null;
-    new THREE.OBJLoader().load('logo_blue.obj',function(obj){
-      obj.traverse(function(c){if(c.isMesh)c.material=mat;});
-      var box=new THREE.Box3().setFromObject(obj);
-      var ctr=new THREE.Vector3(); box.getCenter(ctr); obj.position.sub(ctr);
-      var sz=new THREE.Vector3(); box.getSize(sz);
-      obj.scale.setScalar(1/Math.max(sz.x,sz.y,sz.z));
-      mesh=obj; scene.add(mesh);
-    });
-    function resize(){
-      W=window.innerWidth; H=window.innerHeight;
-      renderer.setSize(W,H,false);
-      camera.left=-W/2; camera.right=W/2; camera.top=H/2; camera.bottom=-H/2;
-      camera.updateProjectionMatrix();
-    }
-    window.addEventListener('resize',resize); resize();
-    var rot=0;
-    function tick(){
-      requestAnimationFrame(tick);
-      if(!mesh) return;
-      rot+=0.006;
-      mesh.position.set(-window.innerWidth*0.25, 0, 0);
-      mesh.scale.setScalar(window.innerHeight*0.01);
-      mesh.rotation.x=0.12; mesh.rotation.y=rot;
-      renderer.render(scene,camera);
-    }
-    tick();
-  })();
-  </script>
+  <!-- ═══════ STUDENT S2 — البيانات ═══════ -->
+  <div id="sS2" style="display:none" class="step-panel">
 
-  <script type="module">
-    import { supabase, signUpWithOtp, verifyEmailOtp, showAlert, setLoading } from './supabase.js';
+    <!-- shown only when scan fails -->
+    <div class="scan-fail-banner" id="scanFailBanner">
+      <div class="scan-fail-icon">!</div>
+      <div class="scan-fail-text">
+        <strong>لم نتمكن من قراءة البطاقة تلقائياً</strong>
+        <p>لا مشكلة — أدخل بياناتك يدوياً في الحقول أدناه. جميع الحقول المعلّمة بـ * مطلوبة.</p>
+      </div>
+    </div>
 
-    let selectedType=null, pendingEmail='', pendingMeta={}, countdownInterval=null;
-    const GEMINI_KEY='YOUR_GEMINI_API_KEY_HERE';
-    const GEMINI_MODEL='gemini-1.5-flash';
+    <div class="card">
 
-    window.selectType=(t)=>{
-      selectedType=t;
-      document.getElementById('cardStudent').classList.toggle('selected',t==='student');
-      document.getElementById('cardEmployer').classList.toggle('selected',t==='employer');
-      document.getElementById('step1Btn').disabled=false;
-    };
+      <!-- MODE A: scan succeeded -->
+      <div id="sS2-scanned" style="display:none">
+        <h2 class="card-title">تحقق من بياناتك</h2>
+        <p class="card-sub">راجع المعلومات المستخرجة تلقائياً وأكمل باقي الحقول</p>
+        <div class="sec-divider">البيانات المستخرجة من البطاقة</div>
+        <div class="verified-fields">
+          <div class="vf"><div class="vf-badge">✓</div><div class="vf-label">الاسم</div><div class="vf-value" id="vf_fn">—</div></div>
+          <div class="vf"><div class="vf-badge">✓</div><div class="vf-label">اللقب</div><div class="vf-value" id="vf_ln">—</div></div>
+          <div class="vf"><div class="vf-badge">✓</div><div class="vf-label">الجامعة</div><div class="vf-value" id="vf_uni">—</div></div>
+          <div class="vf"><div class="vf-badge">✓</div><div class="vf-label">التخصص</div><div class="vf-value" id="vf_field">—</div></div>
+        </div>
+        <input type="hidden" id="s_fn"><input type="hidden" id="s_ln">
+        <input type="hidden" id="s_uni"><input type="hidden" id="s_field"><input type="hidden" id="s_sid">
+      </div>
 
-    window.goStep1=()=>{ hide('step2Student');hide('step2Employer');hide('step3');show('step1');setStep(1);clearAlert(); };
-    window.goStep2=()=>{
-      if(!selectedType) return;
-      hide('step1');
-      if(selectedType==='student') show('step2Student'); else show('step2Employer');
-      setStep(2);clearAlert();
-    };
-    window.goBack=()=>{
-      clearInterval(countdownInterval);hide('step3');
-      if(selectedType==='student') show('step2Student'); else show('step2Employer');
-      setStep(2);clearAlert();
-    };
+      <!-- MODE B: manual entry (scan failed) -->
+      <div id="sS2-manual" style="display:none">
+        <h2 class="card-title">أدخل بياناتك</h2>
+        <p class="card-sub">أدخل معلوماتك الجامعية يدوياً</p>
+        <div class="sec-divider">المعلومات الشخصية</div>
+        <div class="form-grid-2" style="margin-bottom:14px;">
+          <div class="fg" style="margin-bottom:0;"><label>الاسم *</label><input type="text" id="sm_fn" placeholder="الاسم"></div>
+          <div class="fg" style="margin-bottom:0;"><label>اللقب *</label><input type="text" id="sm_ln" placeholder="اللقب"></div>
+        </div>
+        <div class="form-grid-2" style="margin-bottom:14px;">
+          <div class="fg" style="margin-bottom:0;"><label>الجامعة *</label><input type="text" id="sm_uni" placeholder="اسم الجامعة"></div>
+          <div class="fg" style="margin-bottom:0;"><label>التخصص *</label><input type="text" id="sm_field" placeholder="الميدان أو التخصص"></div>
+        </div>
+        <div class="fg">
+          <label>رقم بطاقة الطالب <span class="opt">(اختياري)</span></label>
+          <input type="text" id="sm_sid" placeholder="مثال: 2024-USTHB-XXXXX">
+        </div>
+      </div>
 
-    function setStep(n){
-      for(let i=1;i<=3;i++){
-        const dot=document.getElementById('dot'+i), lbl=document.getElementById('lbl'+i);
-        if(i<n){dot.className='step-dot done';dot.textContent='✓';lbl.className='step-label done';}
-        else if(i===n){dot.className='step-dot active';dot.textContent=i;lbl.className='step-label active';}
-        else{dot.className='step-dot pending';dot.textContent=i;lbl.className='step-label pending';}
-        if(i<3){const l=document.getElementById('line'+i);if(l)l.className=i<n?'step-line done':'step-line';}
-      }
-    }
-    function show(id){
-      const el=document.getElementById(id);
-      el.style.display='';
-      el.classList.remove('step-panel');
-      void el.offsetWidth; // reflow
-      el.classList.add('step-panel');
-    }
-    function hide(id){document.getElementById(id).style.display='none';}
-    function clearAlert(){document.getElementById('alertBox').classList.remove('show');}
+      <!-- SHARED: always visible -->
+      <div class="sec-divider">معلومات التواصل</div>
+      <div class="fg">
+        <label>رقم الهاتف <span class="opt">(اختياري)</span></label>
+        <input type="tel" id="s_phone" placeholder="+213 6XX XXX XXX">
+      </div>
 
-    window.togglePwd=(id,btn)=>{
-      const i=document.getElementById(id);
-      i.type=i.type==='password'?'text':'password';
-      btn.textContent=i.type==='password'?'👁️':'🙈';
-    };
+      <div class="sec-divider">بيانات الحساب</div>
+      <div class="fg">
+        <label>البريد الإلكتروني *</label>
+        <input type="email" id="s_email" placeholder="you@univ.dz">
+      </div>
+      <div class="fg">
+        <label>كلمة المرور *</label>
+        <input type="password" id="s_pw" placeholder="6 أحرف على الأقل">
+        <button type="button" class="pwd-toggle" onclick="togglePwd('s_pw',this)">👁️</button>
+      </div>
+      <div class="fg">
+        <label>تأكيد كلمة المرور *</label>
+        <input type="password" id="s_pw2" placeholder="أعد كلمة المرور">
+        <button type="button" class="pwd-toggle" onclick="togglePwd('s_pw2',this)">👁️</button>
+      </div>
 
-    /* shared handler for all three inputs (drop zone + gallery btn + camera btn) */
-    window.handleCard=async(e)=>{
-      const file=e.target.files[0]; if(!file) return;
-      const reader=new FileReader();
-      reader.onload=async(ev)=>{
-        const base64=ev.target.result.split(',')[1];
-        document.getElementById('cardImg').src=ev.target.result;
-        document.getElementById('cardPreview').classList.add('show');
-        document.getElementById('scanStatus').classList.add('show');
-        document.getElementById('prefillNotice').classList.remove('show');
-        document.getElementById('studentFields').style.display='none';
-        clearAlert();
-        try{
-          const resp=await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_KEY}`,
-            {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-              contents:[{parts:[
-                {text:'Extract all text from this student card. Return ONLY a JSON object with keys: institution, id_number, full_name_latin, full_name_arabic, field_of_study, specialty. No markdown, no explanation.'},
-                {inline_data:{mime_type:file.type,data:base64}}
-              ]}],
-              generationConfig:{temperature:0.1,maxOutputTokens:400}
-            })}
-          );
-          const d=await resp.json();
-          const raw=d.candidates?.[0]?.content?.parts?.[0]?.text||'';
-          const info=JSON.parse(raw.replace(/```json?\n?/g,'').replace(/```/g,'').trim());
-          prefill(info);
-        }catch{
-          showAlert('alertBox','Could not read card automatically — please fill in your details manually.');
-        }finally{
-          document.getElementById('scanStatus').classList.remove('show');
-          show('studentFields');
+    </div>
+
+    <div class="action-row">
+      <button class="btn-secondary" onclick="goTo('sS1')"> رجوع</button>
+      <button class="btn-primary" id="sRegBtn" onclick="doStudentRegister()">
+        <div class="spinner"></div><span class="btn-label">إرسال رمز التحقق </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════ STUDENT S3 — OTP ═══════ -->
+  <div id="sS3" style="display:none" class="step-panel">
+    <div class="card" style="text-align:center;">
+      <h2 class="card-title">تفعيل الحساب</h2>
+      <p class="card-sub">أرسلنا رمزاً من 8 أرقام إلى<br><strong id="sEmailDisplay" style="color:var(--blue)"></strong></p>
+      <div style="margin-bottom:16px;"><div class="timer-badge" id="sTimerBadge">ينتهي خلال <span id="sCountdown">2:00</span></div></div>
+      <div class="otp-inputs" id="sOtpInputs">
+        <input type="text" id="sOtpSingle" maxlength="8" inputmode="numeric" 
+               placeholder="• • • • • • • •" autocomplete="one-time-code"
+               style="direction:ltr;text-align:center;letter-spacing:8px;font-size:22px;font-weight:800;width:100%;height:60px;padding:0 16px;border:2px solid var(--border);border-radius:12px;background:var(--bg);font-family:'DM Mono',monospace;outline:none;transition:border-color .2s,box-shadow .2s;"
+               oninput="this.value=this.value.replace(/\D/g,'').slice(0,8);if(this.classList)this.classList.toggle('filled',this.value.length===8);"
+               onkeydown="" onpaste="">
+      </div>
+      <button class="btn-primary" id="sVerifyBtn" onclick="doStudentVerify()">
+        <div class="spinner"></div><span class="btn-label">تحقق وأنشئ الحساب </span>
+      </button>
+      <div style="margin-top:14px;"><button class="resend-btn" id="sResendBtn" onclick="sResend()" disabled>إعادة الإرسال</button></div>
+      <div class="form-foot"><a href="#" onclick="goTo('sS2')"> تعديل البيانات</a></div>
+    </div>
+  </div>
+
+  <!-- ═══════ EMPLOYER E1 — بطاقة الهوية (اختياري) ═══════ -->
+  <div id="sE1" style="display:none" class="step-panel">
+    <div class="skip-banner">
+      <div class="skip-banner-text">
+        <strong>هذه الخطوة اختيارية</strong>
+        رفع الهوية يزيد من مصداقية حسابك ويساعدك على استقطاب الطلاب بشكل أسرع
+      </div>
+      <button class="btn-skip" onclick="goTo('sE2')">تخطي</button>
+    </div>
+    <div class="card">
+      <h2 class="card-title">ارفع بطاقة التعريف الوطنية</h2>
+      <p class="card-sub">وثيقة رسمية لإثبات هويتك كصاحب عمل</p>
+      <div class="upload-grid">
+        <div class="upload-box">
+          <input type="file" accept="image/*" onchange="handleEmployerID(event)">
+          <div class="upload-box-icon"><img src="icons/upload.png" alt="id" width="28" height="28"></div>
+          <div class="upload-box-title">رفع بطاقة الهوية</div>
+          <div class="upload-box-sub">الوجه الأمامي</div>
+          <div class="btn-upload">تصفح</div>
+          <div class="upload-box-hint">JPG, PNG — 5MB بحد أقصى</div>
+        </div>
+        <div class="upload-or">أو</div>
+        <div class="upload-box">
+          <input type="file" accept="image/*" capture="environment" onchange="handleEmployerID(event)">
+          <div class="upload-box-icon"><img src="icons/camera.png" alt="camera" width="28" height="28"></div>
+          <div class="upload-box-title">التقاط صورة</div>
+          <div class="upload-box-sub">استخدم الكاميرا</div>
+          <div class="btn-upload">فتح الكاميرا</div>
+          <div class="upload-box-hint">تأكد من وضوح النص</div>
+        </div>
+      </div>
+      <!-- <div class="privacy-notice">
+        <div>
+          <strong>بياناتك محمية بتشفير كامل</strong>
+          <p>لن تُشارك وثيقتك مع أي طرف ثالث.</p>
+        </div>
+        <a href="privacy.html" style="white-space:nowrap;font-size:13px;color:var(--blue);font-weight:600;">سياسة الخصوصية</a>
+      </div> -->
+    </div>
+    <div class="action-row">
+      <button class="btn-secondary" onclick="goTo('s0')">رجوع</button>
+      <button class="btn-primary" onclick="goTo('sE2')"><span class="btn-label">التالي </span></button>
+    </div>
+  </div>
+
+  <!-- ═══════ EMPLOYER E2 — المعلومات الشخصية ═══════ -->
+  <div id="sE2" style="display:none" class="step-panel">
+    <div class="card">
+      <h2 class="card-title">معلوماتك الشخصية</h2>
+      <p class="card-sub">أخبرنا عن نفسك وعن نشاطك التجاري</p>
+      <div class="form-grid-2" style="margin-bottom:14px;">
+        <div class="fg" style="margin-bottom:0;"><label>الاسم *</label><input type="text" id="e_fn" placeholder="الاسم"></div>
+        <div class="fg" style="margin-bottom:0;"><label>اللقب *</label><input type="text" id="e_ln" placeholder="اللقب"></div>
+      </div>
+      <div class="fg">
+        <label>نوع / مجال العمل *</label>
+        <select id="e_sector">
+          <option value="">اختر المجال…</option>
+          <option value="retail">تجارة التجزئة</option>
+          <option value="food">مطاعم وفنادق</option>
+          <option value="events">فعاليات وحفلات</option>
+          <option value="logistics">نقل ولوجستيك</option>
+          <option value="education">تعليم ودروس خصوصية</option>
+          <option value="tech">تقنية ومعلوماتية</option>
+          <option value="construction">بناء وعقارات</option>
+          <option value="other">أخرى</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>اسم الشركة / المؤسسة <span class="opt">(اختياري)</span></label>
+        <input type="text" id="e_company" placeholder="مثال: مقهى النجمة…">
+      </div>
+      <div class="fg">
+        <label>رقم الهاتف *</label>
+        <input type="tel" id="e_phone" placeholder="+213 6XX XXX XXX">
+      </div>
+    </div>
+    <div class="action-row">
+      <button class="btn-secondary" onclick="goTo('sE1')"> رجوع</button>
+      <button class="btn-primary" onclick="doEmployerStep2()"><span class="btn-label">التالي </span></button>
+    </div>
+  </div>
+
+  <!-- ═══════ EMPLOYER E3 — بيانات الحساب ═══════ -->
+  <div id="sE3" style="display:none" class="step-panel">
+    <div class="card">
+      <h2 class="card-title">بيانات الحساب</h2>
+      <p class="card-sub">أنشئ بريدك وكلمة مرورك للدخول إلى المنصة</p>
+      <div class="fg">
+        <label>البريد الإلكتروني *</label>
+        <input type="email" id="e_email" placeholder="you@company.dz">
+      </div>
+      <div class="fg">
+        <label>كلمة المرور *</label>
+        <input type="password" id="e_pw" placeholder="6 أحرف على الأقل">
+        <button type="button" class="pwd-toggle" onclick="togglePwd('e_pw',this)">👁️</button>
+      </div>
+      <div class="fg">
+        <label>تأكيد كلمة المرور *</label>
+        <input type="password" id="e_pw2" placeholder="أعد كلمة المرور">
+        <button type="button" class="pwd-toggle" onclick="togglePwd('e_pw2',this)">👁️</button>
+      </div>
+    </div>
+    <div class="action-row">
+      <button class="btn-secondary" onclick="goTo('sE2')"> رجوع</button>
+      <button class="btn-primary" id="eRegBtn" onclick="doEmployerRegister()">
+        <div class="spinner"></div><span class="btn-label">إرسال رمز التحقق </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════ EMPLOYER E4 — OTP ═══════ -->
+  <div id="sE4" style="display:none" class="step-panel">
+    <div class="card" style="text-align:center;">
+      <h2 class="card-title">تفعيل الحساب</h2>
+      <p class="card-sub">أرسلنا رمزاً من 8 أرقام إلى<br><strong id="eEmailDisplay" style="color:var(--blue)"></strong></p>
+      <div style="margin-bottom:16px;"><div class="timer-badge" id="eTimerBadge">ينتهي خلال <span id="eCountdown">2:00</span></div></div>
+      <div class="otp-inputs" id="eOtpInputs">
+        <input type="text" id="eOtpSingle" maxlength="8" inputmode="numeric"
+               placeholder="• • • • • • • •" autocomplete="one-time-code"
+               style="direction:ltr;text-align:center;letter-spacing:8px;font-size:22px;font-weight:800;width:100%;height:60px;padding:0 16px;border:2px solid var(--border);border-radius:12px;background:var(--bg);font-family:'DM Mono',monospace;outline:none;transition:border-color .2s,box-shadow .2s;"
+               oninput="this.value=this.value.replace(/\D/g,'').slice(0,8);if(this.classList)this.classList.toggle('filled',this.value.length===8);"
+               onkeydown="" onpaste="">
+      </div>
+      <button class="btn-primary" id="eVerifyBtn" onclick="doEmployerVerify()">
+        <div class="spinner"></div><span class="btn-label">تحقق وأنشئ الحساب </span>
+      </button>
+      <div style="margin-top:14px;"><button class="resend-btn" id="eResendBtn" onclick="eResend()" disabled>إعادة الإرسال</button></div>
+      <div class="form-foot"><a href="#" onclick="goTo('sE3')"> تعديل البيانات</a></div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script type="module">
+  import { supabase, signUpWithOtp, verifyEmailOtp, showAlert, setLoading } from './api.js';
+
+  let role = null;
+  let pendingEmail = '', pendingMeta = {};
+  let sCountdownInterval = null, eCountdownInterval = null;
+  const GEMINI_KEY   = 'YOUR_GEMINI_API_KEY_HERE';
+  const GEMINI_MODEL = 'gemini-2.0-flash';
+  let cardData = { fn:'', ln:'', uni:'', field:'', sid:'' };
+  let cardScanFailed = false;
+
+  const S_STEPS = [{id:'sS1',label:'البطاقة'},{id:'sS2',label:'البيانات'},{id:'sS3',label:'التفعيل'}];
+  const E_STEPS = [{id:'sE1',label:'الهوية'},{id:'sE2',label:'معلوماتي'},{id:'sE3',label:'الحساب'},{id:'sE4',label:'التفعيل'}];
+  const ALL = ['s0','sS1','sS2','sS3','sE1','sE2','sE3','sE4'];
+
+  function hide(id){ const e=document.getElementById(id); if(e) e.style.display='none'; }
+  function show(id){
+    const e=document.getElementById(id); if(!e) return;
+    e.style.display='';
+    e.classList.remove('step-panel'); void e.offsetWidth; e.classList.add('step-panel');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function clearAlert(){ const a=document.getElementById('alertBox'); a.className='alert'; a.textContent=''; }
+
+  window.goTo = function(id){
+    clearAlert(); ALL.forEach(p=>hide(p)); show(id); buildStepBar(id);
+  };
+
+  function buildStepBar(currentId){
+    const wrap=document.getElementById('stepBarWrap');
+    const bar=document.getElementById('stepBar');
+    const steps=role==='student'?S_STEPS:E_STEPS;
+    const idx=steps.findIndex(s=>s.id===currentId);
+    if(currentId==='s0'||idx===-1){ wrap.style.display='none'; return; }
+    wrap.style.display='';
+    bar.innerHTML=steps.map((s,i)=>{
+      const dc=i<idx?'sdot done':i===idx?'sdot active':'sdot';
+      const lc=i<idx?'slbl done':i===idx?'slbl active':'slbl';
+      const dt=i<idx?'✓':(i+1);
+      const line=i<steps.length-1?`<div class="sline${i<idx?' done':''}"></div>`:'';
+      return `<div class="step-col"><div class="${dc}">${dt}</div><div class="${lc}">${s.label}</div></div>${line}`;
+    }).join('');
+  }
+
+  window.pickRole = function(r){
+    role=r;
+    ['roleStudent','roleEmployer'].forEach(id=>document.getElementById(id).classList.remove('selected'));
+    document.getElementById(r==='student'?'roleStudent':'roleEmployer').classList.add('selected');
+    setTimeout(()=>goTo(r==='student'?'sS1':'sE1'),260);
+  };
+
+  window.togglePwd=(id,btn)=>{
+    const i=document.getElementById(id);
+    i.type=i.type==='password'?'text':'password';
+    btn.textContent=i.type==='password'?'👁️':'🙈';
+  };
+
+  /* ── STUDENT: card scan ── */
+  window.handleCard=async(e)=>{
+    const file=e.target.files[0]; if(!file) return;
+    const reader=new FileReader();
+    reader.onload=async(ev)=>{
+      const base64=ev.target.result.split(',')[1];
+      document.getElementById('cardImg').src=ev.target.result;
+      document.getElementById('cardPreview').classList.add('show');
+      document.getElementById('scanStatus').classList.add('show');
+      document.getElementById('prefillNotice').classList.remove('show');
+      document.getElementById('s1NextBtn').disabled=true;
+      clearAlert();
+      try{
+        const resp=await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_KEY}`,
+          {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+            contents:[{parts:[
+              {text:'Algerian university student card. Return ONLY raw JSON no markdown. Keys: {"full_name_latin":"","id_number":"","institution":"","field_of_study":""}'},
+              {inline_data:{mime_type:file.type,data:base64}}
+            ]}],
+            generationConfig:{temperature:0,maxOutputTokens:300,responseMimeType:'application/json'}
+          })}
+        );
+        const d=await resp.json();
+        if(d.error) throw new Error(d.error.message);
+        const raw=(d.candidates?.[0]?.content?.parts?.[0]?.text||'').trim();
+        const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('no data');
+        const info=JSON.parse(m[0]);
+        const cap=s=>s?s.charAt(0).toUpperCase()+s.slice(1).toLowerCase():'';
+        if(info.full_name_latin){
+          const parts=info.full_name_latin.trim().split(/\s+/);
+          cardData.ln=cap(parts[0]);
+          cardData.fn=parts.slice(1).map(cap).join(' ')||cap(parts[0]);
         }
-      };
-      reader.readAsDataURL(file);
-    };
-
-    function prefill(info){
-      const cap=s=>s?s.charAt(0).toUpperCase()+s.slice(1).toLowerCase():'';
-      if(info.full_name_latin){
-        const parts=info.full_name_latin.trim().split(/\s+/);
-        document.getElementById('s_ln').value=cap(parts[0]);
-        document.getElementById('s_fn').value=parts.slice(1).map(cap).join(' ');
-        document.getElementById('s_ln').classList.add('prefilled');
-        document.getElementById('s_fn').classList.add('prefilled');
+        cardData.uni=info.institution||''; cardData.field=info.field_of_study||''; cardData.sid=info.id_number||'';
+        cardScanFailed=false;
+        document.getElementById('prefillNotice').classList.add('show');
+      }catch(err){
+        console.error(err);
+        cardScanFailed=true;
+        const notice=document.getElementById('prefillNotice');
+        notice.textContent='لم نتمكن من قراءة البطاقة — ستُدخل بياناتك يدوياً في الخطوة التالية.';
+        notice.style.background='#FEF2F2'; notice.style.borderColor='#FECACA'; notice.style.color='#991B1B';
+        notice.classList.add('show');
+      }finally{
+        document.getElementById('scanStatus').classList.remove('show');
+        document.getElementById('s1NextBtn').disabled=false;
       }
-      if(info.institution){document.getElementById('s_uni').value=info.institution;document.getElementById('s_uni').classList.add('prefilled');}
-      if(info.field_of_study){document.getElementById('s_field').value=info.field_of_study;document.getElementById('s_field').classList.add('prefilled');}
-      if(info.id_number){document.getElementById('s_sid').value=info.id_number;document.getElementById('s_sid').classList.add('prefilled');}
-      document.getElementById('prefillNotice').classList.add('show');
-    }
-
-    window.doStudentRegister=async()=>{
-      const fn=document.getElementById('s_fn').value.trim(), ln=document.getElementById('s_ln').value.trim();
-      const email=document.getElementById('s_email').value.trim(), phone=document.getElementById('s_phone').value.trim();
-      const pw=document.getElementById('s_pw').value, pw2=document.getElementById('s_pw2').value;
-      const uni=document.getElementById('s_uni').value.trim(), field=document.getElementById('s_field').value.trim(), sid=document.getElementById('s_sid').value.trim();
-      if(!fn||!ln||!email||!pw){showAlert('alertBox','Please fill in all required fields.');return;}
-      if(pw.length<6){showAlert('alertBox','Password must be at least 6 characters.');return;}
-      if(pw!==pw2){showAlert('alertBox','Passwords do not match.');return;}
-      pendingEmail=email;
-      pendingMeta={firstname:fn,lastname:ln,phone,role:'client',grade:'Student',domain:field?field.toLowerCase().slice(0,80):'autre',institution:uni,field_of_study:field,student_id_number:sid};
-      await sendOtp('sRegBtn');
     };
+    reader.readAsDataURL(file);
+  };
 
-    window.doEmployerRegister=async()=>{
-      const fn=document.getElementById('e_fn').value.trim(), ln=document.getElementById('e_ln').value.trim();
-      const email=document.getElementById('e_email').value.trim(), phone=document.getElementById('e_phone').value.trim();
-      const pw=document.getElementById('e_pw').value, pw2=document.getElementById('e_pw2').value;
-      const company=document.getElementById('e_company').value.trim();
-      if(!fn||!ln||!email||!pw){showAlert('alertBox','Please fill in all required fields.');return;}
-      if(pw.length<6){showAlert('alertBox','Password must be at least 6 characters.');return;}
-      if(pw!==pw2){showAlert('alertBox','Passwords do not match.');return;}
-      pendingEmail=email;
-      pendingMeta={firstname:fn,lastname:ln,phone,role:'client',grade:'Company manager',domain:'autre',company_name:company};
-      await sendOtp('eRegBtn');
-    };
-
-    async function sendOtp(btnId){
-      setLoading(btnId,true); clearAlert();
-      const pw=selectedType==='student'?document.getElementById('s_pw').value:document.getElementById('e_pw').value;
-      const {error}=await signUpWithOtp({email:pendingEmail,password:pw,metadata:pendingMeta});
-      setLoading(btnId,false);
-      if(error){showAlert('alertBox',error.message);return;}
-      hide('step2Student');hide('step2Employer');show('step3');setStep(3);
-      document.getElementById('emailDisplay').textContent=pendingEmail;
-      setupOtp(); startCountdown();
+  window.goToS2=function(){
+    if(cardScanFailed){
+      document.getElementById('sS2-scanned').style.display='none';
+      document.getElementById('sS2-manual').style.display='';
+      document.getElementById('scanFailBanner').classList.add('show');
+    } else {
+      document.getElementById('sS2-manual').style.display='none';
+      document.getElementById('sS2-scanned').style.display='';
+      document.getElementById('scanFailBanner').classList.remove('show');
+      document.getElementById('vf_fn').textContent    = cardData.fn||'—';
+      document.getElementById('vf_ln').textContent    = cardData.ln||'—';
+      document.getElementById('vf_uni').textContent   = cardData.uni||'—';
+      document.getElementById('vf_field').textContent = cardData.field||'—';
+      document.getElementById('s_fn').value    = cardData.fn;
+      document.getElementById('s_ln').value    = cardData.ln;
+      document.getElementById('s_uni').value   = cardData.uni;
+      document.getElementById('s_field').value = cardData.field;
+      document.getElementById('s_sid').value   = cardData.sid;
     }
+    goTo('sS2');
+  };
 
-    function setupOtp(){
-      const inputs=document.querySelectorAll('#otpInputs input');
-      inputs.forEach((inp,i)=>{
-        inp.value=''; inp.className='';
-        inp.oninput=()=>{
-          inp.value=inp.value.replace(/\D/g,'').slice(-1);
-          if(inp.value){inp.classList.add('filled');if(i<7)inputs[i+1].focus();}
-          else inp.classList.remove('filled');
-        };
-        inp.onkeydown=e=>{if(e.key==='Backspace'&&!inp.value&&i>0)inputs[i-1].focus();};
-        inp.onpaste=e=>{
-          e.preventDefault();
-          const t=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'');
-          inputs.forEach((el,j)=>{el.value=t[j]||'';el.classList.toggle('filled',!!el.value);});
-        };
-      });
-      inputs[0].focus();
-    }
-
-    function getOtp(){return[...document.querySelectorAll('#otpInputs input')].map(i=>i.value).join('');}
-
-    function startCountdown(){
-      let s=120;
-      const badge=document.getElementById('timerBadge'), count=document.getElementById('countdown'), resend=document.getElementById('resendBtn');
-      resend.disabled=true; badge.className='timer-badge';
-      clearInterval(countdownInterval);
-      countdownInterval=setInterval(()=>{
-        s--;
-        count.textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
-        if(s<=0){clearInterval(countdownInterval);badge.className='timer-badge expired';badge.innerHTML='⛔ Code expired';resend.disabled=false;}
-      },1000);
-    }
-
-    window.resend=async()=>{
-      document.getElementById('resendBtn').disabled=true; clearAlert();
-      const pw=selectedType==='student'?document.getElementById('s_pw').value:document.getElementById('e_pw').value;
-      await signUpWithOtp({email:pendingEmail,password:pw,metadata:pendingMeta});
-      setupOtp(); startCountdown();
-      showAlert('alertBox','New code sent!','success');
+  window.doStudentRegister=async()=>{
+    const email=document.getElementById('s_email').value.trim();
+    const phone=document.getElementById('s_phone').value.trim();
+    const pw=document.getElementById('s_pw').value;
+    const pw2=document.getElementById('s_pw2').value;
+    const fn   = cardScanFailed ? document.getElementById('sm_fn').value.trim()    : document.getElementById('s_fn').value;
+    const ln   = cardScanFailed ? document.getElementById('sm_ln').value.trim()    : document.getElementById('s_ln').value;
+    const uni  = cardScanFailed ? document.getElementById('sm_uni').value.trim()   : document.getElementById('s_uni').value;
+    const field= cardScanFailed ? document.getElementById('sm_field').value.trim() : document.getElementById('s_field').value;
+    const sid  = cardScanFailed ? document.getElementById('sm_sid').value.trim()   : document.getElementById('s_sid').value;
+    if(cardScanFailed&&(!fn||!ln)){ showAlert('alertBox','الاسم واللقب مطلوبان.'); return; }
+    if(!email){ showAlert('alertBox','البريد الإلكتروني مطلوب.'); return; }
+    if(!pw||pw.length<6){ showAlert('alertBox','كلمة المرور 6 أحرف على الأقل.'); return; }
+    if(pw!==pw2){ showAlert('alertBox','كلمتا المرور غير متطابقتين.'); return; }
+    pendingEmail=email;
+    pendingMeta={
+      firstname:fn||'طالب', lastname:ln, phone, role:'client', grade:'Student',
+      domain:field.toLowerCase().slice(0,80)||'autre',
+      institution:uni, field_of_study:field, student_id_number:sid,
     };
+    setLoading('sRegBtn',true); clearAlert();
+    const {error}=await signUpWithOtp({email:pendingEmail,password:pw,metadata:pendingMeta});
+    setLoading('sRegBtn',false);
+    if(error){ showAlert('alertBox',error.message); return; }
+    document.getElementById('sEmailDisplay').textContent=pendingEmail;
+    goTo('sS3'); setupOtp('sOtpInputs'); startCountdown('s');
+  };
 
-    window.doVerify=async()=>{
-      const otp=getOtp(); if(otp.length<8){showAlert('alertBox','Enter all 8 digits.');return;}
-      setLoading('verifyBtn',true); clearAlert();
-      const {data,error}=await verifyEmailOtp({email:pendingEmail,token:otp});
-      setLoading('verifyBtn',false);
-      if(error){showAlert('alertBox',error.message.includes('expired')?'Code expired — request a new one.':'Invalid code.');return;}
-      clearInterval(countdownInterval);
-      showAlert('alertBox','🎉 Account created! Redirecting…','success');
-      setTimeout(()=>window.location.href='login.html',1800);
+  window.doStudentVerify=async()=>{
+    const otp=getOtp('sOtpInputs');
+    if(otp.length<8){ showAlert('alertBox','أدخل جميع الأرقام الثمانية.'); return; }
+    setLoading('sVerifyBtn',true); clearAlert();
+    const {error}=await verifyEmailOtp({email:pendingEmail,token:otp});
+    setLoading('sVerifyBtn',false);
+    if(error){ showAlert('alertBox',error.message.includes('expired')?'انتهت صلاحية الرمز.':'الرمز غير صحيح.'); return; }
+    clearInterval(sCountdownInterval);
+    const a=document.getElementById('alertBox'); a.className='alert success show'; a.textContent='تم إنشاء الحساب! جاري التحويل…';
+    setTimeout(()=>window.location.href='login.html',1800);
+  };
+
+  window.sResend=async()=>{
+    document.getElementById('sResendBtn').disabled=true; clearAlert();
+    await signUpWithOtp({email:pendingEmail,password:document.getElementById('s_pw').value,metadata:pendingMeta});
+    setupOtp('sOtpInputs'); startCountdown('s');
+    const a=document.getElementById('alertBox'); a.className='alert success show'; a.textContent='تم إرسال رمز جديد!';
+  };
+
+  /* ── EMPLOYER ── */
+  window.handleEmployerID=async(e)=>{ /* optional */ };
+
+  window.doEmployerStep2=function(){
+    const fn=document.getElementById('e_fn').value.trim();
+    const ln=document.getElementById('e_ln').value.trim();
+    const sector=document.getElementById('e_sector').value;
+    const phone=document.getElementById('e_phone').value.trim();
+    if(!fn){ showAlert('alertBox','الاسم مطلوب.'); return; }
+    if(!ln){ showAlert('alertBox','اللقب مطلوب.'); return; }
+    if(!sector){ showAlert('alertBox','يرجى اختيار مجال العمل.'); return; }
+    if(!phone){ showAlert('alertBox','رقم الهاتف مطلوب.'); return; }
+    goTo('sE3');
+  };
+
+  window.doEmployerRegister=async()=>{
+    const email=document.getElementById('e_email').value.trim();
+    const pw=document.getElementById('e_pw').value;
+    const pw2=document.getElementById('e_pw2').value;
+    if(!email){ showAlert('alertBox','البريد الإلكتروني مطلوب.'); return; }
+    if(!pw||pw.length<6){ showAlert('alertBox','كلمة المرور 6 أحرف على الأقل.'); return; }
+    if(pw!==pw2){ showAlert('alertBox','كلمتا المرور غير متطابقتين.'); return; }
+    pendingEmail=email;
+    pendingMeta={
+      firstname:document.getElementById('e_fn').value,
+      lastname:document.getElementById('e_ln').value,
+      phone:document.getElementById('e_phone').value,
+      role:'client', grade:'Company manager',
+      domain:document.getElementById('e_sector').value||'autre',
+      company_name:document.getElementById('e_company').value,
     };
-  </script>
+    setLoading('eRegBtn',true); clearAlert();
+    const {error}=await signUpWithOtp({email:pendingEmail,password:pw,metadata:pendingMeta});
+    setLoading('eRegBtn',false);
+    if(error){ showAlert('alertBox',error.message); return; }
+    document.getElementById('eEmailDisplay').textContent=pendingEmail;
+    goTo('sE4'); setupOtp('eOtpInputs'); startCountdown('e');
+  };
+
+  window.doEmployerVerify=async()=>{
+    const otp=getOtp('eOtpInputs');
+    if(otp.length<8){ showAlert('alertBox','أدخل جميع الأرقام الثمانية.'); return; }
+    setLoading('eVerifyBtn',true); clearAlert();
+    const {error}=await verifyEmailOtp({email:pendingEmail,token:otp});
+    setLoading('eVerifyBtn',false);
+    if(error){ showAlert('alertBox',error.message.includes('expired')?'انتهت صلاحية الرمز.':'الرمز غير صحيح.'); return; }
+    clearInterval(eCountdownInterval);
+    const a=document.getElementById('alertBox'); a.className='alert success show'; a.textContent='تم إنشاء الحساب! جاري التحويل…';
+    setTimeout(()=>window.location.href='login.html',1800);
+  };
+
+  window.eResend=async()=>{
+    document.getElementById('eResendBtn').disabled=true; clearAlert();
+    await signUpWithOtp({email:pendingEmail,password:document.getElementById('e_pw').value,metadata:pendingMeta});
+    setupOtp('eOtpInputs'); startCountdown('e');
+    const a=document.getElementById('alertBox'); a.className='alert success show'; a.textContent='تم إرسال رمز جديد!';
+  };
+
+  /* ── OTP helpers ── */
+  function setupOtp(cid){
+    // With single-field OTP, just clear and focus it
+    const inp = document.querySelector('#'+cid+' input');
+    if(inp){ inp.value=''; inp.classList.remove('filled'); setTimeout(()=>inp.focus(),50); }
+  }
+  function getOtp(cid){ 
+    const inp = document.querySelector('#'+cid+' input');
+    return inp ? inp.value.replace(/\D/g,'').slice(0,8) : '';
+  }
+  function startCountdown(p){
+    const badge=document.getElementById(p+'TimerBadge');
+    const count=document.getElementById(p+'Countdown');
+    const resend=document.getElementById(p+'ResendBtn');
+    let s=120; resend.disabled=true; badge.className='timer-badge';
+    const iv=setInterval(()=>{
+      s--; count.textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+      if(s<=0){ clearInterval(iv); badge.className='timer-badge expired'; badge.innerHTML='انتهت صلاحية الرمز'; resend.disabled=false; }
+    },1000);
+    if(p==='s') sCountdownInterval=iv; else eCountdownInterval=iv;
+  }
+
+  /* init */
+  goTo('s0');
+</script>
 </body>
 </html>

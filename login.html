@@ -1,230 +1,312 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In · Talib-Awn طالب عون</title>
+  <title>تسجيل الدخول · طالب عون</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="auth.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="brand.css">
   <style>
     :root{
-      --fh:'Playfair Display',serif;
-      --fb:'Inter',sans-serif;
+      /* ── Talib-Awn brand — matches brand.css ── */
+      --blue:#7C3AED; --blue-dark:#5B21B6; --blue-pale:#EDE9FE; --blue-mid:#A78BFA;
+      --green:#5a9e6f; --green-dark:#3d7a52; --green-pale:#e4f2e8; --green-mid:#b8ddc4;
+      --bg:#f7f7f7; --white:#ffffff;
+      --text:#10202d; --text2:#2a3d4d; --text3:#6b7c8a;
+      --border:rgba(124,58,237,0.20); --red:#EF4444;
+      --navy:#10202d;
+      --ff:'Cairo',sans-serif;
     }
-    /* override auth.css fonts */
-    body { font-family: var(--fb); }
-    h1,h2,.brand-logo-name { font-family: var(--fh); }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:var(--ff);}
+    body{background:var(--bg);display:flex;min-height:100vh;overflow:hidden;}
 
-    /* ── animations ── */
-    @keyframes fadeUp   { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
-    @keyframes slideIn  { from{opacity:0;transform:translateX(32px)} to{opacity:1;transform:translateX(0)} }
-    @keyframes floatBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-
-    .brand-side { animation: fadeIn .9s ease both; }
-    .brand-eyebrow { animation: fadeUp .6s .1s ease both; }
-    .brand-side h1  { animation: fadeUp .7s .2s ease both; font-family: var(--fh); font-style:normal; }
-    .brand-side h1 em { font-style: italic; }
-    .brand-side p   { animation: fadeUp .7s .3s ease both; }
-    .brand-stats    { animation: fadeUp .7s .4s ease both; }
-
-    .form-box { animation: slideIn .65s .15s ease both; }
-
-    /* input focus glow */
-    .form-group input:focus {
-      outline: none;
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(26,110,245,.12);
-      transition: box-shadow .2s, border-color .2s;
+    /* ── decorative dots & shapes ── */
+    body::before{
+      content:'';position:fixed;inset:0;pointer-events:none;
+      background-image:
+        radial-gradient(circle,rgba(124,58,237,.12) 1.5px,transparent 1.5px),
+        radial-gradient(circle,rgba(124,58,237,.07) 1px,transparent 1px);
+      background-size:48px 48px, 24px 24px;
+      background-position:0 0, 12px 12px;
     }
 
-    /* btn hover lift */
-    .btn-submit { transition: transform .2s, box-shadow .2s; }
-    .btn-submit:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(26,110,245,.35);
+    /* ── LEFT BRAND PANEL ── */
+    .brand{
+      flex:0 0 55%;display:flex;flex-direction:column;justify-content:center;
+      padding:60px 56px;position:relative;overflow:hidden;
+      background:linear-gradient(155deg, #10202d 0%, #1a2f40 60%, #243d52 100%);
+    }
+    .brand::after{
+      content:'';position:absolute;bottom:-80px;left:-60px;
+      width:500px;height:500px;border-radius:50%;
+      background:radial-gradient(circle,rgba(255,255,255,.07) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .brand-logo{display:flex;align-items:center;gap:12px;margin-bottom:56px;}
+    .brand-logo-img{height:42px;width:auto;object-fit:contain;}
+    .brand-logo-name{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.02em;}
+    .brand-logo-name span{color:rgba(255,255,255,.65);}
+
+    .brand-headline{margin-bottom:24px;}
+    .brand-h1{font-size:clamp(40px,4.5vw,62px);font-weight:900;line-height:1.15;color:#fff;margin-bottom:6px;}
+    .brand-h1 span{display:block;}
+    .brand-underline{width:72px;height:4px;background:rgba(255,255,255,.5);border-radius:2px;margin-bottom:20px;}
+    .brand-sub{font-size:16px;font-weight:400;color:rgba(255,255,255,.65);line-height:1.7;max-width:420px;}
+
+    /* stats */
+    .brand-stats{display:flex;gap:0;margin-top:36px;border:1.5px solid rgba(124,58,237,0.3);border-radius:16px;overflow:hidden;background:rgba(124,58,237,0.10);}
+    .bstat{flex:1;padding:18px 20px;border-left:1.5px solid rgba(255,255,255,.15);text-align:center;}
+    .bstat:last-child{border-left:none;}
+    .bstat-num{font-size:24px;font-weight:800;color:#fff;margin-bottom:3px;}
+    .bstat-lbl{font-size:12px;font-weight:500;color:rgba(255,255,255,.55);}
+
+    /* ── RIGHT FORM PANEL ── */
+    .form-side{
+      flex:1;display:flex;align-items:center;justify-content:center;
+      padding:40px 32px;position:relative;
+    }
+    /* wave decoration */
+    .form-side::before{
+      content:'';position:absolute;top:-60px;right:-80px;
+      width:320px;height:320px;border-radius:50%;
+      background:rgba(124,58,237,.07);pointer-events:none;
+    }
+    .form-side::after{
+      content:'';position:absolute;bottom:-80px;left:-60px;
+      width:280px;height:280px;border-radius:50%;
+      background:rgba(124,58,237,.05);pointer-events:none;
     }
 
-    /* brand logo float */
-    .brand-logo { animation: floatBob 5s ease-in-out infinite; }
-
-    /* stat numbers pop in */
-    .b-stat-num {
-      font-family: var(--fh);
-      font-size: 28px;
-      font-weight: 800;
-      animation: fadeUp .7s .5s ease both;
+    .form-box{
+      width:100%;max-width:440px;
+      background:var(--white);
+      border-radius:24px;
+      padding:40px 36px;
+      box-shadow:0 8px 40px rgba(0,0,0,.07);
+      position:relative;z-index:1;
+      animation:slideUp .5s ease both;
     }
-    .b-stat-label { font-family: var(--fb); font-size:12px; font-weight:500; }
+    @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 
-    .brand-logo-name { font-family: var(--fh); font-size:20px; font-weight:800; letter-spacing:-.02em; }
-    .brand-logo-arabic { font-family: var(--fh); }
+    .form-title{font-size:28px;font-weight:800;color:var(--text);margin-bottom:4px;text-align:center;}
+    .form-sub{font-size:14px;color:var(--text3);text-align:center;margin-bottom:24px;}
 
-    .form-header h2 { font-family: var(--fh); font-weight:800; letter-spacing:-.02em; }
-    .form-header p  { font-family: var(--fb); font-weight:400; }
+    /* alert */
+    .alert{display:none;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:600;margin-bottom:14px;background:#FFF0F0;color:var(--red);border:1px solid #FFCDD2;}
+    .alert.show{display:block;}
+    .alert.success{background:var(--green-pale);color:var(--green-dark);border-color:var(--green-mid);}
 
-    label { font-family: var(--fb); font-size:13px; font-weight:600; }
-    .btn-submit .btn-label { font-family: var(--fb); font-weight:700; letter-spacing:.02em; }
-    .form-footer { font-family: var(--fb); font-size:14px; }
+    /* form fields */
+    .fg{position:relative;margin-bottom:14px;}
+    .fg label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;}
+    .fg input{
+      width:100%;height:48px;padding:0 44px 0 16px;
+      border:1.5px solid var(--border);border-radius:12px;
+      font-family:var(--ff);font-size:14px;color:var(--text);
+      background:var(--bg);transition:border-color .2s,box-shadow .2s;
+    }
+    .fg input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(124,58,237,.15);}
+    /* svg field icons */
+    .fg-icon{position:absolute;right:14px;bottom:0;height:48px;pointer-events:none;display:flex;align-items:center;color:var(--text3);}
+    .pwd-toggle{position:absolute;right:14px;bottom:0;height:48px;background:none;border:none;cursor:pointer;color:var(--text3);display:flex;align-items:center;padding:0;transition:color .15s;}
+    .pwd-toggle:hover{color:var(--blue);}
 
-    /* stagger form fields */
-    .form-group:nth-child(1) { animation: fadeUp .5s .3s ease both; opacity:0; animation-fill-mode:both; }
-    .form-group:nth-child(2) { animation: fadeUp .5s .4s ease both; opacity:0; animation-fill-mode:both; }
+    .row-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+    .remember{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);cursor:pointer;}
+    .remember input[type=checkbox]{
+      width:18px;height:18px;border-radius:5px;accent-color:var(--green);cursor:pointer;
+    }
+    .forgot{font-size:13px;font-weight:600;color:var(--blue);text-decoration:none;}
+    .forgot:hover{text-decoration:underline;}
+
+    /* main button */
+    .btn-green{
+      width:100%;height:52px;border-radius:12px;border:none;cursor:pointer;
+      background:linear-gradient(135deg,#5B21B6,#7C3AED);color:#fff;
+      font-family:var(--ff);font-size:16px;font-weight:800;
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      box-shadow:0 6px 20px rgba(124,58,237,.40);
+      transition:transform .18s,box-shadow .18s;
+      position:relative;
+    }
+    .btn-green:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(124,58,237,.55);}
+    .btn-green:active{transform:translateY(0);}
+    .btn-green:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+    .spinner{width:20px;height:20px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;display:none;animation:spin .7s linear infinite;}
+    .btn-green.loading .spinner{display:block;}
+    .btn-green.loading .btn-label{display:none;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* divider */
+    .divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--text3);font-size:13px;}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+    /* social buttons */
+    .social-row{display:flex;gap:12px;margin-bottom:20px;}
+    .btn-social{
+      flex:1;height:46px;border:1.5px solid var(--border);border-radius:12px;
+      background:var(--white);cursor:pointer;font-family:var(--ff);font-size:14px;
+      font-weight:600;color:var(--text2);display:flex;align-items:center;justify-content:center;gap:8px;
+      transition:border-color .2s,background .2s;
+    }
+    .btn-social:hover{border-color:var(--blue);background:var(--blue-pale);}
+
+    .form-foot{text-align:center;font-size:14px;color:var(--text3);margin-top:18px;}
+    .form-foot a{color:var(--blue);font-weight:700;text-decoration:none;}
+    .form-foot a:hover{text-decoration:underline;}
+
+    .otp-link{
+      width:100%;margin-top:12px;padding:14px;border-radius:12px;
+      border:1.5px solid var(--border);background:transparent;cursor:pointer;
+      font-family:var(--ff);font-size:14px;font-weight:600;color:var(--text2);
+      display:flex;align-items:center;justify-content:space-between;
+      transition:border-color .2s,background .2s;
+    }
+    .otp-link:hover{border-color:var(--blue);background:var(--blue-pale);color:var(--blue-dark);}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px){
+      body{flex-direction:column;overflow:auto;}
+      .brand{flex:none;padding:32px 24px 24px;}
+      .brand-stats{max-width:400px;}
+      .testimonial{max-width:400px;}
+      .form-side{padding:24px 16px 40px;}
+      .form-box{padding:28px 20px;}
+    }
+    @media(max-width:480px){
+      .brand-h1{font-size:34px;}
+      .brand{padding:28px 18px 20px;}
+      .form-box{border-radius:20px;padding:24px 18px;}
+    }
   </style>
 </head>
 <body>
-  <div class="page-wrap">
-    <div class="brand-side">
-      <div class="brand-logo">
-        <img src="logo-07.svg" class="brand-logo-icon" alt="Talib-Awn" style="background:transparent;box-shadow:none;">
-        <div class="brand-logo-text">
-          <span class="brand-logo-name">Talib-Awn</span>
-          <span class="brand-logo-arabic">طالب عون</span>
-        </div>
-      </div>
-      <div class="brand-headline">
-        <div class="brand-eyebrow">Welcome back</div>
-        <h1>Your next<br>opportunity <em>awaits.</em></h1>
-        <p>Sign in to browse part-time jobs, offer mini services, and grow your career while studying.</p>
-        <div class="brand-stats">
-          <div>
-            <div class="b-stat-num" id="statUsers">—</div>
-            <div class="b-stat-label">Members</div>
-          </div>
-          <div>
-            <div class="b-stat-num" id="statProjects">—</div>
-            <div class="b-stat-label">Services</div>
-          </div>
-          <div>
-            <div class="b-stat-num">Free</div>
-            <div class="b-stat-label">Always</div>
-          </div>
-        </div>
-      </div>
+
+  <!-- ── LEFT: BRAND ── -->
+  <div class="brand">
+    <div class="brand-logo">
+      <img src="logo-07.svg" class="brand-logo-img" alt="طالب عون">
+      <div class="brand-logo-name">طالب<span> عون</span></div>
     </div>
 
-    <div class="form-side">
-      <div class="form-box">
-        <div class="form-header">
-          <h2>Sign in</h2>
-          <p>Enter your credentials to continue.</p>
-        </div>
-        <div id="alertBox" class="alert"></div>
-        <div class="form-group">
-          <label>Email address</label>
-          <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" id="password" placeholder="••••••••">
-          <button type="button" class="password-toggle" id="pwdToggle">👁️</button>
-        </div>
-        <div style="text-align:right;margin-bottom:20px;">
-          <a href="forgot-password.html" style="font-family:var(--fb);font-size:13px;color:var(--blue);font-weight:600;text-decoration:none;">Forgot password?</a>
-        </div>
-        <button class="btn-submit" id="loginBtn">
-          <div class="spinner"></div>
-          <span class="btn-label">Sign in →</span>
-        </button>
-        <div class="form-footer">Don't have an account? <a href="register.html">Create one free</a></div>
+    <div class="brand-headline">
+      <h1 class="brand-h1">
+        <span>اعثر على عمل جزئي</span>
+        <span>بالقرب منك</span>
+      </h1>
+      <div class="brand-underline"></div>
+      <p class="brand-sub">منصة جزائرية تربط الطلبة بفرص العمل الجزئي لدى المقاهي، المتاجر، والمشاريع المحلية.</p>
+    </div>
+
+    <div class="brand-stats">
+      <div class="bstat">
+        <div class="bstat-num">مجاناً</div>
+        <div class="bstat-lbl">التسجيل والاستخدام</div>
+      </div>
+      <div class="bstat">
+        <div class="bstat-num">محلية</div>
+        <div class="bstat-lbl">وظائف قريبة من جامعتك</div>
+      </div>
+      <div class="bstat">
+        <div class="bstat-num">مرونة</div>
+        <div class="bstat-lbl">ساعات تناسب دراستك</div>
       </div>
     </div>
   </div>
 
-  <!-- 3D Logo -->
-  <canvas id="logo3d" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
-  <script>
-  (function(){
-    var canvas=document.getElementById('logo3d');
-    if(!canvas||typeof THREE==='undefined') return;
-    var renderer=new THREE.WebGLRenderer({canvas:canvas,alpha:true,antialias:true});
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-    renderer.setClearColor(0x000000,0);
-    var scene=new THREE.Scene();
-    var W=window.innerWidth, H=window.innerHeight;
-    var camera=new THREE.OrthographicCamera(-W/2,W/2,H/2,-H/2,-2000,2000);
-    camera.position.z=800;
-    scene.add(new THREE.AmbientLight(0xffffff,0.55));
-    var sun=new THREE.DirectionalLight(0xffffff,1.1); sun.position.set(2,3,4); scene.add(sun);
-    var rim=new THREE.DirectionalLight(0x5ba3f8,0.5); rim.position.set(-3,-1,2); scene.add(rim);
-    var mat=new THREE.MeshPhongMaterial({color:0xf5a623,specular:0xf2b85c,shininess:40});
-    var mesh=null;
-    new THREE.OBJLoader().load('logo_blue.obj',function(obj){
-      obj.traverse(function(c){if(c.isMesh)c.material=mat;});
-      var box=new THREE.Box3().setFromObject(obj);
-      var ctr=new THREE.Vector3(); box.getCenter(ctr); obj.position.sub(ctr);
-      var sz=new THREE.Vector3(); box.getSize(sz);
-      obj.scale.setScalar(1/Math.max(sz.x,sz.y,sz.z));
-      mesh=obj; scene.add(mesh);
-    });
-    function resize(){
-      W=window.innerWidth; H=window.innerHeight;
-      renderer.setSize(W,H,false);
-      camera.left=-W/2; camera.right=W/2; camera.top=H/2; camera.bottom=-H/2;
-      camera.updateProjectionMatrix();
-    }
-    window.addEventListener('resize',resize); resize();
-    var rot=0;
-    function tick(){
-      requestAnimationFrame(tick);
-      if(!mesh) return;
-      rot+=0.006;
-      /* positioned in left panel centre */
-      mesh.position.set(-window.innerWidth*0.25, 0, 0);
-      mesh.scale.setScalar(window.innerHeight*0.22);
-      mesh.rotation.x=0.12; mesh.rotation.y=rot;
-      renderer.render(scene,camera);
-    }
-    tick();
-  })();
-  </script>
+  <!-- ── RIGHT: FORM ── -->
+  <div class="form-side">
+    <div class="form-box">
+      <h2 class="form-title">مرحباً بعودتك</h2>
+      <p class="form-sub">سجّل دخولك للمتابعة</p>
+
+      <div id="alertBox" class="alert"></div>
+
+      <div class="fg">
+        <label>البريد الإلكتروني أو رقم الهاتف</label>
+        <span class="fg-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </span>
+        <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+
+      <div class="fg">
+        <label>كلمة المرور</label>
+        <input type="password" id="password" placeholder="••••••••">
+        <button type="button" class="pwd-toggle" id="pwdToggle">
+          <svg id="eyeIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+
+      <div class="row-meta">
+        <label class="remember">
+          <input type="checkbox" checked> تذكّرني
+        </label>
+        <a href="forgot-password.html" class="forgot">نسيت كلمة المرور؟</a>
+      </div>
+
+      <button class="btn-green" id="loginBtn">
+        <div class="spinner"></div>
+        <span class="btn-label">تسجيل الدخول</span>
+      </button>
+
+      <div class="divider">أو</div>
+
+      <div class="social-row">
+        <button class="btn-social">
+          <img src="https://www.google.com/favicon.ico" width="18" height="18" alt=""> Google
+        </button>
+      </div>
+
+      <div class="form-foot">ليس لديك حساب؟ <a href="register.html">أنشئ حساباً مجانياً</a></div>
+
+      <button class="otp-link" onclick="window.location.href='otp.html'">
+        <span style="display:flex;align-items:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          الدخول برمز OTP على هاتفك
+        </span>
+        <span>←</span>
+      </button>
+    </div>
+  </div>
 
   <script type="module">
-    import { supabase, signIn, redirectByRole, showAlert, setLoading } from './supabase.js';
+    import { supabase, signIn, redirectByRole, showAlert, setLoading } from './api.js';
 
+    // redirect if already logged in
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-      const { data: p } = await supabase.from('users').select('role').eq('auth_id', session.user.id).single();
-      redirectByRole(p?.role);
+      const { data: p } = await supabase.from('users').select('role, grade').eq('auth_id', session.user.id).single();
+      redirectByRole(p);
     }
 
-    (async () => {
-      const [{ count: u }, { count: p }] = await Promise.all([
-        supabase.from('users').select('*', { count: 'exact', head: true }).neq('role', 'Admin'),
-        supabase.from('projects').select('*', { count: 'exact', head: true }).eq('is_visible', true),
-      ]);
-      document.getElementById('statUsers').textContent = (u || 0) + '+';
-      document.getElementById('statProjects').textContent = (p || 0) + '+';
-    })();
-
+    const EYE    = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    const EYEOFF = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
     document.getElementById('pwdToggle').onclick = () => {
       const i = document.getElementById('password');
       i.type = i.type === 'password' ? 'text' : 'password';
+      document.getElementById('pwdToggle').innerHTML = i.type === 'password' ? EYE : EYEOFF;
     };
 
     async function doLogin() {
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
-      if (!email || !password) { showAlert('alertBox', 'Please fill in all fields.'); return; }
+      if (!email || !password) { showAlert('alertBox', 'يرجى ملء جميع الحقول.'); return; }
       setLoading('loginBtn', true);
       document.getElementById('alertBox').classList.remove('show');
       const { data, error } = await signIn({ email, password });
       setLoading('loginBtn', false);
       if (error) {
         const { data: prof } = await supabase.from('users').select('is_banned,ban_reason').eq('email', email).maybeSingle();
-        if (prof?.is_banned) {
-          showAlert('alertBox', `Account banned. Reason: ${prof.ban_reason}`);
-        } else {
-          showAlert('alertBox', 'Incorrect email or password.');
-        }
+        if (prof?.is_banned) showAlert('alertBox', `الحساب موقوف. السبب: ${prof.ban_reason}`);
+        else showAlert('alertBox', 'البريد الإلكتروني أو كلمة المرور غير صحيحة.');
         return;
       }
-      const { data: profile } = await supabase.from('users').select('role').eq('auth_id', data.user.id).single();
-      redirectByRole(profile?.role);
+      const { data: profile } = await supabase.from('users').select('role, grade').eq('auth_id', data.user.id).single();
+      redirectByRole(profile);
     }
 
     document.getElementById('loginBtn').addEventListener('click', doLogin);

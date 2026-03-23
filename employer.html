@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talib-Awn — لوحة الطالب</title>
+<link rel="stylesheet" href="brand.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#10202d;--blue:#7C3AED;--blue-mid:#A78BFA;--blue-light:#DDD6FE;--blue-pale:#EDE9FE;
+  --green:#22C55E;--green-dark:#16A34A;--green-pale:#DCFCE7;--green-mid:#BBF7D0;
+  --gold:#D97706;--gold-pale:#FEF3C7;
+  --red:#EF4444;--red-pale:#FEF2F2;
+  --purple:#8B5CF6;--purple-pale:#F3E8FF;--purple-dark:#6B21A8;
+  --bg:#F8FAFC;--white:#fff;
+  --text:#0F172A;--text2:#334155;--text3:#64748B;--border:#E2E8F0;
+  --ff:'Inter',sans-serif;--fa:'Cairo',sans-serif;--nav-h:64px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--fa);background:var(--bg);color:var(--text);direction:rtl;-webkit-font-smoothing:antialiased;}
+button,input,select,textarea{font-family:var(--fa);}
+button{cursor:pointer;}
+a{text-decoration:none;color:inherit;}
+
+/* ══ NAV ══ */
+.navbar{position:fixed;top:0;right:0;left:0;z-index:500;height:var(--nav-h);background:rgba(255,255,255,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:0;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.nav-brand{display:flex;align-items:center;gap:7px;flex-shrink:0;margin-left:14px;}
+.nav-logo-box{height:36px;width:auto;object-fit:contain;}
+.nav-name{font-size:17px;font-weight:800;color:var(--navy);letter-spacing:-.02em;font-family:var(--ff);}
+.nav-pro{background:linear-gradient(135deg,#064E3B,#065F46);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:100px;letter-spacing:.05em;font-family:var(--ff);}
+.nav-sep{width:1px;height:20px;background:var(--border);margin:0 14px;flex-shrink:0;}
+.nav-links{display:flex;align-items:stretch;height:var(--nav-h);flex:1;}
+.nav-link{display:flex;align-items:center;gap:5px;padding:0 13px;font-size:13px;font-weight:600;color:var(--text3);background:none;border:none;border-bottom:2.5px solid transparent;cursor:pointer;white-space:nowrap;transition:all .15s;}
+.nav-link svg{width:14px;height:14px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.nav-link:hover{color:var(--blue);background:rgba(124,58,237,.04);}
+.nav-link.active{color:#5B21B6;border-bottom-color:#7C3AED;}
+.nbadge{background:#7C3AED;color:#fff;border-radius:100px;font-size:9px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center;font-family:var(--ff);}
+.nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.notif-btn{width:34px;height:34px;border-radius:9px;background:transparent;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .15s;}
+.notif-btn:hover{background:var(--blue-pale);border-color:var(--blue-light);}
+.notif-btn svg{width:15px;height:15px;stroke:var(--text2);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.notif-red{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--red);border:2px solid #fff;}
+.nav-av{width:32px;height:32px;border-radius:50%;background:var(--blue-pale);color:var(--navy);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--blue-light);transition:all .15s;}
+.nav-av:hover{border-color:var(--blue);}
+
+/* ══ NOTIF PANEL ══ */
+.notif-panel{position:fixed;top:calc(var(--nav-h)+8px);left:16px;z-index:600;width:310px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.1);display:none;}
+.notif-panel.open{display:block;animation:drop .15s ease;}
+@keyframes drop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.np-hdr{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.np-hdr span{font-size:13px;font-weight:700;}
+.np-mark{font-size:11px;color:var(--blue);background:none;border:none;cursor:pointer;}
+.np-item{padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
+.np-item:last-child{border-bottom:none;}
+.np-item:hover{background:var(--bg);}
+.np-item.unread{background:var(--blue-pale);}
+.np-item.unread:hover{background:#C7D9FA;}
+.np-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:1px;}
+.np-time{font-size:11px;color:var(--text3);}
+
+/* ══ LAYOUT ══ */
+.main{padding-top:var(--nav-h);}
+.page{display:none;}
+.page.active{display:block;}
+.page.page-msg{display:none;}
+.page.page-msg.active{display:flex;}
+
+/* ══ FAB ══ */
+.fab{position:fixed;bottom:24px;left:20px;z-index:200;background:linear-gradient(135deg,#064E3B,#065F46);color:#fff;border:none;border-radius:100px;padding:13px 22px;font-size:14px;font-weight:800;display:flex;align-items:center;gap:7px;cursor:pointer;box-shadow:0 4px 20px rgba(124,58,237,.45);transition:all .2s;}
+.fab:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,.55);}
+.fab svg{width:16px;height:16px;stroke:#fff;stroke-width:2.3;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ══ MODAL ══ */
+.overlay{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:16px;}
+.overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:18px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;padding:24px;box-shadow:0 12px 40px rgba(0,0,0,.12);}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.modal-title{font-size:16px;font-weight:800;}
+.modal-close{width:30px;height:30px;border-radius:8px;background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:var(--text3);}
+.fld{margin-bottom:14px;}
+.fld label{display:block;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;font-family:var(--ff);}
+.fld input,.fld select,.fld textarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;color:var(--text);background:var(--white);outline:none;transition:border-color .15s;height:42px;}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(124,58,237,.08);}
+.fld textarea{height:80px;resize:vertical;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.trow{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.trow:last-child{border-bottom:none;}
+.trow-label{font-size:13px;font-weight:600;}
+.trow-sub{font-size:11px;color:var(--text3);}
+.toggle{width:38px;height:20px;border-radius:100px;background:var(--border);border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:var(--blue);}
+.toggle::after{content:'';position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle.on::after{transform:translateX(-18px);}
+
+/* ══ HOME ══ */
+.home-wrap{display:grid;grid-template-columns:220px 1fr;gap:18px;width:100%;padding:22px 18px 60px;}
+.sidebar{position:sticky;top:calc(var(--nav-h)+14px);align-self:start;height:fit-content;max-height:calc(100vh - var(--nav-h) - 28px);overflow-y:auto;scrollbar-width:thin;}
+.filter-box{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.fb-title{font-size:12px;font-weight:800;color:var(--text);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.fs{margin-bottom:14px;}
+.fs-label{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.14em;margin-bottom:7px;font-family:var(--ff);}
+.fopt{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);margin-bottom:5px;cursor:pointer;}
+.fopt input{accent-color:var(--blue);width:13px;height:13px;flex-shrink:0;}
+.range-row{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px;}
+input[type=range]{width:100%;accent-color:var(--blue);margin-bottom:3px;}
+.fa-btn{width:100%;padding:9px;background:linear-gradient(135deg,#064E3B,#065F46);color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .15s;margin-top:4px;}
+.fa-btn:hover{opacity:.9;}
+
+/* ══ WELCOME STRIP ══ */
+.welcome{background:linear-gradient(135deg,#064E3B,#065F46);border-radius:14px;padding:22px 24px;color:#fff;margin-bottom:14px;position:relative;overflow:hidden;}
+.welcome::before{content:'';position:absolute;right:-30px;top:-30px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.07);}
+.welcome::after{content:'';position:absolute;left:35%;bottom:-25px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.05);}
+.w-name{font-size:18px;font-weight:800;margin-bottom:3px;position:relative;z-index:1;}
+.w-sub{font-size:12px;opacity:.75;position:relative;z-index:1;}
+.w-acts{display:flex;gap:9px;margin-top:14px;position:relative;z-index:1;}
+.wb{padding:8px 18px;border-radius:100px;border:none;cursor:pointer;font-size:12px;font-weight:700;transition:all .18s;}
+.wb-s{background:#fff;color:var(--navy);}
+.wb-s:hover{transform:translateY(-1px);}
+.wb-o{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.3);}
+.wb-o:hover{background:rgba(255,255,255,.22);}
+
+/* ══ STATS ══ */
+.ov-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px;}
+.ov{background:var(--white);border:1.5px solid var(--border);border-radius:11px;padding:13px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.ov-ico{width:34px;height:34px;border-radius:9px;margin:0 auto 7px;display:flex;align-items:center;justify-content:center;}
+.ov-ico svg{width:15px;height:15px;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.ov-val{font-size:17px;font-weight:800;color:var(--text);}
+.ov-lbl{font-size:10px;color:var(--text3);font-weight:600;margin-top:2px;}
+
+/* ══ CARDS/SECTIONS ══ */
+.card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.card+.card{margin-top:12px;}
+.sec-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sec-row h3{font-size:14px;font-weight:700;}
+.sec-link{font-size:12px;font-weight:600;color:var(--blue);background:none;border:none;cursor:pointer;}
+
+/* ══ JOB CARD ══ */
+.job-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:all .18s;cursor:default;}
+.job-card:hover{border-color:var(--blue-light);box-shadow:0 4px 18px rgba(124,58,237,.09);transform:translateY(-1px);}
+.jc-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.jc-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.jc-company{font-size:12px;color:var(--text3);}
+.jc-metas{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;}
+.jc-m{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);}
+.jc-m svg{width:11px;height:11px;stroke:var(--text3);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.jc-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:10px;}
+.jc-price{font-size:14px;font-weight:800;color:var(--blue);}
+.jc-price span{font-size:10px;color:var(--text3);font-weight:400;}
+
+/* ══ BADGES ══ */
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:100px;font-size:10px;font-weight:700;white-space:nowrap;}
+.b-open{background:var(--green-pale);color:var(--green-dark);}
+.b-pend{background:var(--gold-pale);color:#92400E;}
+.b-rej{background:var(--red-pale);color:var(--red);}
+.b-part{background:var(--blue-pale);color:var(--navy);}
+.b-done{background:#F0FFF4;color:var(--green-dark);}
+.b-req{background:var(--purple-pale);color:var(--purple-dark);}
+
+/* ══ BTNS ══ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 15px;border-radius:9px;border:none;cursor:pointer;font-size:12px;font-weight:700;transition:all .18s;}
+.btn-p{background:linear-gradient(135deg,#064E3B,#065F46);color:#fff;box-shadow:0 2px 8px rgba(124,58,237,.25);}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(124,58,237,.35);}
+.btn-g{background:var(--bg);border:1.5px solid var(--border);color:var(--text2);}
+.btn-g:hover{border-color:var(--blue);color:var(--blue);}
+.btn-s{background:var(--green-pale);color:var(--green-dark);border:1.5px solid var(--green-mid);}
+.btn-s:hover{background:#BBF7D0;}
+.btn-d{background:var(--red-pale);color:var(--red);border:1.5px solid #FECACA;}
+.btn-d:hover{background:#FEE2E2;}
+.btn-sm{padding:5px 11px;font-size:11px;border-radius:7px;}
+
+/* ══ TABLE ══ */
+.tbl-wrap{overflow-x:auto;}
+.tbl{width:100%;border-collapse:collapse;min-width:540px;}
+.tbl th{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:9px 13px;border-bottom:2px solid var(--border);text-align:right;font-family:var(--ff);}
+.tbl td{padding:11px 13px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--bg);}
+
+/* ══ WALLET ══ */
+.wallet{background:linear-gradient(135deg,#064E3B,#065F46);border-radius:14px;padding:24px;color:#fff;margin-bottom:14px;}
+.wl-lbl{font-size:12px;opacity:.7;margin-bottom:5px;}
+.wl-amt{font-size:32px;font-weight:800;margin-bottom:3px;letter-spacing:-.02em;color:#6EE7B7;}
+.wl-sub{font-size:11px;opacity:.55;}
+.wl-acts{display:flex;gap:9px;margin-top:18px;}
+.wb2{padding:8px 18px;border-radius:100px;border:none;cursor:pointer;font-size:12px;font-weight:700;transition:all .18s;}
+.wbs{background:#fff;color:var(--navy);}
+.wbs:hover{transform:translateY(-1px);}
+.wbo{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.28);}
+.wbo:hover{background:rgba(255,255,255,.2);}
+.tx-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.tx-row:last-child{border-bottom:none;}
+.tx-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tx-ico svg{width:14px;height:14px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.tx-ttl{font-size:12px;font-weight:600;}
+.tx-dt{font-size:10px;color:var(--text3);}
+.tx-amt{font-size:13px;font-weight:700;}
+.in{color:#059669;}
+.out{color:#DC2626;}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);}
+.info-row:last-child{border-bottom:none;}
+.il{font-size:12px;color:var(--text3);}
+.iv{font-size:12px;font-weight:700;}
+
+/* ══ REVIEWS ══ */
+.rev-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+.rev-card+.rev-card{margin-top:10px;}
+.rev-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;}
+.rev-av{width:38px;height:38px;border-radius:50%;background:var(--blue-pale);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--navy);flex-shrink:0;}
+.rev-name{font-size:13px;font-weight:700;}
+.rev-meta{font-size:11px;color:var(--text3);margin-top:1px;}
+.rev-txt{font-size:12px;color:var(--text2);line-height:1.65;}
+.star{color:#D97706;}
+
+/* ══ PROFILE ══ */
+.ph{background:linear-gradient(135deg,#064E3B,#065F46);border-radius:14px;padding:24px;color:#fff;margin-bottom:14px;position:relative;overflow:hidden;}
+.ph::after{content:'';position:absolute;left:-30px;bottom:-30px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.07);}
+.ph-top{display:flex;gap:16px;margin-bottom:12px;align-items:flex-start;}
+.ph-av{width:66px;height:66px;border-radius:50%;background:rgba(255,255,255,.2);border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;flex-shrink:0;z-index:1;}
+.ph-info{z-index:1;}
+.ph-name{font-size:18px;font-weight:800;margin-bottom:3px;}
+.ph-sub{font-size:12px;opacity:.75;margin-bottom:7px;}
+.ph-tags{display:flex;flex-wrap:wrap;gap:5px;z-index:1;}
+.ph-tag{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:100px;padding:3px 10px;font-size:11px;font-weight:600;}
+.ph-edit{position:absolute;top:16px;left:16px;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.28);color:#fff;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;z-index:1;}
+.skill-tag{background:var(--blue-pale);color:var(--navy);border-radius:100px;padding:3px 10px;font-size:11px;font-weight:600;}
+
+/* ══ PAGES WRAPPER ══ */
+.std-page{width:100%;max-width:100%;padding:22px 24px 60px;}
+.wide-page{width:100%;max-width:100%;padding:22px 24px 60px;}
+
+/* ══ INNER TABS ══ */
+.itabs{display:flex;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:3px;margin-bottom:18px;width:fit-content;gap:2px;}
+.itab{padding:7px 16px;border-radius:8px;border:none;font-size:12px;font-weight:700;color:var(--text3);background:none;cursor:pointer;transition:all .15s;}
+.itab.active{background:var(--white);color:var(--blue);box-shadow:0 1px 4px rgba(0,0,0,.08);}
+
+/* ══ BROWSE ══ */
+.browse-grid{display:grid;grid-template-columns:200px 1fr;gap:16px;align-items:start;}
+.sr-row{position:relative;margin-bottom:12px;}
+.sr-row input{width:100%;height:42px;padding:0 42px 0 14px;border:1.5px solid var(--border);border-radius:11px;font-size:13px;color:var(--text);background:var(--white);outline:none;transition:border-color .15s;}
+.sr-row input:focus{border-color:var(--blue);}
+.sr-ico{position:absolute;right:13px;top:50%;transform:translateY(-50%);pointer-events:none;}
+.sr-ico svg{width:15px;height:15px;stroke:var(--text3);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.res-count{font-size:12px;color:var(--text3);margin-bottom:10px;}
+
+/* ══ MESSAGES PAGE ══ */
+.page-msg{height:calc(100vh - var(--nav-h));overflow:hidden;}
+
+/* Sidebar */
+.msg-sb{width:268px;flex-shrink:0;border-left:1px solid var(--border);background:var(--white);display:flex;flex-direction:column;overflow:hidden;}
+.msb-hdr{padding:14px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.msb-title{font-size:15px;font-weight:800;}
+.msb-new{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#064E3B,#065F46);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.msb-new svg{width:12px;height:12px;stroke:#fff;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.msb-search{padding:9px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.msb-search-wrap{position:relative;}
+.msb-search input{width:100%;height:32px;padding:0 10px 0 30px;border:1.5px solid var(--border);border-radius:9px;font-size:12px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s;}
+.msb-search input:focus{border-color:var(--blue);}
+.msb-sico{position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--text3);}
+.msb-sico svg{width:12px;height:12px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.msb-tabs{display:flex;padding:7px 10px;gap:3px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.msb-tab{padding:4px 10px;border-radius:100px;border:none;font-size:11px;font-weight:700;color:var(--text3);background:none;cursor:pointer;transition:all .15s;}
+.msb-tab.active{background:linear-gradient(135deg,#064E3B,#065F46);color:#fff;}
+.msg-list{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.mi{padding:11px 13px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:flex-start;gap:9px;transition:background .1s;}
+.mi:hover{background:var(--bg);}
+.mi.active{background:var(--blue-pale);}
+.mi-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;position:relative;}
+.mi-dot{position:absolute;bottom:0;left:0;width:9px;height:9px;border-radius:50%;background:var(--green);border:2px solid var(--white);}
+.mi-body{flex:1;min-width:0;}
+.mi-name{font-size:12px;font-weight:700;margin-bottom:2px;}
+.mi-prev{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;}
+.mi-meta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
+.mi-time{font-size:10px;color:var(--text3);}
+.mi-unread{background:linear-gradient(135deg,#064E3B,#065F46);color:#fff;border-radius:100px;font-size:9px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center;font-family:var(--ff);}
+.mi-tag{font-size:9px;font-weight:700;padding:2px 6px;border-radius:100px;}
+.mtag-done{background:var(--green-pale);color:var(--green-dark);}
+.mtag-act{background:var(--gold-pale);color:#92400E;}
+
+/* Chat area */
+.msg-chat{flex:1;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;}
+.mch-hdr{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--white);flex-shrink:0;}
+.mch-info{display:flex;align-items:center;gap:9px;}
+.mch-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.mch-name{font-size:13px;font-weight:700;}
+.mch-status{font-size:11px;color:var(--green-dark);display:flex;align-items:center;gap:3px;}
+.mch-status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;}
+.mch-offline{color:var(--text3);}
+.mch-offline::before{background:var(--text3);}
+.mch-acts{display:flex;gap:5px;}
+.mch-btn{width:30px;height:30px;border-radius:7px;background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .13s;}
+.mch-btn:hover{background:var(--blue-pale);border-color:var(--blue-light);}
+.mch-btn svg{width:13px;height:13px;stroke:var(--text2);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.job-bar{background:var(--blue-pale);border-bottom:1px solid var(--blue-light);padding:6px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.jb-text{font-size:11px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:5px;}
+.jb-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);display:inline-block;}
+.jb-btn{padding:4px 12px;border-radius:100px;background:linear-gradient(135deg,#064E3B,#065F46);color:#fff;border:none;font-size:10px;font-weight:700;cursor:pointer;}
+.chat-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.day-lbl{text-align:center;font-size:10px;color:var(--text3);margin:2px 0;}
+.bwrap{display:flex;gap:7px;max-width:68%;}
+.bwrap.mine{align-self:flex-start;flex-direction:row-reverse;}
+.bwrap.theirs{align-self:flex-end;}
+.bav{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;align-self:flex-end;}
+.bubble{padding:9px 13px;border-radius:13px;font-size:12px;line-height:1.55;}
+.bwrap.theirs .bubble{background:var(--white);color:var(--text);border:1px solid var(--border);border-bottom-right-radius:3px;}
+.bwrap.mine .bubble{background:linear-gradient(135deg,#064E3B,#065F46);color:#fff;border-bottom-left-radius:3px;}
+.btime{font-size:9px;color:var(--text3);margin-top:3px;align-self:flex-end;}
+.bwrap.mine .btime{color:rgba(255,255,255,.5);text-align:left;}
+.bfile{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:9px;padding:8px 10px;margin-top:5px;cursor:pointer;}
+.bfile.dark{background:var(--bg);border-color:var(--border);}
+.bfile-ico{width:28px;height:28px;border-radius:6px;background:var(--red-pale);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--red);flex-shrink:0;}
+.bfile-name{font-size:11px;font-weight:600;}
+.bfile-size{font-size:10px;opacity:.7;}
+.bimg{width:190px;border-radius:10px;background:linear-gradient(135deg,var(--green-pale),var(--blue-pale));height:110px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:28px;}
+.tdots{display:flex;gap:3px;align-items:center;padding:8px 12px;}
+.tdot{width:5px;height:5px;border-radius:50%;background:var(--text3);animation:td .9s ease-in-out infinite;}
+.tdot:nth-child(2){animation-delay:.15s;}
+.tdot:nth-child(3){animation-delay:.3s;}
+@keyframes td{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.chat-input-area{padding:11px 14px;border-top:1px solid var(--border);background:var(--white);display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.ci-btn{width:30px;height:30px;border-radius:7px;background:transparent;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .13s;flex-shrink:0;}
+.ci-btn:hover{background:var(--blue-pale);border-color:var(--blue-light);}
+.ci-btn svg{width:13px;height:13px;stroke:var(--text3);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.ci-input{flex:1;height:36px;padding:0 13px;border:1.5px solid var(--border);border-radius:100px;font-size:12px;color:var(--text);background:var(--bg);outline:none;transition:all .15s;}
+.ci-input:focus{border-color:var(--blue);background:var(--white);}
+.ci-send{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#064E3B,#065F46);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 2px 8px rgba(124,58,237,.35);transition:all .18s;}
+.ci-send:hover{transform:scale(1.06);}
+.ci-send svg{width:14px;height:14px;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+
+/* Detail panel */
+.msg-detail{width:272px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);overflow-y:auto;scrollbar-width:thin;display:flex;flex-direction:column;}
+.md-hdr{padding:14px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.md-title{font-size:13px;font-weight:800;}
+.md-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.jd-wrap{margin:11px;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;}
+.jd-top{background:linear-gradient(135deg,#064E3B,#065F46);padding:12px 13px;color:#fff;}
+.jd-t{font-size:12px;font-weight:700;margin-bottom:2px;}
+.jd-s{font-size:10px;opacity:.72;}
+.prog-wrap{padding:10px 13px 6px;}
+.prog-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;}
+.prog-label span:first-child{color:var(--text3);}
+.prog-label span:last-child{color:var(--blue);font-weight:700;}
+.prog-track{height:5px;background:var(--border);border-radius:100px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--navy),var(--blue));border-radius:100px;transition:width .5s ease;}
+.jd-rows{padding:5px 13px 10px;}
+.jd-row{display:flex;justify-content:space-between;padding:4px 0;font-size:11px;}
+.jd-row span:first-child{color:var(--text3);}
+.jd-row span:last-child{font-weight:600;}
+.jd-stages{padding:10px 13px;}
+.jd-st-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);font-family:var(--ff);margin-bottom:9px;}
+.jd-st{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
+.jd-st:last-child{margin-bottom:0;}
+.st-ico{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:8px;}
+.st-done{background:var(--green);color:#fff;}
+.st-act{background:linear-gradient(135deg,#064E3B,#065F46);color:#fff;font-size:6px;}
+.st-todo{background:var(--border);}
+.st-lbl{font-size:11px;}
+.st-done-l{color:var(--text3);text-decoration:line-through;}
+.price-box{margin:0 11px 11px;background:var(--gold-pale);border:1.5px solid rgba(245,158,11,.3);border-radius:10px;padding:10px 12px;}
+.pb-lbl{font-size:10px;color:#92400E;margin-bottom:3px;}
+.pb-amt{font-size:22px;font-weight:800;}
+.pb-sub{font-size:10px;color:var(--text3);margin-top:2px;}
+.atts{padding:0 11px 11px;}
+.att-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);font-family:var(--ff);margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;}
+.att-item{display:flex;align-items:center;gap:7px;padding:7px;border:1.5px solid var(--border);border-radius:9px;margin-bottom:5px;cursor:pointer;transition:background .1s;}
+.att-item:hover{background:var(--bg);}
+.att-ico{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;}
+.att-z{background:var(--gold-pale);color:#92400E;}
+.att-i{background:var(--green-pale);color:var(--green-dark);}
+.att-n{font-size:11px;font-weight:600;}
+.att-s{font-size:10px;color:var(--text3);}
+.jd-btns{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 11px 13px;}
+
+/* ══ TOAST ══ */
+.toast{position:fixed;bottom:24px;right:24px;z-index:1000;background:var(--text);color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.2);transform:translateY(80px);opacity:0;transition:all .3s ease;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{background:var(--green-dark);}
+.toast.error{background:var(--red);}
+
+@media(max-width:1020px){.msg-detail{display:none;}}
+@media(max-width:780px){.msg-sb{display:none;}.home-wrap{grid-template-columns:1fr;}.sidebar{display:none;}.browse-grid{grid-template-columns:1fr;}.ov-grid{grid-template-columns:repeat(2,1fr);}.g2{grid-template-columns:1fr;}}
+
+/* ── Nav centered ── */
+.nav-links{flex:1;justify-content:center;}
+
+/* ── Avatar dropdown ── */
+.av-wrap{position:relative;display:inline-block;}
+.av-dropdown{position:absolute;top:calc(100% + 10px);right:0;width:210px;background:var(--white);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.13);overflow:hidden;opacity:0;transform:translateY(-8px) scale(.97);pointer-events:none;transition:opacity .18s,transform .18s;z-index:700;}
+.av-dropdown.open{opacity:1;transform:translateY(0) scale(1);pointer-events:all;}
+.av-header{padding:12px 14px 10px;border-bottom:1px solid var(--border);background:var(--bg);}
+.av-hname{font-size:13px;font-weight:700;color:var(--text);}
+.av-hsub{font-size:11px;color:var(--text3);margin-top:2px;}
+.av-item{display:flex;align-items:center;gap:9px;width:100%;padding:10px 14px;font-size:13px;font-weight:500;color:var(--text2);background:none;border:none;cursor:pointer;transition:background .12s;text-align:right;font-family:var(--fa);}
+.av-item svg{width:15px;height:15px;flex-shrink:0;stroke:var(--text3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.av-item:hover{background:var(--bg);color:var(--blue);}
+.av-item:hover svg{stroke:var(--blue);}
+.av-item-danger{color:var(--red);}
+.av-item-danger svg{stroke:var(--red);}
+.av-item-danger:hover{background:var(--red-pale);}
+.av-divider{height:1px;background:var(--border);margin:3px 0;}
+
+/* ── Toggle ── */
+.tog-btn{width:42px;height:24px;border-radius:100px;background:var(--border);border:none;cursor:pointer;position:relative;transition:background .22s;flex-shrink:0;padding:0;}
+.tog-btn.on{background:var(--blue);}
+.tog-btn span{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .22s;box-shadow:0 1px 4px rgba(0,0,0,.18);display:block;}
+.tog-btn.on span{transform:translateX(-18px);}
+
+/* ── Settings link rows ── */
+.settings-links{display:flex;flex-direction:column;margin-top:6px;}
+.settings-link{display:flex;align-items:center;gap:13px;width:100%;padding:12px 0;background:none;border:none;border-bottom:1px solid var(--border);cursor:pointer;text-align:right;font-family:var(--fa);border-radius:0;transition:all .15s;}
+.settings-link:last-child{border-bottom:none;}
+.settings-link:hover .settings-link-title{color:var(--blue);}
+.settings-link:hover .settings-link-arrow{stroke:var(--blue);}
+.settings-link-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.settings-link-icon svg{width:17px;height:17px;}
+.settings-link-text{flex:1;}
+.settings-link-title{font-size:13px;font-weight:600;color:var(--text);transition:color .15s;}
+.settings-link-sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.settings-link-arrow{width:15px;height:15px;stroke:var(--border);flex-shrink:0;transition:stroke .15s;}
+.settings-link-danger .settings-link-title{color:var(--red);}
+.settings-link-danger .settings-link-arrow{stroke:var(--red);}
+.settings-link-danger:hover .settings-link-title{color:var(--red);}
+
+/* ── Page load animation ── */
+@keyframes pgFadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.page.active .std-page,.page.active .wide-page,.page.active .home-wrap{animation:pgFadeUp .3s cubic-bezier(.22,1,.36,1) both;}
+.page.active .stat,.page.active .ov-item{animation:pgFadeUp .3s cubic-bezier(.22,1,.36,1) both;}
+.page.active .stat:nth-child(1),.page.active .ov-item:nth-child(1){animation-delay:.03s}
+.page.active .stat:nth-child(2),.page.active .ov-item:nth-child(2){animation-delay:.07s}
+.page.active .stat:nth-child(3),.page.active .ov-item:nth-child(3){animation-delay:.11s}
+.page.active .stat:nth-child(4),.page.active .ov-item:nth-child(4){animation-delay:.15s}
+.page.active .card{animation:pgFadeUp .28s cubic-bezier(.22,1,.36,1) both;}
+.page.active .welcome,.page.active .ph,.page.active .wallet{animation:pgFadeUp .25s cubic-bezier(.22,1,.36,1) both;}
+.page.active .job-card,.page.active .rev-card{animation:pgFadeUp .26s cubic-bezier(.22,1,.36,1) both;}
+
+/* ── Hamburger ── */
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;background:none;border:none;cursor:pointer;padding:4px;border-radius:8px;flex-shrink:0;}
+.hamburger span{display:block;height:2px;width:22px;background:var(--text2);border-radius:2px;transition:all .25s cubic-bezier(.22,1,.36,1);}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+/* ── Drawer ── */
+.drawer-overlay{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s;}
+.drawer-overlay.open{opacity:1;pointer-events:all;}
+.drawer{position:fixed;top:0;right:0;bottom:0;z-index:850;width:280px;background:var(--white);box-shadow:-8px 0 32px rgba(0,0,0,.12);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s cubic-bezier(.22,1,.36,1);}
+.drawer.open{transform:translateX(0);}
+.drawer-header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border);}
+.drawer-close{width:32px;height:32px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;font-size:14px;color:var(--text3);display:flex;align-items:center;justify-content:center;}
+.drawer-user{display:flex;align-items:center;gap:12px;padding:16px 18px;background:var(--bg);border-bottom:1px solid var(--border);}
+.drawer-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#064E3B,#065F46);color:#fff;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.drawer-uname{font-size:14px;font-weight:700;color:var(--text);}
+.drawer-usub{font-size:11px;color:var(--text3);margin-top:2px;}
+.drawer-nav{flex:1;overflow-y:auto;padding:8px 0;}
+.drawer-link{display:flex;align-items:center;gap:12px;width:100%;padding:13px 20px;font-size:14px;font-weight:600;color:var(--text2);background:none;border:none;border-right:3px solid transparent;cursor:pointer;transition:all .15s;font-family:var(--fa);text-align:right;}
+.drawer-link svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.drawer-link:hover{background:var(--bg);color:var(--blue);border-right-color:var(--blue-light);}
+.drawer-link.active{background:var(--blue-pale);color:var(--blue);border-right-color:var(--blue);font-weight:700;}
+.drawer-link .nbadge{margin-right:auto;}
+.drawer-footer{padding:14px 18px;border-top:1px solid var(--border);}
+.drawer-signout{display:flex;align-items:center;gap:10px;width:100%;padding:11px 14px;background:var(--red-pale);color:var(--red);border:1.5px solid #FECACA;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;font-family:var(--fa);}
+.drawer-signout svg{width:16px;height:16px;flex-shrink:0;}
+.hide-mobile{display:flex;}
+
+/* ════ Responsive ════ */
+@media(max-width:1280px){
+  .std-page,.wide-page{padding:18px 18px 60px;}
+  .home-wrap{padding:18px 14px 60px;gap:14px;}
+  .msg-detail{display:none;}
+}
+@media(max-width:1024px){
+  :root{--nav-h:60px;}
+  .navbar{padding:0 14px;}
+  .nav-link{padding:0 10px;font-size:12px;}
+  .home-wrap{grid-template-columns:1fr;gap:14px;padding:16px 14px 60px;}
+  .sidebar{position:static;max-height:none;}
+  .filter-box{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .filter-box .fb-title,.filter-box .fa-btn{grid-column:1/-1;}
+  .std-page,.wide-page{padding:16px 16px 60px;}
+}
+@media(max-width:768px){
+  :root{--nav-h:56px;}
+  .hamburger{display:flex;}
+  .nav-links{display:none;}
+  .hide-mobile{display:none;}
+  .nav-sep{display:none;}
+  .navbar{padding:0 12px;}
+  .nav-brand{margin-left:0;}
+  /* RTL mobile: hamburger RIGHT, brand center, notif+av LEFT */
+  .hamburger{order:1;}
+  .nav-brand{order:2;flex:1;}
+  .nav-right{order:3;}
+  .home-wrap{grid-template-columns:1fr;gap:12px;padding:14px 12px 80px;}
+  .std-page,.wide-page{padding:14px 12px 80px;}
+  .sidebar{display:none !important;}
+  .ov-grid,.stats-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .stat{padding:11px;}
+  .welcome{padding:18px 16px;}
+  .job-card{padding:13px 14px;}
+  .browse-grid{grid-template-columns:1fr;}
+  .browse-grid .filter-box{display:none;}
+  .card{padding:14px;}
+  .g2{grid-template-columns:1fr 1fr;gap:10px;}
+  .ph{padding:18px 16px;}
+  .ph-av{width:52px;height:52px;}
+  .wallet{padding:18px 16px;}
+  .wl-amt{font-size:26px;}
+  .tbl th,.tbl td{padding:8px 9px;font-size:11px;}
+  .page-msg.active{flex-direction:column;}
+  .msg-sb{width:100%;height:auto;max-height:45vh;}
+  .msg-detail{display:none !important;}
+  .fab{bottom:16px;left:14px;padding:12px 18px;font-size:13px;}
+  .notif-panel{width:calc(100vw - 24px);left:12px;right:12px;}
+
+  .home-sc-grid{grid-template-columns:repeat(2,1fr);}
+  .msg-back-btn{display:flex;}
+
+  .av-dropdown{right:auto;left:0;}
+}
+@media(max-width:480px){
+  :root{--nav-h:52px;}
+  .navbar{padding:0 10px;}
+  .nav-logo-box{height:26px;}
+  .nav-name{font-size:14px;}
+  .hamburger{order:1;}
+  .nav-brand{order:2;flex:1;}
+  .nav-right{order:3;}
+  .home-wrap,.std-page,.wide-page{padding:12px 10px 80px;}
+  .ov-grid,.stats-grid{display:flex;flex-direction:row;overflow-x:auto;gap:10px;padding-bottom:4px;scrollbar-width:none;}
+  .ov-grid::-webkit-scrollbar,.stats-grid::-webkit-scrollbar{display:none;}
+  .ov-grid .stat,.stats-grid .stat{min-width:120px;flex:0 0 auto;}
+  .stat{padding:10px;border-radius:10px;}
+  .stat-ico{width:28px;height:28px;border-radius:7px;margin-bottom:5px;}
+  .stat-val{font-size:17px;}
+  .welcome{padding:14px;}
+  .w-acts{flex-wrap:wrap;}
+  .wb{flex:1;text-align:center;font-size:11px;}
+  .job-card{padding:11px 12px;}
+  .jc-title{font-size:12px;}
+  .jc-foot{flex-wrap:wrap;gap:6px;}
+  .card{padding:12px;border-radius:12px;}
+  .g2{grid-template-columns:1fr;}
+  .ph-top{flex-direction:column;align-items:center;text-align:center;}
+  .ph-tags{justify-content:center;}
+  .wallet{padding:14px;}
+  .wl-amt{font-size:22px;}
+  .wl-acts{flex-wrap:wrap;gap:7px;}
+  .wb2{flex:1;text-align:center;}
+  .msg-sb{max-height:38vh;}
+  .tbl th,.tbl td{padding:7px;font-size:10px;}
+  .itabs{flex-wrap:wrap;}
+  .itab{flex:1;text-align:center;font-size:10px;}
+  .drawer{width:260px;}
+  .fab{bottom:12px;left:10px;padding:11px 14px;font-size:12px;}
+  .overlay{padding:10px;}
+  .notif-panel{width:calc(100vw - 20px);left:10px;right:10px;}
+  .settings-link{padding:11px 0;}
+
+  .home-sc-grid{grid-template-columns:1fr;}
+}
+
+
+/* Profile info grid: stack on mobile */
+@media (max-width: 768px) {
+  .profile-info-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ══ CHAT BUBBLE COMPAT ══ */
+.msg{display:flex;flex-direction:column;max-width:68%;}
+.msg-mine{align-self:flex-start;}
+.msg-them{align-self:flex-end;}
+.mb{padding:9px 13px;border-radius:13px;font-size:12px;line-height:1.55;}
+.msg-them .mb{background:var(--white);color:var(--text);border:1px solid var(--border);border-bottom-right-radius:3px;}
+.msg-mine .mb{background:linear-gradient(135deg,#064E3B,#065F46);color:#fff;border-bottom-left-radius:3px;}
+.msg-mine .mt{text-align:left;color:rgba(255,255,255,.5);}
+.mt{font-size:9px;color:var(--text3);margin-top:3px;}
+
+/* ══ CHAT STATUS ══ */
+.mch-sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.mch-online{color:var(--green-dark);display:flex;align-items:center;gap:3px;}
+.mch-online::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;}
+.mch-offline{color:var(--text3);}
+.mch-offline::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--text3);display:inline-block;}
+
+/* ══ MOBILE MSG PANELS ══ */
+.msg-view-list{display:flex;flex-direction:column;}
+.msg-view-chat{display:flex;flex-direction:column;}
+.msg-back-btn{display:none;align-items:center;gap:8px;background:none;border:none;cursor:pointer;color:var(--blue);font-size:13px;font-weight:700;font-family:var(--fa);padding:0;flex-shrink:0;}
+.msg-back-btn svg{width:18px;height:18px;stroke:var(--blue);stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ══ HOME SC GRID ══ */
+.home-sc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+
+</style>
+</head>
+<body>
+
+<!-- NOTIF PANEL -->
+<div class="notif-panel" id="notifPanel">
+  <div class="np-hdr"><span>الإشعارات</span><button class="np-mark" onclick="markAllRead()">تحديد كمقروء</button></div>
+  <div class="np-item unread" onclick="closeNotif()"><div class="np-title">✅ تم قبول طلبك — مقهى النجمة (عامل كاشير)</div><div class="np-time">منذ 20 دقيقة</div></div>
+  <div class="np-item unread" onclick="closeNotif()"><div class="np-title">💬 رسالة جديدة من صاحب العمل — مطعم الأصالة</div><div class="np-time">منذ ساعة</div></div>
+  <div class="np-item unread" onclick="closeNotif()"><div class="np-title">💰 تم إيداع 3,200 دج في محفظتك</div><div class="np-time">منذ 3 ساعات</div></div>
+  <div class="np-item" onclick="closeNotif()"><div class="np-title">📋 وظيفة جديدة تناسب ملفك — توزيع منشورات</div><div class="np-time">أمس الساعة 14:30</div></div>
+  <div class="np-item" onclick="closeNotif()"><div class="np-title">⭐ تقييم جديد من صاحب عمل</div><div class="np-time">منذ يومين</div></div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <button class="hamburger" id="hamburgerBtn" onclick="toggleDrawer()"><span></span><span></span><span></span></button>
+  <div class="nav-brand">
+    <img src="logo-07.svg" class="nav-logo-box" alt="Talib-Awn" onerror="this.style.display='none'">
+    <span class="nav-name">Talib<span style="color:var(--blue);">-Awn</span></span>
+  </div>
+  <div class="nav-sep hide-mobile"></div>
+  <div class="nav-links" id="navLinks">
+    <button class="nav-link active" id="tab-home" onclick="showPage('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>الرئيسية</button>
+    <button class="nav-link" id="tab-jobs" onclick="showPage('jobs')"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>الوظائف</button>
+    <button class="nav-link" id="tab-apps" onclick="showPage('apps')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>طلباتي <span class="nbadge" id="apps-badge">3</span></button>
+    <button class="nav-link" id="tab-messages" onclick="showPage('messages')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>الرسائل <span class="nbadge" id="msg-badge">2</span></button>
+    <button class="nav-link" id="tab-earnings" onclick="showPage('earnings')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>أرباحي</button>
+    <button class="nav-link" id="tab-reviews" onclick="showPage('reviews')"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>تقييماتي</button>
+    <button class="nav-link" id="tab-profile" onclick="showPage('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>الإعدادات</button>
+  </div>
+  <div class="nav-right">
+    <button class="notif-btn" id="notifBtn" onclick="toggleNotif()">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="notif-red" id="notif-red"></span>
+    </button>
+    <div class="av-wrap">
+      <div class="nav-av" id="navAv" onclick="toggleAvatarMenu()">ي</div>
+      <div class="av-dropdown" id="avDropdown">
+        <div class="av-header"><div class="av-hname">يوسف بن علي</div><div class="av-hsub">USTHB · علوم الحاسوب</div></div>
+        <button class="av-item" onclick="closeAvatarMenu();showPage('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>الملف الشخصي</button>
+        <button class="av-item" onclick="closeAvatarMenu();showPage('earnings')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>أرباحي</button>
+        <div class="av-divider"></div>
+        <button class="av-item av-item-danger" onclick="closeAvatarMenu();doSignOut()"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>تسجيل الخروج</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span class="nav-name">Talib<span style="color:var(--blue);">-Awn</span></span>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-user">
+    <div class="drawer-av">ي</div>
+    <div><div class="drawer-uname">يوسف بن علي</div><div class="drawer-usub">USTHB · علوم الحاسوب</div></div>
+  </div>
+  <nav class="drawer-nav">
+    <button class="drawer-link active" id="dtab-home"     onclick="showPage('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>الرئيسية</button>
+    <button class="drawer-link" id="dtab-jobs"     onclick="showPage('jobs')"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>الوظائف</button>
+    <button class="drawer-link" id="dtab-apps"     onclick="showPage('apps')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>طلباتي <span class="nbadge">3</span></button>
+    <button class="drawer-link" id="dtab-messages" onclick="showPage('messages')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>الرسائل <span class="nbadge">2</span></button>
+    <button class="drawer-link" id="dtab-earnings" onclick="showPage('earnings')"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>أرباحي</button>
+    <button class="drawer-link" id="dtab-reviews"  onclick="showPage('reviews')"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>تقييماتي</button>
+    <button class="drawer-link" id="dtab-profile"  onclick="showPage('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>ملفي الشخصي</button>
+  </nav>
+  <div class="drawer-footer">
+    <button class="drawer-signout" onclick="closeDrawer();doSignOut()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>تسجيل الخروج</button>
+  </div>
+</div>
+
+
+
+<!-- FAB -->
+<button class="fab" id="mainFab" onclick="openModal('reqModal')">
+  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>أبحث عن عمل جزئي
+</button>
+
+<!-- REQUEST MODAL -->
+<div class="overlay" id="reqModal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title">نشر طلب عمل جزئي</div><button class="modal-close" onclick="closeModal('reqModal')">✕</button></div>
+    <div style="background:var(--purple-pale);border:1px solid #E9D5FF;border-radius:9px;padding:9px 13px;margin-bottom:16px;font-size:12px;color:var(--purple-dark);font-weight:600;">🎓 طلبك سيظهر مباشرة لأصحاب العمل على منصة كفاءة</div>
+    <div class="fld"><label>عنوان الطلب *</label><input type="text" id="req-title" placeholder="مثال: أبحث عن عمل جزئي في خدمة العملاء"></div>
+    <div class="fld"><label>المجال المفضّل</label><select id="req-field"><option value="">أي مجال (مفتوح)</option><option>مطاعم ومقاهي</option><option>توصيل ولوجستيك</option><option>تجارة تجزئة</option><option>تعليم وتدريس</option><option>فعاليات وتنشيط</option><option>إدارية وسكرتارية</option><option>أخرى</option></select></div>
+    <div class="g2"><div class="fld"><label>الأجر المتوقع (دج/يوم)</label><input type="number" id="req-salary" placeholder="700" min="300"></div><div class="fld"><label>ساعات العمل اليومية</label><input type="number" id="req-hours" placeholder="4" min="1" max="8"></div></div>
+    <div class="fld"><label>فترة التوفر</label><select id="req-period"><option>صباحي (8ص–12م)</option><option>مسائي (4م–8م)</option><option>نهاية الأسبوع فقط</option><option>مرن حسب الجدول</option></select></div>
+    <div class="fld"><label>الولاية</label><select id="req-wilaya"><option>الجزائر العاصمة</option><option>وهران</option><option>قسنطينة</option><option>عنابة</option><option>تيزي وزو</option><option>بجاية</option><option>سطيف</option><option>باتنة</option></select></div>
+    <div class="fld"><label>نبذة عنك</label><textarea id="req-bio" placeholder="تخصصك، مهاراتك، ما يميّزك..."></textarea></div>
+    <div style="margin-bottom:16px;">
+      <div class="trow"><div><div class="trow-label">عرض رقم الهاتف لأصحاب العمل</div><div class="trow-sub">يسهّل التواصل المباشر</div></div><button class="toggle on" id="t1" onclick="this.classList.toggle('on')"></button></div>
+      <div class="trow"><div><div class="trow-label">إشعار بالعروض المناسبة</div><div class="trow-sub">إشعار فوري عند كل عرض</div></div><button class="toggle on" id="t2" onclick="this.classList.toggle('on')"></button></div>
+    </div>
+    <button class="btn btn-p" style="width:100%;height:44px;font-size:14px;border-radius:10px;" onclick="submitReq()">نشر الطلب</button>
+  </div>
+</div>
+
+<!-- JOB DETAIL MODAL -->
+<div class="overlay" id="jobModal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title" id="jm-title">تفاصيل الوظيفة</div><button class="modal-close" onclick="closeModal('jobModal')">✕</button></div>
+    <div id="jm-body"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<main class="main">
+
+<div class="page active" id="page-home">
+  <div class="home-wrap">
+    <aside class="sidebar">
+      <div class="filter-box">
+        <div class="fb-title">فلاتر الوظائف<button style="font-size:10px;color:var(--blue);background:none;border:none;cursor:pointer;" onclick="resetFilters()">مسح</button></div>
+        <div class="fs"><div class="fs-label">الأجر اليومي (دج)</div><input type="range" min="0" max="3000" value="2500" id="f-sal" oninput="document.getElementById('f-sal-v').textContent=this.value+'+'"><div class="range-row"><span>0</span><span id="f-sal-v">2500+</span></div></div>
+        <div class="fs"><div class="fs-label">ساعات العمل</div><input type="range" min="1" max="8" value="6" id="f-hrs" oninput="document.getElementById('f-hrs-v').textContent=this.value+'س'"><div class="range-row"><span>1س</span><span id="f-hrs-v">6س</span></div></div>
+        <div class="fs"><div class="fs-label">نوع العمل</div>
+          <label class="fopt"><input type="checkbox" checked>مطاعم ومقاهي</label>
+          <label class="fopt"><input type="checkbox" checked>توصيل ولوجستيك</label>
+          <label class="fopt"><input type="checkbox" checked>تجارة تجزئة</label>
+          <label class="fopt"><input type="checkbox">فعاليات</label>
+          <label class="fopt"><input type="checkbox">تعليم وتدريس</label>
+        </div>
+        <div class="fs"><div class="fs-label">الفترة</div>
+          <label class="fopt"><input type="checkbox" checked>صباحي</label>
+          <label class="fopt"><input type="checkbox" checked>مسائي</label>
+          <label class="fopt"><input type="checkbox">نهاية الأسبوع</label>
+          <label class="fopt"><input type="checkbox">مرن</label>
+        </div>
+        <div class="fs"><div class="fs-label">المكان</div>
+          <label class="fopt"><input type="checkbox" checked>الجزائر العاصمة</label>
+          <label class="fopt"><input type="checkbox" checked>باب الزوار</label>
+          <label class="fopt"><input type="checkbox">بئر مراد رايس</label>
+          <label class="fopt"><input type="checkbox">حيدرة</label>
+          <label class="fopt"><input type="checkbox">القبة</label>
+        </div>
+        <div class="fs"><div class="fs-label">تقييم صاحب العمل</div>
+          <label class="fopt"><input type="checkbox">≥ 4.5 ★</label>
+          <label class="fopt"><input type="checkbox" checked>≥ 4.0 ★</label>
+          <label class="fopt"><input type="checkbox">≥ 3.5 ★</label>
+        </div>
+        <button class="fa-btn" onclick="showToast('تم تطبيق الفلاتر','success')">تطبيق الفلاتر</button>
+      </div>
+    </aside>
+    <div>
+      <div class="welcome">
+        <div class="w-name">أهلاً يوسف 👋</div>
+        <div class="w-sub">عندك 3 طلبات نشطة — تصفّح أحدث الوظائف الجزئية في منطقتك</div>
+        <div class="w-acts">
+          <button class="wb wb-s" onclick="showPage('jobs')">تصفّح الوظائف</button>
+          <button class="wb wb-o" onclick="showPage('apps')">طلباتي (3)</button>
+          <button class="wb wb-o" onclick="openModal('reqModal')">+ نشر طلب</button>
+        </div>
+      </div>
+
+      <div class="ov-grid">
+        <div class="ov"><div class="ov-ico" style="background:var(--blue)"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div><div class="ov-val">12</div><div class="ov-lbl">وظائف جزئية أنجزتها</div></div>
+        <div class="ov"><div class="ov-ico" style="background:var(--green-dark)"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="ov-val">45,200</div><div class="ov-lbl">إجمالي الأرباح (دج)</div></div>
+        <div class="ov"><div class="ov-ico" style="background:var(--gold)"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="ov-val">4.7 ★</div><div class="ov-lbl">تقييمي المتوسط</div></div>
+        <div class="ov"><div class="ov-ico" style="background:#8B5CF6"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="ov-val">3</div><div class="ov-lbl">طلبات قيد المراجعة</div></div>
+      </div>
+
+      <div class="sec-row"><h3>أحدث الوظائف الجزئية</h3><button class="sec-link" onclick="showPage('jobs')">عرض الكل (24) ←</button></div>
+      <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:18px;">
+        <div class="job-card"><div class="jc-row"><div><div class="jc-title">عامل كاشير — دوام جزئي</div><div class="jc-company">مقهى النجمة · باب الزوار</div></div><span class="badge b-open">متاح الآن</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>4 ساعات · مسائي</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>باب الزوار</span><span class="jc-m">⭐ 4.8 صاحب العمل</span></div><div class="jc-foot"><div><span class="jc-price">800 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('كاشير في مقهى النجمة','مقهى النجمة','800 دج/يوم','4 ساعات مسائية','باب الزوار، الجزائر العاصمة','مطلوب عامل كاشير لمقهى نشيط، يُفضَّل من لديه خبرة في التعامل مع الزبائن والصندوق. العمل من 16:00 إلى 20:00 أيام الأسبوع.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'مقهى النجمة')">تقدّم الآن</button></div></div></div>
+        <div class="job-card"><div class="jc-row"><div><div class="jc-title">موزّع طرود — صباحي</div><div class="jc-company">شركة سريع للتوصيل · بئر مراد رايس</div></div><span class="badge b-open">متاح الآن</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>5 ساعات · صباحي</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>بئر مراد رايس</span><span class="jc-m">⭐ 4.5 صاحب العمل</span></div><div class="jc-foot"><div><span class="jc-price">650 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('موزّع طرود صباحي','شركة سريع للتوصيل','650 دج/يوم','5 ساعات صباحية','بئر مراد رايس، الجزائر','توصيل الطرود في المنطقة، مطلوب دراجة أو دراجة نارية. من 8:00 إلى 13:00.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'شركة سريع')">تقدّم الآن</button></div></div></div>
+        <div class="job-card"><div class="jc-row"><div><div class="jc-title">مساعد مبيعات — مرن</div><div class="jc-company">متجر ميلاد للإلكترونيات · حيدرة</div></div><span class="badge b-part">عطلة الأسبوع</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>6 ساعات · السبت–الأحد</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>حيدرة</span><span class="jc-m">⭐ 4.6 صاحب العمل</span></div><div class="jc-foot"><div><span class="jc-price">750 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('مساعد مبيعات','متجر ميلاد للإلكترونيات','750 دج/يوم','6 ساعات عطلة الأسبوع','حيدرة، الجزائر','مساعدة الزبائن في اختيار المنتجات وإتمام عمليات البيع، يفضل من لديه معرفة بالإلكترونيات.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'ميلاد إلكترونيات')">تقدّم الآن</button></div></div></div>
+        <div class="job-card"><div class="jc-row"><div><div class="jc-title">مشرف قاعة فعاليات</div><div class="jc-company">قاعة الأمل للاحتفالات · القبة</div></div><span class="badge b-part">نهاية الأسبوع</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>8 ساعات · السبت</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>القبة</span><span class="jc-m">⭐ 4.9 صاحب العمل</span></div><div class="jc-foot"><div><span class="jc-price">2,400 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('مشرف قاعة فعاليات','قاعة الأمل','2400 دج/يوم','8 ساعات السبت','القبة، الجزائر','الإشراف على القاعة أثناء الحفلات والاحتفالات، استقبال الضيوف، التنسيق مع فريق العمل.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'قاعة الأمل')">تقدّم الآن</button></div></div></div>
+      </div>
+
+      <div class="sec-row"><h3>آخر تقييماتي</h3><button class="sec-link" onclick="showPage('reviews')">عرض الكل ←</button></div>
+      <div class="rev-card"><div class="rev-top"><div class="rev-av">م</div><div style="flex:1"><div class="rev-name">محمد بوطالبي</div><div class="rev-meta">صاحب مطعم الأصالة · 20 مارس 2025</div></div><div style="text-align:left"><span class="star">★★★★★</span><div style="font-size:11px;font-weight:700;">5.0</div></div></div><p class="rev-txt">طالب جاد ومنضبط في المواعيد. نظيف وسريع في العمل. سأوظفه مجدداً بلا تردد.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ JOBS ══ -->
+<div class="page" id="page-jobs">
+  <div class="wide-page">
+    <div class="itabs">
+      <button class="itab active" id="itab-browse" onclick="switchItab('browse')">🔍 تصفّح الوظائف</button>
+      <button class="itab" id="itab-requests" onclick="switchItab('requests')">🎓 طلبات الطلاب</button>
+    </div>
+    <div id="inner-browse">
+      <div class="sr-row"><span class="sr-ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><input type="text" placeholder="ابحث عن وظيفة جزئية، شركة، حي..." oninput="filterJobs(this.value)"></div>
+      <div class="browse-grid">
+        <div class="filter-box">
+          <div class="fb-title">تصفية<button style="font-size:10px;color:var(--blue);background:none;border:none;cursor:pointer;" onclick="resetFilters()">مسح</button></div>
+          <div class="fs"><div class="fs-label">الأجر (دج/يوم)</div><input type="range" min="0" max="3000" value="3000" id="jf-sal" oninput="document.getElementById('jf-sal-v').textContent=this.value"><div class="range-row"><span>0</span><span id="jf-sal-v">3000</span></div></div>
+          <div class="fs"><div class="fs-label">نوع العمل</div><label class="fopt"><input type="checkbox" checked>مطاعم ومقاهي</label><label class="fopt"><input type="checkbox" checked>توصيل</label><label class="fopt"><input type="checkbox" checked>تجارة</label><label class="fopt"><input type="checkbox">فعاليات</label><label class="fopt"><input type="checkbox">تعليم</label></div>
+          <div class="fs"><div class="fs-label">الفترة</div><label class="fopt"><input type="checkbox" checked>صباحي</label><label class="fopt"><input type="checkbox" checked>مسائي</label><label class="fopt"><input type="checkbox">عطلة الأسبوع</label></div>
+          <div class="fs"><div class="fs-label">الولاية</div><label class="fopt"><input type="checkbox" checked>الجزائر</label><label class="fopt"><input type="checkbox">وهران</label><label class="fopt"><input type="checkbox">قسنطينة</label></div>
+          <button class="fa-btn" onclick="showToast('تم تطبيق الفلاتر','success')">تطبيق</button>
+        </div>
+        <div>
+          <div class="res-count" id="jobs-count">24 وظيفة جزئية متاحة</div>
+          <div style="display:flex;flex-direction:column;gap:9px;" id="jobs-list">
+            <div class="job-card" data-search="كاشير مقهى النجمة باب الزوار" data-sal="800" data-type="مطاعم" data-period="مسائي" data-location="باب الزوار" data-rating="4.8"><div class="jc-row"><div><div class="jc-title">عامل كاشير — دوام جزئي</div><div class="jc-company">مقهى النجمة · باب الزوار</div></div><span class="badge b-open">متاح</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>4 ساعات · مسائي</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>باب الزوار</span><span class="jc-m">⭐ 4.8</span></div><div class="jc-foot"><div><span class="jc-price">800 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('كاشير مقهى النجمة','مقهى النجمة','800 دج/يوم','4 ساعات مسائية','باب الزوار','مطلوب عامل كاشير لمقهى نشيط في باب الزوار. العمل 4 ساعات مساءً من الاثنين للجمعة.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'مقهى النجمة')">تقدّم</button></div></div></div>
+            <div class="job-card" data-search="موزع طرود توصيل سريع" data-sal="650" data-type="توصيل" data-period="صباحي" data-location="بئر مراد رايس" data-rating="4.5"><div class="jc-row"><div><div class="jc-title">موزّع طرود — صباحي</div><div class="jc-company">شركة سريع · بئر مراد رايس</div></div><span class="badge b-open">متاح</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>5 ساعات · صباحي</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>بئر مراد رايس</span><span class="jc-m">⭐ 4.5</span></div><div class="jc-foot"><div><span class="jc-price">650 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('موزع طرود','شركة سريع','650 دج/يوم','5 ساعات صباحية','بئر مراد رايس','توصيل الطرود في المنطقة. يشترط امتلاك دراجة أو دراجة نارية.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'شركة سريع')">تقدّم</button></div></div></div>
+            <div class="job-card" data-search="مساعد مبيعات متجر ميلاد الكترونيات حيدرة" data-sal="750" data-type="تجارة" data-period="عطلة" data-location="حيدرة" data-rating="4.6"><div class="jc-row"><div><div class="jc-title">مساعد مبيعات — نهاية الأسبوع</div><div class="jc-company">متجر ميلاد للإلكترونيات · حيدرة</div></div><span class="badge b-part">عطلة الأسبوع</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>6 ساعات · السبت–الأحد</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>حيدرة</span><span class="jc-m">⭐ 4.6</span></div><div class="jc-foot"><div><span class="jc-price">750 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('مساعد مبيعات','ميلاد إلكترونيات','750 دج/يوم','6 ساعات/يوم','حيدرة','مساعدة الزبائن وإتمام عمليات البيع في متجر الإلكترونيات.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'ميلاد إلكترونيات')">تقدّم</button></div></div></div>
+            <div class="job-card" data-search="نادل خدمة طاولات مطعم الأصالة" data-sal="700" data-type="مطاعم" data-period="مسائي" data-location="الأبيار" data-rating="4.7"><div class="jc-row"><div><div class="jc-title">نادل خدمة طاولات</div><div class="jc-company">مطعم الأصالة · الأبيار</div></div><span class="badge b-open">متاح</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>5 ساعات · مسائي</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>الأبيار</span><span class="jc-m">⭐ 4.7</span></div><div class="jc-foot"><div><span class="jc-price">700 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('نادل','مطعم الأصالة','700 دج/يوم','5 ساعات مسائية','الأبيار، الجزائر','خدمة طاولات في مطعم راقٍ، مطلوب لياقة جسدية وحسن المظهر.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'مطعم الأصالة')">تقدّم</button></div></div></div>
+            <div class="job-card" data-search="موزع منشورات اعلانات تسويق" data-sal="400" data-type="فعاليات" data-period="صباحي" data-location="الجزائر" data-rating="4.2"><div class="jc-row"><div><div class="jc-title">موزّع منشورات إعلانية</div><div class="jc-company">وكالة نجوم للإشهار · العاصمة</div></div><span class="badge b-open">متاح</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>3 ساعات · صباحي</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>الجزائر العاصمة</span><span class="jc-m">⭐ 4.2</span></div><div class="jc-foot"><div><span class="jc-price">400 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('موزع منشورات','وكالة نجوم','400 دج/يوم','3 ساعات صباحية','الجزائر العاصمة','توزيع منشورات في المناطق التجارية، عمل بسيط لا يتطلب خبرة.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'وكالة نجوم')">تقدّم</button></div></div></div>
+            <div class="job-card" data-search="مراقب امتحانات جامعي اشراف" data-sal="600" data-type="تعليم" data-period="صباحي" data-location="رويبة" data-rating="4.4"><div class="jc-row"><div><div class="jc-title">مراقب امتحانات</div><div class="jc-company">مركز التكوين المهني · رويبة</div></div><span class="badge b-part">مرن</span></div><div class="jc-metas"><span class="jc-m"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>4 ساعات · صباحي</span><span class="jc-m"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>رويبة</span><span class="jc-m">⭐ 4.4</span></div><div class="jc-foot"><div><span class="jc-price">600 دج <span>/ يوم</span></span></div><div style="display:flex;gap:7px;"><button class="btn btn-g btn-sm" onclick="openJobDetail('مراقب امتحانات','مركز التكوين','600 دج/يوم','4 ساعات','رويبة','الإشراف على قاعات الامتحانات، يشترط مستوى جامعي.')">التفاصيل</button><button class="btn btn-p btn-sm" onclick="applyJob(this,'مركز التكوين')">تقدّم</button></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="inner-requests" style="display:none;">
+      <div style="background:var(--purple-pale);border:1px solid #E9D5FF;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--purple-dark);font-weight:600;">🎓 هذه طلبات نشرها طلاب آخرون يبحثون عن عمل جزئي — يمكنك التواصل أو الاستفادة</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="background:var(--white);border:1.5px solid #E9D5FF;border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;justify-content:space-between;"><div style="display:flex;align-items:center;gap:9px;"><div style="width:38px;height:38px;border-radius:50%;background:var(--purple-pale);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--purple-dark);">ا</div><div><div style="font-size:13px;font-weight:700;">أمين بوعزيز</div><div style="font-size:11px;color:var(--text3);">USTHB · إعلام آلي · سنة 3</div></div></div><span class="badge b-req">طلب عمل جزئي</span></div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px;">أبحث عن عمل جزئي في مجال البرمجة أو الدعم التقني</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px;">طالب علوم الحاسوب لدي خبرة في Python وJS. أتوفر مساءً ويمكنني العمل عن بعد أو حضوراً. أبحث عن فرصة تفيدني مهنياً إلى جانب الدراسة.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;"><span style="background:var(--purple-pale);color:var(--purple-dark);border-radius:100px;padding:2px 9px;font-size:10px;font-weight:700;">Python</span><span style="background:var(--purple-pale);color:var(--purple-dark);border-radius:100px;padding:2px 9px;font-size:10px;font-weight:700;">JavaScript</span><span style="background:var(--purple-pale);color:var(--purple-dark);border-radius:100px;padding:2px 9px;font-size:10px;font-weight:700;">دعم تقني</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #E9D5FF;padding-top:9px;"><span style="font-size:11px;color:var(--text3);">مسائي · الجزائر العاصمة · 600–900 دج/يوم</span><button class="btn btn-sm" style="background:linear-gradient(135deg,var(--purple-dark),var(--purple));color:#fff;" onclick="showToast('تم إرسال طلب التواصل إلى أمين')">تواصل</button></div>
+        </div>
+        <div style="background:var(--white);border:1.5px solid #E9D5FF;border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px;justify-content:space-between;"><div style="display:flex;align-items:center;gap:9px;"><div style="width:38px;height:38px;border-radius:50%;background:var(--blue-pale);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--navy);">ن</div><div><div style="font-size:13px;font-weight:700;">نور الهدى سعيد</div><div style="font-size:11px;color:var(--text3);">UMMTO · إدارة أعمال · سنة 2</div></div></div><span class="badge b-req">طلب عمل جزئي</span></div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px;">أبحث عن عمل جزئي في مجال الخدمة أو الإدارة</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px;">طالبة إدارة، لدي خبرة في خدمة العملاء من تجربة سابقة في متجر ملابس. هادئة ومتعاملة جيداً مع الزبائن.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;"><span style="background:var(--purple-pale);color:var(--purple-dark);border-radius:100px;padding:2px 9px;font-size:10px;font-weight:700;">خدمة عملاء</span><span style="background:var(--purple-pale);color:var(--purple-dark);border-radius:100px;padding:2px 9px;font-size:10px;font-weight:700;">مبيعات</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #E9D5FF;padding-top:9px;"><span style="font-size:11px;color:var(--text3);">مسائي · تيزي وزو · 500–700 دج/يوم</span><button class="btn btn-sm" style="background:linear-gradient(135deg,var(--purple-dark),var(--purple));color:#fff;" onclick="showToast('تم إرسال طلب التواصل إلى نور')">تواصل</button></div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:14px;"><button class="btn btn-g" onclick="openModal('reqModal')">+ انشر طلبك أنت أيضاً</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APPLICATIONS ══ -->
+<div class="page" id="page-apps">
+  <div class="std-page">
+    <div class="sec-row" style="margin-bottom:16px;"><h3>طلباتي على وظائف جزئية</h3><span id="apps-status" style="font-size:12px;color:var(--text3);">3 طلبات نشطة</span></div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>الوظيفة</th><th>صاحب العمل</th><th>الأجر</th><th>تاريخ التقديم</th><th>الحالة</th><th>إجراء</th></tr></thead>
+          <tbody id="apps-tbody">
+            <tr id="app-1"><td><strong>عامل كاشير</strong><div style="font-size:10px;color:var(--text3);">4 ساعات · مسائي</div></td><td>مقهى النجمة</td><td>800 دج/يوم</td><td>15 مارس 2025</td><td><span class="badge b-pend">قيد المراجعة</span></td><td style="display:flex;gap:5px;"><button class="btn btn-g btn-sm" onclick="cancelApp('app-1')">إلغاء</button><button class="btn btn-p btn-sm" onclick="showPage('messages')">محادثة</button></td></tr>
+            <tr id="app-2"><td><strong>موزّع طرود</strong><div style="font-size:10px;color:var(--text3);">5 ساعات · صباحي</div></td><td>شركة سريع</td><td>650 دج/يوم</td><td>13 مارس 2025</td><td><span class="badge b-pend">قيد المراجعة</span></td><td style="display:flex;gap:5px;"><button class="btn btn-g btn-sm" onclick="cancelApp('app-2')">إلغاء</button><button class="btn btn-p btn-sm" onclick="showPage('messages')">محادثة</button></td></tr>
+            <tr id="app-3"><td><strong>مساعد مبيعات</strong><div style="font-size:10px;color:var(--text3);">6 ساعات · عطلة الأسبوع</div></td><td>متجر ميلاد</td><td>750 دج/يوم</td><td>10 مارس 2025</td><td><span class="badge b-open">مقبول ✓</span></td><td style="display:flex;gap:5px;"><button class="btn btn-s btn-sm" onclick="confirmApp('app-3')">تأكيد البداية</button></td></tr>
+            <tr id="app-4"><td><strong>مشرف فعاليات</strong><div style="font-size:10px;color:var(--text3);">8 ساعات · السبت</div></td><td>قاعة الأمل</td><td>2,400 دج/يوم</td><td>5 مارس 2025</td><td><span class="badge b-rej">مرفوض</span></td><td style="display:flex;gap:5px;"><button class="btn btn-p btn-sm" onclick="applyJob(this,'قاعة الأمل')">تقديم مجدداً</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MESSAGES ══ -->
+<div class="page page-msg" id="page-messages">
+
+  <!-- LIST VIEW -->
+  <div class="msg-sb msg-view-list" id="msgViewList">
+    <div class="msb-hdr">
+      <span class="msb-title">الرسائل</span>
+      <button class="msb-new" onclick="showToast('ميزة المحادثة الجديدة قادمة قريباً')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+    </div>
+    <div class="msb-search"><div class="msb-search-wrap"><span class="msb-sico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><input type="text" placeholder="بحث..." oninput="searchConvs(this.value)"></div></div>
+    <div class="msb-tabs"><button class="msb-tab active" onclick="filterConvs('all',this)">الكل</button><button class="msb-tab" onclick="filterConvs('active',this)">نشطة</button><button class="msb-tab" onclick="filterConvs('done',this)">مكتملة</button></div>
+    <div class="msg-list" id="conv-list">
+      <div class="mi active" data-id="1" data-status="active" onclick="openConvMobile(1)"><div class="mi-av" style="background:var(--green-pale);color:var(--green-dark);">م<div class="mi-dot"></div></div><div class="mi-body"><div class="mi-name">مطعم الأصالة</div><div class="mi-prev" id="prev-1">متى تبدأ العمل؟ 👍</div></div><div class="mi-meta"><span class="mi-time">10:42</span><span class="mi-unread" id="unread-1">2</span></div></div>
+      <div class="mi" data-id="2" data-status="active" onclick="openConvMobile(2)"><div class="mi-av" style="background:var(--blue-pale);color:var(--navy);">س</div><div class="mi-body"><div class="mi-name">شركة سريع</div><div class="mi-prev" id="prev-2">ابدأ الثلاثاء الصباح.</div></div><div class="mi-meta"><span class="mi-time">أمس</span><span class="mi-unread" id="unread-2">1</span></div></div>
+      <div class="mi" data-id="3" data-status="active" onclick="openConvMobile(3)"><div class="mi-av" style="background:var(--gold-pale);color:#92400E;">ن</div><div class="mi-body"><div class="mi-name">مقهى النجمة</div><div class="mi-prev" id="prev-3">أرسل لنا ملفك.</div></div><div class="mi-meta"><span class="mi-time">اليوم</span></div></div>
+      <div class="mi" data-id="4" data-status="done" onclick="openConvMobile(4)"><div class="mi-av" style="background:#F3E8FF;color:#6B21A8;">ق</div><div class="mi-body"><div class="mi-name">قاعة الأمل</div><div class="mi-prev" id="prev-4">كان العمل ممتازاً! شكراً.</div></div><div class="mi-meta"><span class="mi-time">20 فبراير</span><span class="mi-tag mtag-done">مكتملة</span></div></div>
+      <div class="mi" data-id="5" data-status="done" onclick="openConvMobile(5)"><div class="mi-av" style="background:var(--red-pale);color:var(--red);">م</div><div class="mi-body"><div class="mi-name">متجر ميلاد</div><div class="mi-prev" id="prev-5">استلمت. شكراً جزيلاً!</div></div><div class="mi-meta"><span class="mi-time">5 مارس</span><span class="mi-tag mtag-done">مكتملة</span></div></div>
+    </div>
+  </div>
+
+  <!-- CHAT VIEW -->
+  <div class="msg-chat msg-view-chat" id="msgViewChat">
+    <div class="mch-hdr">
+      <div class="mch-info">
+        <button class="msg-back-btn" onclick="backToList()" aria-label="رجوع">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <div class="mch-av" id="chat-av" style="background:var(--green-pale);color:var(--green-dark);">م</div>
+        <div><div class="mch-name" id="chat-name">مطعم الأصالة</div><div class="mch-sub mch-online" id="chat-status">متصل الآن</div></div>
+      </div>
+      <div class="mch-acts">
+        <button class="mch-btn" onclick="showToast('ميزة المكالمات قادمة قريباً')"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.5a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+        <button class="mch-btn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+      </div>
+    </div>
+    <div class="job-bar" id="job-bar">
+      <span class="jb-text"><span class="jb-dot"></span><span id="jb-text">وظيفة: نادل — دوام جزئي مسائي</span></span>
+      <button class="jb-btn" onclick="showToast('تم تأكيد إتمام العمل ✓','success')">تأكيد الإتمام</button>
+    </div>
+    <div class="chat-body" id="chat-body"></div>
+    <div class="chat-input-area">
+      <button class="ci-btn" onclick="showToast('إرسال ملف')"><svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>
+      <button class="ci-btn" onclick="showToast('إرسال صورة')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
+      <input class="ci-input" id="chat-input" type="text" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="ci-send" onclick="sendMsg()"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+    </div>
+  </div>
+
+  <!-- DETAIL PANEL (desktop only) -->
+  <div class="msg-detail" id="msg-detail">
+    <div class="md-hdr"><div class="md-title">تفاصيل الوظيفة</div><div class="md-sub" id="md-sub">مطعم الأصالة</div></div>
+    <div class="jd-wrap">
+      <div class="jd-top"><div class="jd-t" id="jd-t">نادل — دوام جزئي مسائي</div><div class="jd-s" id="jd-s">مطعم الأصالة · باب الزوار</div></div>
+      <div class="prog-wrap"><div class="prog-label"><span>التقدم</span><span id="jd-prog-pct">60%</span></div><div class="prog-track"><div class="prog-fill" id="jd-prog-fill" style="width:60%"></div></div></div>
+      <div class="jd-rows"><div class="jd-row"><span>الأيام المتبقية</span><span id="jd-days">5 أيام</span></div><div class="jd-row"><span>آخر نشاط</span><span>منذ دقيقتين</span></div></div>
+      <div class="jd-stages">
+        <div class="jd-st-title">مراحل العمل</div>
+        <div class="jd-st"><div class="st-ico st-done">✓</div><span class="st-lbl" style="color:var(--text3);text-decoration:line-through;">التقديم وقبول العرض</span></div>
+        <div class="jd-st"><div class="st-ico st-done">✓</div><span class="st-lbl" style="color:var(--text3);text-decoration:line-through;">تأكيد بداية العمل</span></div>
+        <div class="jd-st"><div class="st-ico st-act">●</div><span class="st-lbl" style="color:var(--blue);font-weight:700;">تنفيذ أيام العمل</span></div>
+        <div class="jd-st"><div class="st-ico st-todo"></div><span class="st-lbl" style="color:var(--text3);">تأكيد صاحب العمل</span></div>
+        <div class="jd-st"><div class="st-ico st-todo"></div><span class="st-lbl" style="color:var(--text3);">استلام الأجر</span></div>
+      </div>
+    </div>
+    <div class="price-box"><div class="pb-lbl">💰 الأجر المحجوز لك</div><div class="pb-amt" id="jd-price">3,500 دج</div><div class="pb-sub">يُحوَّل إلى محفظتك بعد تأكيد الإتمام</div></div>
+    <div class="jd-btns">
+      <button class="btn btn-p btn-sm" style="justify-content:center;" onclick="showToast('تم تأكيد إتمام العمل ✓','success')">تأكيد الإتمام</button>
+      <button class="btn btn-d btn-sm" style="justify-content:center;" onclick="showToast('تم إبلاغ الدعم','error')">إبلاغ</button>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-earnings">
+  <div class="std-page">
+    <div class="wallet">
+      <div class="wl-lbl">رصيد المحفظة الحالي</div>
+      <div class="wl-amt">18,500 دج</div>
+      <div class="wl-sub">محمي عبر بروتوكول Chargily الجزائري · يُحوَّل لحسابك فور تأكيد إتمام العمل</div>
+      <div class="wl-acts">
+        <button class="wb2 wbs" onclick="showToast('تم طلب السحب — سيصل خلال 24 ساعة','success')">سحب الرصيد</button>
+        <button class="wb2 wbo" onclick="showToast('جاري تحميل السجل الكامل...')">سجل العمليات</button>
+      </div>
+    </div>
+    <div class="g2" style="margin-bottom:14px;">
+      <div class="card"><div class="sec-row" style="margin-bottom:10px;"><h3>ملخص الأرباح</h3></div><div class="info-row"><span class="il">هذا الشهر</span><span class="iv" style="color:var(--green-dark);">+8,500 دج</span></div><div class="info-row"><span class="il">الشهر الماضي</span><span class="iv" style="color:var(--green-dark);">+12,000 دج</span></div><div class="info-row"><span class="il">إجمالي الأرباح</span><span class="iv">45,200 دج</span></div><div class="info-row"><span class="il">عدد الوظائف الجزئية</span><span class="iv">12 وظيفة</span></div></div>
+      <div class="card"><div class="sec-row" style="margin-bottom:10px;"><h3>طرق السحب</h3></div>
+        <div style="display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--border);">
+          <div style="width:30px;height:30px;background:var(--green-pale);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;">💳</div>
+          <div style="flex:1"><div style="font-size:12px;font-weight:700;">Edahabia</div><div style="font-size:10px;color:var(--text3);">مربوط · ***1234</div></div>
+          <span class="badge b-open">نشط</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;padding:9px 0;">
+          <div style="width:30px;height:30px;background:var(--blue-pale);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;">🏦</div>
+          <div style="flex:1"><div style="font-size:12px;font-weight:700;">CCP البريد</div><div style="font-size:10px;color:var(--text3);">غير مربوط بعد</div></div>
+          <button class="btn btn-g btn-sm" onclick="showToast('إعداد ربط CCP...')">ربط</button>
+        </div>
+      </div>
+    </div>
+    <div class="card"><div class="sec-row" style="margin-bottom:12px;"><h3>آخر المعاملات</h3></div>
+      <div class="tx-row"><div class="tx-ico" style="background:var(--green-dark)"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div style="flex:1"><div class="tx-ttl">أجر — مطعم الأصالة (نادل 5 ساعات)</div><div class="tx-dt">20 مارس 2025</div></div><div class="tx-amt in">+3,500 دج</div></div>
+      <div class="tx-row"><div class="tx-ico" style="background:var(--green-dark)"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div style="flex:1"><div class="tx-ttl">أجر — شركة سريع (توصيل 3 أيام)</div><div class="tx-dt">14 مارس 2025</div></div><div class="tx-amt in">+5,000 دج</div></div>
+      <div class="tx-row"><div class="tx-ico" style="background:var(--red)"><svg viewBox="0 0 24 24"><polyline points="17 11 21 7 17 3"/><line x1="21" y1="7" x2="9" y2="7"/><path d="M3 21v-4a4 4 0 0 1 4-4h14"/></svg></div><div style="flex:1"><div class="tx-ttl">سحب إلى بطاقة Edahabia</div><div class="tx-dt">10 مارس 2025</div></div><div class="tx-amt out">−10,000 دج</div></div>
+      <div class="tx-row"><div class="tx-ico" style="background:var(--green-dark)"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div style="flex:1"><div class="tx-ttl">أجر — مقهى النجمة (كاشير أسبوع)</div><div class="tx-dt">3 مارس 2025</div></div><div class="tx-amt in">+3,200 دج</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REVIEWS ══ -->
+<div class="page" id="page-reviews">
+  <div class="std-page">
+    <div class="sec-row" style="margin-bottom:16px;"><h3>تقييمات أصحاب العمل عنّي</h3><div style="display:flex;align-items:center;gap:5px;"><span class="star">★★★★</span><span style="font-size:15px;font-weight:800;">4.7</span><span style="font-size:11px;color:var(--text3);">(12 تقييم)</span></div></div>
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;display:flex;gap:20px;align-items:center;">
+      <div style="text-align:center;flex-shrink:0;"><div style="font-size:48px;font-weight:800;color:var(--text);line-height:1;">4.7</div><div class="star" style="font-size:18px;">★★★★</div><div style="font-size:11px;color:var(--text3);margin-top:3px;">12 تقييم</div></div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;"><span style="font-size:11px;width:14px;">5</span><div style="flex:1;height:5px;background:var(--border);border-radius:100px;overflow:hidden;"><div style="width:75%;height:100%;background:var(--gold);border-radius:100px;"></div></div><span style="font-size:10px;color:var(--text3);">9</span></div>
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;"><span style="font-size:11px;width:14px;">4</span><div style="flex:1;height:5px;background:var(--border);border-radius:100px;overflow:hidden;"><div style="width:17%;height:100%;background:var(--gold);border-radius:100px;"></div></div><span style="font-size:10px;color:var(--text3);">2</span></div>
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;"><span style="font-size:11px;width:14px;">3</span><div style="flex:1;height:5px;background:var(--border);border-radius:100px;overflow:hidden;"><div style="width:8%;height:100%;background:var(--gold);border-radius:100px;"></div></div><span style="font-size:10px;color:var(--text3);">1</span></div>
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;"><span style="font-size:11px;width:14px;">2</span><div style="flex:1;height:5px;background:var(--border);border-radius:100px;overflow:hidden;"><div style="width:0%;height:100%;background:var(--gold);border-radius:100px;"></div></div><span style="font-size:10px;color:var(--text3);">0</span></div>
+        <div style="display:flex;align-items:center;gap:7px;"><span style="font-size:11px;width:14px;">1</span><div style="flex:1;height:5px;background:var(--border);border-radius:100px;overflow:hidden;"><div style="width:0%;height:100%;background:var(--gold);border-radius:100px;"></div></div><span style="font-size:10px;color:var(--text3);">0</span></div>
+      </div>
+    </div>
+    <div class="rev-card"><div class="rev-top"><div class="rev-av">م</div><div style="flex:1"><div class="rev-name">محمد بوطالبي</div><div class="rev-meta">مطعم الأصالة · وظيفة: نادل جزئي · 20 مارس 2025</div></div><div style="text-align:left"><span class="star">★★★★★</span><div style="font-size:11px;font-weight:700;">5.0</div></div></div><p class="rev-txt">طالب ممتاز ومنضبط. جاء في وقته كل يوم ولم يتأخر مرة واحدة. يتعامل مع الزبائن باحترافية. سأوظفه مجدداً في كل مناسبة.</p></div>
+    <div class="rev-card" style="margin-top:10px;"><div class="rev-top"><div class="rev-av" style="background:var(--blue-pale);">ن</div><div style="flex:1"><div class="rev-name">نذير بلحاج</div><div class="rev-meta">مقهى النجمة · وظيفة: كاشير جزئي · 10 مارس 2025</div></div><div style="text-align:left"><span class="star">★★★★★</span><div style="font-size:11px;font-weight:700;">5.0</div></div></div><p class="rev-txt">يوسف جدير بالثقة. يعمل بهدوء وكفاءة. المبالغ كانت دائماً صحيحة 100%. مرحب به في أي وقت.</p></div>
+    <div class="rev-card" style="margin-top:10px;"><div class="rev-top"><div class="rev-av" style="background:var(--gold-pale);color:#92400E;">ك</div><div style="flex:1"><div class="rev-name">كمال عزوز</div><div class="rev-meta">شركة سريع · وظيفة: توزيع طرود · 28 فبراير 2025</div></div><div style="text-align:left"><span class="star">★★★★</span><div style="font-size:11px;font-weight:700;">4.0</div></div></div><p class="rev-txt">عمل جيد في المجمل. أحياناً يتأخر قليلاً لكنه دائماً يكمل مهمته. يستحق الفرصة.</p></div>
+    <div class="rev-card" style="margin-top:10px;"><div class="rev-top"><div class="rev-av" style="background:var(--red-pale);color:var(--red);">ح</div><div style="flex:1"><div class="rev-name">حمزة قاسي</div><div class="rev-meta">قاعة الأمل · وظيفة: مشرف فعاليات · 20 فبراير 2025</div></div><div style="text-align:left"><span class="star">★★★★★</span><div style="font-size:11px;font-weight:700;">5.0</div></div></div><p class="rev-txt">مبادر ونشيط. أخذ مبادرات خارج نطاق مهمته وساعد في تنظيم القاعة. سيُعاد توظيفه بلا شك.</p></div>
+  </div>
+</div>
+
+<!-- ══ PROFILE ══ -->
+<div class="page" id="page-profile">
+  <div class="std-page">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <div><h3 style="font-size:18px;font-weight:800;">ملفي الشخصي</h3><div style="font-size:12px;color:var(--text3);margin-top:3px;">بياناتك ومعلوماتك المهنية على المنصة</div></div>
+      <button class="btn btn-p" onclick="openEditModal()">✏️ تعديل الملف</button>
+    </div>
+    <div class="ph" style="margin-bottom:14px;">
+      <div class="ph-top">
+        <div class="ph-av">ي</div>
+        <div class="ph-info" style="flex:1;z-index:1;">
+          <div class="ph-name">يوسف بن علي</div>
+          <div class="ph-sub">طالب · علوم الحاسوب · USTHB · الجزائر العاصمة</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;"><span class="star" style="font-size:14px;">★★★★</span><span style="font-size:14px;font-weight:700;">4.7</span><span style="font-size:11px;opacity:.65;">(12 تقييم)</span></div>
+          <div class="ph-tags"><span class="ph-tag">✓ موثّق</span><span class="ph-tag">متاح صباحاً</span><span class="ph-tag">الجزائر العاصمة</span><span class="ph-tag">12 وظيفة مكتملة</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px;position:relative;z-index:1;flex-wrap:wrap;">
+        <div style="background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:10px 16px;text-align:center;flex:1;min-width:70px;cursor:pointer;" onclick="showPage('apps')"><div style="font-size:20px;font-weight:800;">12</div><div style="font-size:10px;opacity:.7;">وظيفة مكتملة</div></div>
+        <div style="background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:10px 16px;text-align:center;flex:1;min-width:70px;cursor:pointer;" onclick="showPage('earnings')"><div style="font-size:20px;font-weight:800;">45K دج</div><div style="font-size:10px;opacity:.7;">إجمالي الأرباح</div></div>
+        <div style="background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:10px 16px;text-align:center;flex:1;min-width:70px;cursor:pointer;" onclick="showPage('reviews')"><div style="font-size:20px;font-weight:800;">4.7★</div><div style="font-size:10px;opacity:.7;">تقييم أصحاب العمل</div></div>
+        <div style="background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:10px 16px;text-align:center;flex:1;min-width:70px;cursor:pointer;" onclick="showPage('jobs')"><div style="font-size:20px;font-weight:800;">87</div><div style="font-size:10px;opacity:.7;">وظيفة متاحة</div></div>
+      </div>
+    </div>
+    <div class="profile-info-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+      <div class="card">
+        <div class="sec-row" style="margin-bottom:14px;"><h3>المعلومات الشخصية</h3><button class="btn btn-g btn-sm" onclick="openEditModal()">تعديل</button></div>
+        <div class="info-row"><span class="il">الاسم الكامل</span><span class="iv" id="prof-name">يوسف بن علي</span></div>
+        <div class="info-row"><span class="il">الجامعة</span><span class="iv" id="prof-uni">USTHB — الجزائر</span></div>
+        <div class="info-row"><span class="il">التخصص</span><span class="iv" id="prof-major">علوم الحاسوب</span></div>
+        <div class="info-row"><span class="il">السنة الدراسية</span><span class="iv" id="prof-year">السنة 3</span></div>
+        <div class="info-row"><span class="il">الولاية</span><span class="iv" id="prof-state">الجزائر العاصمة</span></div>
+        <div class="info-row"><span class="il">الهاتف</span><span class="iv" id="prof-phone">+213 66 987 6543</span></div>
+        <div class="info-row"><span class="il">البريد</span><span class="iv" id="prof-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="661f091315150300260b070f0a4805090b">[email&#160;protected]</a></span></div>
+      </div>
+      <div class="card">
+        <div class="sec-row" style="margin-bottom:14px;"><h3>التوفر والمهارات</h3><button class="btn btn-g btn-sm" onclick="openAvailModal()">تعديل</button></div>
+        <div class="info-row"><span class="il">الفترة الصباحية</span><span class="iv"><span class="badge b-open" id="avail-morning">متاح ✓</span></span></div>
+        <div class="info-row"><span class="il">الفترة المسائية</span><span class="iv"><span class="badge b-rej" id="avail-evening">غير متاح</span></span></div>
+        <div class="info-row"><span class="il">نهاية الأسبوع</span><span class="iv"><span class="badge b-open" id="avail-weekend">متاح ✓</span></span></div>
+        <div class="info-row"><span class="il">الأجر المقبول</span><span class="iv" id="prof-salary">من 600 دج/يوم</span></div>
+        <div class="info-row"><span class="il">ساعات يومية</span><span class="iv" id="prof-hours">حتى 6 ساعات</span></div>
+        <div style="margin-top:10px;"><div style="font-size:11px;color:var(--text3);margin-bottom:7px;font-weight:600;">المهارات</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;" id="skills-wrap"><span class="skill-tag">كاشير</span><span class="skill-tag">خدمة عملاء</span><span class="skill-tag">توصيل</span><span class="skill-tag">إدارة مخزون</span><span class="skill-tag">تدريس</span><span class="skill-tag">تنظيم فعاليات</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="sec-row" style="margin-bottom:12px;"><h3>نبذة عني</h3><button class="btn btn-g btn-sm" onclick="editBio()">تعديل</button></div>
+      <p id="bio-text" style="font-size:13px;color:var(--text2);line-height:1.75;">طالب في السنة الثالثة علوم الحاسوب بجامعة USTHB. أبحث عن وظائف جزئية مرنة تتناسب مع جدولي الدراسي. لدي خبرة في خدمة العملاء والكاشير وأعمل بالتزام واحترافية.</p>
+    </div>
+    <div class="card" style="margin-bottom:14px;">
+      <div class="settings-links">
+        <button class="settings-link" onclick="openSettingsModal()">
+          <div class="settings-link-icon" style="background:var(--blue-pale);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg></div>
+          <div class="settings-link-text"><div class="settings-link-title">الإعدادات</div><div class="settings-link-sub">الإشعارات، الخصوصية، ظهور الملف</div></div>
+          <svg class="settings-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="settings-link" onclick="changePassword()">
+          <div class="settings-link-icon" style="background:var(--gold-pale);"><svg viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="settings-link-text"><div class="settings-link-title">تغيير كلمة المرور</div><div class="settings-link-sub">تحديث بيانات تسجيل الدخول</div></div>
+          <svg class="settings-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="settings-link" onclick="doSignOut()">
+          <div class="settings-link-icon" style="background:#FEF3C7;"><svg viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+          <div class="settings-link-text"><div class="settings-link-title">تسجيل الخروج</div><div class="settings-link-sub">الخروج من حسابك الحالي</div></div>
+          <svg class="settings-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="settings-link settings-link-danger" onclick="deleteAccount()">
+          <div class="settings-link-icon" style="background:var(--red-pale);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
+          <div class="settings-link-text"><div class="settings-link-title">حذف الحساب</div><div class="settings-link-sub">إجراء نهائي لا يمكن التراجع عنه</div></div>
+          <svg class="settings-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ═══ CONVERSATION DATA ═══
+var convData = {
+  1:{name:'يوسف بن علي',av:'ي',bg:'var(--blue-pale)',col:'var(--navy)',online:true,job:'عامل كاشير — دوام جزئي مسائي',jobSub:'مطعم الأصالة · باب الزوار',price:'3,200 دج',days:'3 أيام',pct:60,msgs:[{mine:false,text:'السلام عليكم! رأيت وظيفة الكاشير على المنصة. هل لا تزال متاحة؟',time:'09:30'},{mine:true,text:'وعليكم السلام! نعم متاحة. هل لديك خبرة سابقة؟',time:'09:35'},{mine:false,text:'نعم طالب في سنة 3 USTHB. عملت كاشير 3 أشهر.',time:'09:38'},{mine:true,text:'ممتاز! العمل 4 ساعات مسائية 16:00–20:00.',time:'09:42'},{mine:false,text:'يناسبني تماماً. متى أبدأ؟',time:'10:42'}]},
+  2:{name:'لمياء رحماني',av:'ل',bg:'var(--gold-pale)',col:'#92400E',online:true,job:'مساعد مطبخ — دوام جزئي صباحي',jobSub:'مطعم الأصالة · الأبيار',price:'3,500 دج',days:'5 أيام',pct:20,msgs:[{mine:false,text:'مرحباً! هل وظيفة مساعد المطبخ لا تزال متاحة؟',time:'أمس 14:20'},{mine:true,text:'أهلاً! نعم متاحة. هل لديك خبرة؟',time:'أمس 14:25'},{mine:false,text:'نعم عملت في مطعم عائلي سنة. طالبة إدارة أعمال.',time:'أمس 14:28'}]},
+  3:{name:'رضا بلحاج',av:'ر',bg:'var(--blue-pale)',col:'var(--navy)',online:false,job:'عامل كاشير — دوام جزئي مسائي',jobSub:'مطعم الأصالة · باب الزوار',price:'2,400 دج',days:'3 أيام',pct:100,msgs:[{mine:false,text:'شكراً على القبول! متحمس للبدء.',time:'أمس 11:00'},{mine:true,text:'أهلاً رضا! ابدأ الأحد 16:00.',time:'أمس 11:05'}]},
+  4:{name:'نور الهدى سعيد',av:'ن',bg:'var(--green-pale)',col:'var(--green-dark)',online:false,job:'موزعة منشورات — فعالية',jobSub:'مطعم الأصالة · وسط المدينة',price:'1,800 دج',days:'مكتملة',pct:100,msgs:[{mine:false,text:'كان العمل ممتازاً! شكراً 🌟',time:'12 مار'},{mine:true,text:'شكراً! كنت متميزة.',time:'12 مار'}]},
+  5:{name:'كمال عزوز',av:'ك',bg:'#FCE7F3',col:'#9D174D',online:false,job:'موظف فعاليات',jobSub:'مطعم الأصالة',price:'2,200 دج',days:'مكتملة',pct:100,msgs:[{mine:false,text:'تمت المهمة، أنتظر التقييم.',time:'8 مار'},{mine:true,text:'أحسنت! سأضع تقييمك.',time:'8 مار'}]}
+};
+
+// ═══ TOAST ═══
+var _tt;
+function showToast(msg, type) {
+  type = type || '';
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' ' + type : '');
+  void t.offsetWidth;
+  t.classList.add('show');
+  clearTimeout(_tt);
+  _tt = setTimeout(function(){ t.classList.remove('show'); }, 3200);
+}
+
+// ═══ PAGE NAV ═══
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.nav-link').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.drawer-link').forEach(function(l){ l.classList.remove('active'); });
+  var page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  var tab = document.getElementById('tab-' + id);
+  if (tab) tab.classList.add('active');
+  var dtab = document.getElementById('dtab-' + id);
+  if (dtab) dtab.classList.add('active');
+  closeNotif();
+  closeAvatarMenu();
+  closeDrawer();
+  var fab = document.getElementById('mainFab');
+  if (fab) fab.style.display = (id === 'messages') ? 'none' : 'flex';
+  if (id !== 'messages') window.scrollTo({top:0, behavior:'smooth'});
+  if (id === 'messages') {
+    if (window.innerWidth <= 768) { showMsgList(); } else { openConv(activeConv); }
+  }
+}
+
+// ═══ MESSAGES MOBILE ═══
+var activeConv = 1;
+
+
+
+
+
+
+
+
+// Reset on resize
+window.addEventListener('resize', function() {
+  if (!isMobile()) {
+    document.getElementById('msgViewList').style.display = '';
+    var chat = document.getElementById('msgViewChat');
+    chat.style.display = '';
+    chat.classList.add('active');
+  }
+});
+
+function openConv(id) {
+  activeConv = id;
+  var d = convData[id];
+  if (!d) return;
+  document.querySelectorAll('.mi').forEach(function(m){ m.classList.remove('active'); });
+  var mi = document.querySelector('.mi[data-id="' + id + '"]');
+  if (mi) mi.classList.add('active');
+  var unread = document.getElementById('unread-' + id);
+  if (unread) unread.style.display = 'none';
+  document.getElementById('chat-av').textContent = d.av;
+  document.getElementById('chat-av').style.background = d.bg;
+  document.getElementById('chat-av').style.color = d.col;
+  document.getElementById('chat-name').textContent = d.name;
+  document.getElementById('chat-status').textContent = d.online ? 'متصل الآن' : 'غير متصل';
+  document.getElementById('chat-status').className = 'mch-sub' + (d.online ? ' mch-online' : '');
+  document.getElementById('jb-text').textContent = 'وظيفة: ' + d.job;
+  document.getElementById('jd-t').textContent = d.job;
+  document.getElementById('jd-s').textContent = d.jobSub;
+  document.getElementById('jd-price').textContent = d.price;
+  document.getElementById('jd-days').textContent = d.days;
+  document.getElementById('jd-prog-pct').textContent = d.pct + '%';
+  document.getElementById('jd-prog-fill').style.width = d.pct + '%';
+  document.getElementById('md-sub').textContent = d.name;
+  var body = document.getElementById('chat-body');
+  body.innerHTML = '';
+  d.msgs.forEach(function(m){ appendMsg(m.text, m.mine, m.time, false); });
+  body.scrollTop = body.scrollHeight;
+}
+function appendMsg(text, mine, time, scroll) {
+  if (scroll === undefined) scroll = true;
+  var body = document.getElementById('chat-body');
+  var div = document.createElement('div');
+  div.className = 'msg ' + (mine ? 'msg-mine' : 'msg-them');
+  div.innerHTML = '<div class="mb">' + text + '</div><div class="mt">' + time + '</div>';
+  body.appendChild(div);
+  if (scroll) body.scrollTop = body.scrollHeight;
+}
+function sendMsg() {
+  var inp = document.getElementById('chat-input');
+  var text = inp.value.trim();
+  if (!text) return;
+  var now = new Date();
+  var time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  appendMsg(text, true, time);
+  convData[activeConv].msgs.push({mine:true, text:text, time:time});
+  var prev = document.getElementById('prev-' + activeConv);
+  if (prev) prev.textContent = text;
+  inp.value = '';
+  setTimeout(function(){
+    var replies = ['شكراً!','حسناً.','تمام، سأكون هناك.','بالتوفيق!','سيتم الأمر.'];
+    var r = replies[Math.floor(Math.random() * replies.length)];
+    appendMsg(r, false, time);
+    convData[activeConv].msgs.push({mine:false, text:r, time:time});
+    if (prev) prev.textContent = r;
+  }, 1200);
+}
+function filterConvs(filter, btn) {
+  document.querySelectorAll('.msb-tab').forEach(function(t){ t.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('.mi').forEach(function(mi){
+    mi.style.display = (filter === 'all' || mi.dataset.status === filter) ? '' : 'none';
+  });
+}
+function searchConvs(q) {
+  var lq = q.toLowerCase();
+  document.querySelectorAll('.mi').forEach(function(mi){
+    mi.style.display = mi.querySelector('.mi-name').textContent.toLowerCase().includes(lq) ? '' : 'none';
+  });
+}
+function showStudentProfileFromChat() {
+  var d = convData[activeConv];
+  showStudentProfile(d.name, '—', '—', '—', '—', '—', '—', '—');
+}
+
+// ═══ DRAWER ═══
+function toggleDrawer() {
+  var drawer = document.getElementById('drawer');
+  if (drawer.classList.contains('open')) closeDrawer();
+  else openDrawer();
+}
+function closeDrawer() {
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var hamburger = document.getElementById('hamburgerBtn');
+  if (!drawer) return;
+  drawer.classList.remove('open');
+  overlay.classList.remove('open');
+  hamburger.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ═══ NOTIF ═══
+function toggleNotif() { document.getElementById('notifPanel').classList.toggle('open'); }
+function closeNotif() { document.getElementById('notifPanel').classList.remove('open'); }
+function markAllRead() {
+  document.querySelectorAll('.np-item.unread').forEach(function(i){ i.classList.remove('unread'); });
+  var r = document.getElementById('notif-red'); if (r) r.style.display = 'none';
+  closeNotif();
+  showToast('تم تحديد كل الإشعارات كمقروءة', 'success');
+}
+
+// ═══ AVATAR ═══
+function toggleAvatarMenu() {
+  document.getElementById('avDropdown').classList.toggle('open');
+  closeNotif();
+}
+function closeAvatarMenu() {
+  var d = document.getElementById('avDropdown');
+  if (d) d.classList.remove('open');
+}
+function doSignOut() {
+  showToast('تم تسجيل الخروج', 'error');
+  if (window._supabaseSignOut) {
+    window._supabaseSignOut();
+  } else {
+    setTimeout(function(){ window.location.href = 'login.html'; }, 1200);
+  }
+}
+document.addEventListener('click', function(e) {
+  var wrap = document.querySelector('.av-wrap');
+  if (wrap && !wrap.contains(e.target)) closeAvatarMenu();
+  var np = document.getElementById('notifPanel');
+  if (np && np.classList.contains('open') && !np.contains(e.target) && !e.target.closest('#notifBtn')) closeNotif();
+});
+
+// ═══ MODALS ═══
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(function(o){
+  o.addEventListener('click', function(e){ if (e.target === o) o.classList.remove('open'); });
+});
+function submitPost() {
+  var t = document.getElementById('post-title').value.trim();
+  if (!t) { showToast('أدخل عنوان الوظيفة', 'error'); return; }
+  closeModal('postModal');
+  var b = document.getElementById('hiring-badge');
+  if (b) b.textContent = (parseInt(b.textContent) || 0) + 1;
+  document.getElementById('post-title').value = '';
+  showToast('✅ تم نشر وظيفتك! ستبدأ الطلبات تصل قريباً', 'success');
+}
+
+// ═══ APP ACTIONS ═══
+function acceptApp(rowId, name) {
+  var row = document.getElementById(rowId);
+  if (!row) return;
+  var cells = row.cells;
+  cells[cells.length - 2].innerHTML = '<span class="badge b-open">مقبول ✓</span>';
+  cells[cells.length - 1].innerHTML = '<button class="btn btn-p btn-sm" onclick="showPage(\'messages\')">محادثة</button>';
+  showToast('✅ تم قبول ' + name, 'success');
+  updateHiringBadge();
+}
+function rejectApp(rowId, name) {
+  var row = document.getElementById(rowId);
+  if (!row) return;
+  var cells = row.cells;
+  cells[cells.length - 2].innerHTML = '<span class="badge b-rej">مرفوض</span>';
+  cells[cells.length - 1].innerHTML = '<span style="font-size:10px;color:var(--text3);">تم الرفض</span>';
+  showToast('تم رفض ' + name, 'error');
+  updateHiringBadge();
+}
+function updateHiringBadge() {
+  var n = document.querySelectorAll('.badge.b-pend').length;
+  var b = document.getElementById('hiring-badge'); if (b) b.textContent = n;
+}
+function closeJob(btn) {
+  if (!confirm('هل تريد إغلاق هذه الوظيفة؟')) return;
+  var card = btn.closest('.card');
+  card.style.transition = 'opacity .3s,transform .3s';
+  card.style.opacity = '0'; card.style.transform = 'translateY(-8px)';
+  setTimeout(function(){ card.remove(); }, 300);
+  showToast('تم إغلاق الوظيفة', 'error');
+}
+
+// ═══ STUDENT PROFILE ═══
+function showStudentProfile(name, major, uni, skills, avail, city, rating, jobs) {
+  document.getElementById('sm-title').textContent = 'ملف الطالب: ' + name;
+  var skillTags = skills.split('،').map(function(s){ return '<span class="skill-tag">' + s.trim() + '</span>'; }).join('');
+  document.getElementById('sm-body').innerHTML =
+    '<div style="display:flex;align-items:center;gap:14px;background:var(--blue-pale);border-radius:10px;padding:14px;margin-bottom:16px;">'
+    + '<div style="width:52px;height:52px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0;">' + name.charAt(0) + '</div>'
+    + '<div><div style="font-size:15px;font-weight:800;">' + name + '</div>'
+    + '<div style="font-size:12px;color:var(--navy);font-weight:600;margin-top:2px;">' + major + ' · ' + uni + '</div>'
+    + '<div style="font-size:12px;color:var(--text3);margin-top:2px;"><span class="star">★</span> ' + rating + ' · ' + jobs + ' وظيفة</div></div></div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">'
+    + '<div style="background:var(--bg);border-radius:9px;padding:10px;"><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:5px;">التوفر</div><div style="font-size:13px;font-weight:600;">' + avail + '</div></div>'
+    + '<div style="background:var(--bg);border-radius:9px;padding:10px;"><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:5px;">المدينة</div><div style="font-size:13px;font-weight:600;">' + city + '</div></div></div>'
+    + '<div style="margin-bottom:14px;"><div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:7px;">المهارات</div>'
+    + '<div style="display:flex;flex-wrap:wrap;gap:5px;">' + skillTags + '</div></div>'
+    + '<div style="display:flex;gap:9px;">'
+    + '<button class="btn btn-p" style="flex:1;height:42px;border-radius:10px;" onclick="hireAndClose(\'' + name + '\')">توظيف هذا الطالب</button>'
+    + '<button class="btn btn-g btn-sm" onclick="closeModal(\'studentModal\')">إغلاق</button></div>';
+  openModal('studentModal');
+}
+function hireAndClose(name) { closeModal('studentModal'); showToast('✅ تم إرسال عرض التوظيف إلى ' + name + '!', 'success'); }
+function hireStudent(name) { closeModal('studentModal'); showToast('✅ تم إرسال عرض التوظيف إلى ' + name + '!', 'success'); }
+
+// ═══ SEARCH & FILTER ═══
+function filterStudents(q) {
+  var lq = q.toLowerCase(); var n = 0;
+  document.querySelectorAll('#students-list .sc').forEach(function(card){
+    var show = (card.dataset.search || '').toLowerCase().includes(lq) || card.textContent.toLowerCase().includes(lq);
+    card.style.display = show ? '' : 'none'; if (show) n++;
+  });
+  var cnt = document.getElementById('students-count'); if (cnt) cnt.textContent = n + ' طالب متاح للوظائف الجزئية';
+}
+function resetFilters() {
+  document.querySelectorAll('.filter-box input[type=checkbox]').forEach(function(cb){ cb.checked = false; });
+  document.querySelectorAll('#students-list .sc').forEach(function(c){ c.style.display = ''; });
+  var cnt = document.getElementById('students-count'); if (cnt) cnt.textContent = '87 طالب متاح للوظائف الجزئية';
+  showToast('تم مسح الفلاتر');
+}
+
+// ═══ SPENDING ═══
+function filterTransactions() {
+  var sel = document.getElementById('tx-filter'); var val = sel ? sel.value : 'all';
+  document.querySelectorAll('#tx-list .tx-row').forEach(function(row){ row.style.display = (val === 'all' || row.dataset.type === val) ? '' : 'none'; });
+}
+function openChargeModal() {
+  var amount = prompt('أدخل مبلغ الشحن بالدينار الجزائري:'); if (!amount) return;
+  if (isNaN(amount) || parseInt(amount) < 1000) { showToast('الحد الأدنى 1000 دج', 'error'); return; }
+  showToast('✅ تم طلب شحن ' + parseInt(amount).toLocaleString() + ' دج عبر Chargily!', 'success');
+}
+function exportReport() { showToast('⬇️ جاري تجهيز تقرير PDF...', 'success'); }
+
+// ═══ REVIEWS ═══
+function filterReviews(stars, btn) {
+  document.querySelectorAll('.rev-filter-btn').forEach(function(b){ b.style.background='var(--bg)'; b.style.borderColor='var(--border)'; b.style.color='var(--text2)'; });
+  btn.style.background='var(--navy)'; btn.style.borderColor='var(--navy)'; btn.style.color='#fff';
+  document.querySelectorAll('#reviews-list .rev-card').forEach(function(card){ card.style.display = (stars === 'all' || card.dataset.stars === stars) ? '' : 'none'; });
+}
+function replyToReview(btn, name) {
+  var card = btn.closest('.rev-card'); var ex = card.querySelector('.reply-box'); if (ex) { ex.remove(); return; }
+  var box = document.createElement('div'); box.className = 'reply-box';
+  box.style.cssText = 'margin-top:10px;padding:10px;background:var(--bg);border-radius:9px;border:1.5px solid var(--border);';
+  box.dataset.name = name;
+  box.innerHTML = '<div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:7px;">ردّك على ' + name + ':</div>'
+    + '<textarea class="reply-ta" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:var(--fa);resize:none;height:70px;outline:none;" placeholder="اكتب ردك..."></textarea>'
+    + '<div style="display:flex;gap:7px;margin-top:7px;"><button class="btn btn-p btn-sm" style="flex:1;" onclick="submitReply(this)">إرسال</button><button class="btn btn-g btn-sm" onclick="this.closest(\'.reply-box\').remove()">إلغاء</button></div>';
+  card.appendChild(box); box.querySelector('textarea').focus();
+}
+function submitReply(btn) {
+  var box = btn.closest('.reply-box'); var text = box.querySelector('textarea').value.trim(); var name = box.dataset.name || '';
+  if (!text) { showToast('اكتب ردك أولاً', 'error'); return; }
+  box.remove();
+  var d = document.createElement('div'); d.style.cssText = 'margin-top:10px;padding:10px 12px;background:var(--blue-pale);border-radius:9px;border-right:3px solid var(--blue);';
+  d.innerHTML = '<div style="font-size:10px;font-weight:700;color:var(--navy);margin-bottom:4px;">ردّك على ' + name + ':</div><div style="font-size:12px;color:var(--text2);">' + text + '</div>';
+  btn.closest('.rev-card').appendChild(d); showToast('✅ تم إرسال الرد', 'success');
+}
+function likeReview(btn) { var n = parseInt(btn.textContent.replace('👍 ',''))||0; btn.textContent='👍 '+(n+1); btn.style.color='var(--green-dark)'; btn.onclick=null; }
+function shareProfile() {
+  if (navigator.clipboard) navigator.clipboard.writeText(window.location.href).then(function(){ showToast('✅ تم نسخ الرابط!', 'success'); });
+  else showToast('✅ رابط جاهز', 'success');
+}
+
+// ═══ PROFILE ═══
+function toggleTog(btn, label) { btn.classList.toggle('on'); showToast((btn.classList.contains('on') ? '✅ تم تفعيل ' : '⛔ تم تعطيل ') + label); }
+function openEditModal() {
+  function g(id){ return document.getElementById(id); }
+  var modal = document.createElement('div'); modal.id = 'edit-modal-dyn';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px;';
+  var inner = document.createElement('div');
+  inner.style.cssText = 'background:var(--white);border-radius:18px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;padding:24px;box-shadow:0 16px 48px rgba(0,0,0,.18);';
+  inner.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;"><div style="font-size:16px;font-weight:800;">تعديل معلومات المؤسسة</div><button onclick="document.getElementById(\'edit-modal-dyn\').remove()" style="width:30px;height:30px;border-radius:8px;background:var(--bg);border:1.5px solid var(--border);cursor:pointer;font-size:16px;color:var(--text3);">✕</button></div>'
+    + '<div class="fld"><label>اسم المؤسسة</label><input id="em-name" type="text" value="' + (g('prof-name') ? g('prof-name').textContent : 'مطعم الأصالة') + '"></div>'
+    + '<div class="fld"><label>نوع النشاط</label><select id="em-type"><option>مطاعم ومقاهي</option><option>تجارة تجزئة</option><option>فعاليات</option><option>تعليم</option><option>توصيل</option><option>أخرى</option></select></div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div class="fld"><label>الولاية</label><select id="em-state"><option>الجزائر العاصمة</option><option>وهران</option><option>قسنطينة</option><option>تيزي وزو</option><option>عنابة</option><option>سطيف</option></select></div><div class="fld"><label>الحي</label><input id="em-area" type="text" value="' + (g('prof-area') ? g('prof-area').textContent : 'الأبيار') + '"></div></div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div class="fld"><label>الهاتف</label><input id="em-phone" type="tel" value="' + (g('prof-phone') ? g('prof-phone').textContent : '+213 55 123 4567') + '"></div><div class="fld"><label>البريد</label><input id="em-email" type="email" value="' + (g('prof-email') ? g('prof-email').textContent : 'aslala@mail.com') + '"></div></div>'
+    + '<div style="display:flex;gap:9px;margin-top:6px;"><button class="btn btn-p" style="flex:1;height:42px;" onclick="saveEditModal()">حفظ التغييرات</button><button class="btn btn-g btn-sm" onclick="document.getElementById(\'edit-modal-dyn\').remove()">إلغاء</button></div>';
+  modal.appendChild(inner); modal.addEventListener('click', function(e){ if (e.target === modal) modal.remove(); }); document.body.appendChild(modal);
+}
+function saveEditModal() {
+  function g(id){ return document.getElementById(id); }
+  function s(id, val){ var el = g(id); if (el && val) el.textContent = val; }
+  s('prof-name', g('em-name') ? g('em-name').value.trim() : ''); s('prof-type', g('em-type') ? g('em-type').value : '');
+  s('prof-state', g('em-state') ? g('em-state').value : ''); s('prof-area', g('em-area') ? g('em-area').value.trim() : '');
+  s('prof-phone', g('em-phone') ? g('em-phone').value.trim() : ''); s('prof-email', g('em-email') ? g('em-email').value.trim() : '');
+  g('edit-modal-dyn').remove(); showToast('✅ تم حفظ معلومات المؤسسة', 'success');
+}
+function editBio() {
+  var bio = document.getElementById('bio-text'); if (!bio) return; var orig = bio.textContent;
+  var wrap = document.createElement('div'); wrap.dataset.original = orig;
+  var ta = document.createElement('textarea'); ta.style.cssText = 'width:100%;padding:10px;border:1.5px solid var(--blue);border-radius:9px;font-size:13px;font-family:var(--fa);resize:vertical;height:90px;outline:none;line-height:1.7;color:var(--text);'; ta.value = orig;
+  var btnRow = document.createElement('div'); btnRow.style.cssText = 'display:flex;gap:7px;margin-top:8px;';
+  btnRow.innerHTML = '<button class="btn btn-p btn-sm" onclick="saveBio(this)">حفظ</button><button class="btn btn-g btn-sm" onclick="cancelBio(this)">إلغاء</button>';
+  wrap.appendChild(ta); wrap.appendChild(btnRow); bio.replaceWith(wrap); ta.focus();
+}
+function saveBio(btn) { var wrap = btn.closest('[data-original]'); var text = wrap.querySelector('textarea').value.trim() || 'أضف نبذة...'; var p = document.createElement('p'); p.id='bio-text'; p.style.cssText='font-size:13px;color:var(--text2);line-height:1.75;'; p.textContent=text; wrap.replaceWith(p); showToast('✅ تم حفظ النبذة', 'success'); }
+function cancelBio(btn) { var wrap = btn.closest('[data-original]'); var p = document.createElement('p'); p.id='bio-text'; p.style.cssText='font-size:13px;color:var(--text2);line-height:1.75;'; p.textContent=wrap.dataset.original; wrap.replaceWith(p); }
+function changePassword() { var p1=prompt('أدخل كلمة المرور الجديدة:'); if(!p1)return; if(p1.length<8){showToast('8 أحرف على الأقل','error');return;} var p2=prompt('أعد كتابة كلمة المرور:'); if(p1!==p2){showToast('كلمتا المرور غير متطابقتين','error');return;} showToast('✅ تم تغيير كلمة المرور','success'); }
+function deleteAccount() { if(!confirm('هل أنت متأكد؟ لا يمكن التراجع.'))return; showToast('تم إرسال طلب الحذف إلى بريدك','error'); }
+
+
+// ═══ MESSAGES MOBILE ═══
+function isMobile() { return window.innerWidth <= 768; }
+
+function openConvMobile(id) {
+  openConv(id);
+  if (isMobile()) {
+    document.getElementById('msgViewList').style.display = 'none';
+    document.getElementById('msgViewChat').style.display = 'flex';
+  }
+}
+
+function backToList() {
+  document.getElementById('msgViewList').style.display = '';
+  document.getElementById('msgViewChat').style.display = 'none';
+}
+
+function showMsgList() {
+  document.getElementById('msgViewList').style.display = '';
+  document.getElementById('msgViewChat').style.display = 'none';
+}
+
+window.addEventListener('resize', function() {
+  if (!document.getElementById('page-messages').classList.contains('active')) return;
+  if (window.innerWidth > 768) {
+    document.getElementById('msgViewList').style.display = '';
+    document.getElementById('msgViewChat').style.display = '';
+  }
+});
+
+
+// ═══ MESSAGES MOBILE ═══
+function isMobile() { return window.innerWidth <= 768; }
+function openConvMobile(id) {
+  openConv(id);
+  if (isMobile()) {
+    document.getElementById('msgViewList').style.display = 'none';
+    document.getElementById('msgViewChat').style.display = 'flex';
+  }
+}
+function backToList() {
+  document.getElementById('msgViewList').style.display = '';
+  document.getElementById('msgViewChat').style.display = 'none';
+}
+function showMsgList() {
+  document.getElementById('msgViewList').style.display = '';
+  document.getElementById('msgViewChat').style.display = 'none';
+}
+window.addEventListener('resize', function() {
+  if (window.innerWidth > 768) {
+    var list = document.getElementById('msgViewList');
+    var chat = document.getElementById('msgViewChat');
+    if (list) list.style.display = '';
+    if (chat) chat.style.display = '';
+  }
+});
+
+// ═══ DRAWER (openDrawer alias) ═══
+function openDrawer() {
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('hamburgerBtn').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// ═══ INIT ═══
+showPage('home');
+openConv(1);
+</script>
+<script type="module">
+import { supabase, requireProfile } from './api.js';
+window._supabaseSignOut = async () => {
+  await supabase.auth.signOut();
+  window.location.href = 'login.html';
+};
+(async () => {
+  const profile = await requireProfile();
+  if (!profile) return;
+  const initials = (profile.firstname?.[0] ?? '?').toUpperCase();
+  const fullName = `${profile.firstname ?? ''} ${profile.lastname ?? ''}`.trim();
+  const subInfo  = profile.company_name ?? profile.domain ?? '';
+  const navAv = document.getElementById('navAv');
+  if (navAv) navAv.textContent = initials;
+  const avHname = document.querySelector('.av-hname');
+  if (avHname) avHname.textContent = fullName;
+  const avHsub = document.querySelector('.av-hsub');
+  if (avHsub) avHsub.textContent = subInfo;
+  const drawerAv = document.querySelector('.drawer-av');
+  if (drawerAv) drawerAv.textContent = initials;
+  const drawerUname = document.querySelector('.drawer-uname');
+  if (drawerUname) drawerUname.textContent = fullName;
+  const drawerUsub = document.querySelector('.drawer-usub');
+  if (drawerUsub) drawerUsub.textContent = subInfo;
+  const wName = document.querySelector('.w-name');
+  if (wName) wName.textContent = `أهلاً ${profile.firstname ?? 'صاحب العمل'} 👋`;
+  const pname = document.getElementById('prof-name');
+  if (pname) pname.textContent = fullName;
+  const pphone = document.getElementById('prof-phone');
+  if (pphone && profile.phone) pphone.textContent = profile.phone;
+  const pemail = document.getElementById('prof-email');
+  if (pemail && profile.email) pemail.textContent = profile.email;
+})();
+</script>
+</body>
+</html>

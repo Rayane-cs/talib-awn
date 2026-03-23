@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الدخول برمز OTP · طالب عون</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="brand.css">
+  <style>
+    :root{
+      --blue:#7C3AED; --blue-dark:#5B21B6; --blue-pale:#EDE9FE; --blue-mid:#A78BFA;
+      --green:#5a9e6f; --green-dark:#3d7a52; --green-pale:#e4f2e8; --green-mid:#b8ddc4;
+      --bg:#f7f7f7; --white:#ffffff;
+      --text:#10202d; --text2:#2a3d4d; --text3:#6b7c8a;
+      --border:rgba(124,58,237,0.20); --red:#EF4444;
+      --ff:'Cairo',sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:var(--ff);}
+    body{background:var(--bg);display:flex;min-height:100vh;overflow:hidden;}
+
+    body::before{
+      content:'';position:fixed;inset:0;pointer-events:none;
+      background-image:
+        radial-gradient(circle,rgba(124,58,237,.12) 1.5px,transparent 1.5px),
+        radial-gradient(circle,rgba(124,58,237,.07) 1px,transparent 1px);
+      background-size:48px 48px, 24px 24px;
+      background-position:0 0, 12px 12px;
+    }
+
+    /* ── BRAND PANEL ── */
+    .brand{
+      flex:0 0 55%;display:flex;flex-direction:column;justify-content:center;
+      padding:60px 56px;position:relative;overflow:hidden;
+      background:linear-gradient(155deg, #10202d 0%, #1a2f40 60%, #243d52 100%);
+    }
+    .brand::after{
+      content:'';position:absolute;bottom:-80px;left:-60px;
+      width:500px;height:500px;border-radius:50%;
+      background:radial-gradient(circle,rgba(255,255,255,.07) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .brand-logo{display:flex;align-items:center;gap:12px;margin-bottom:56px;}
+    .brand-logo-img{height:42px;width:auto;object-fit:contain;}
+    .brand-logo-name{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.02em;}
+    .brand-logo-name span{color:rgba(255,255,255,.65);}
+
+    .brand-h1{font-size:clamp(40px,4.5vw,62px);font-weight:900;line-height:1.15;color:#fff;margin-bottom:6px;}
+    .brand-h1 span{display:block;}
+    .brand-underline{width:72px;height:4px;background:rgba(255,255,255,.5);border-radius:2px;margin-bottom:20px;}
+    .brand-sub{font-size:16px;font-weight:400;color:rgba(255,255,255,.65);line-height:1.7;max-width:420px;}
+
+    .brand-stats{display:flex;gap:0;margin-top:36px;border:1.5px solid rgba(255,255,255,.2);border-radius:16px;overflow:hidden;background:rgba(255,255,255,.08);}
+    .bstat{flex:1;padding:18px 20px;border-left:1.5px solid rgba(255,255,255,.15);text-align:center;}
+    .bstat:last-child{border-left:none;}
+    .bstat-num{font-size:24px;font-weight:800;color:#fff;margin-bottom:3px;}
+    .bstat-lbl{font-size:12px;font-weight:500;color:rgba(255,255,255,.55);}
+
+    /* ── FORM PANEL ── */
+    .form-side{
+      flex:1;display:flex;align-items:center;justify-content:center;
+      padding:40px 32px;position:relative;
+    }
+    .form-side::before{
+      content:'';position:absolute;top:-60px;right:-80px;
+      width:320px;height:320px;border-radius:50%;
+      background:rgba(124,58,237,.07);pointer-events:none;
+    }
+    .form-side::after{
+      content:'';position:absolute;bottom:-80px;left:-60px;
+      width:280px;height:280px;border-radius:50%;
+      background:rgba(124,58,237,.05);pointer-events:none;
+    }
+
+    .form-box{
+      width:100%;max-width:440px;
+      background:var(--white);border-radius:24px;
+      padding:40px 36px;
+      box-shadow:0 8px 40px rgba(0,0,0,.07);
+      position:relative;z-index:1;
+      animation:slideUp .5s ease both;
+    }
+    @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── STEP INDICATOR ── */
+    .step-indicator{display:flex;align-items:center;gap:6px;margin-bottom:32px;}
+    .step-dot{
+      width:30px;height:30px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:12px;font-weight:700;transition:all .3s;
+    }
+    .step-dot.active{background:var(--blue);color:#fff;box-shadow:0 0 0 4px rgba(124,58,237,.18);}
+    .step-dot.pending{background:var(--border);color:var(--text3);}
+    .step-dot.done{background:var(--green);color:#fff;}
+    .step-line{flex:1;height:2px;background:var(--border);border-radius:1px;transition:background .3s;}
+    .step-line.done{background:var(--green);}
+
+    .form-title{font-size:26px;font-weight:800;color:var(--text);margin-bottom:4px;text-align:center;}
+    .form-sub{font-size:14px;color:var(--text3);text-align:center;margin-bottom:28px;line-height:1.6;}
+    .form-sub strong{color:var(--blue);}
+
+    /* ── ALERT ── */
+    .alert{display:none;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:600;margin-bottom:16px;background:#FEF2F2;color:var(--red);border:1px solid #FECACA;}
+    .alert.show{display:block;}.alert.success{background:var(--green-pale);color:var(--green-dark);border-color:var(--green-mid);}
+
+    /* ── FORM FIELDS ── */
+    .fg{position:relative;margin-bottom:14px;}
+    .fg label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;}
+    .fg input{
+      width:100%;height:48px;padding:0 44px 0 16px;
+      border:1.5px solid var(--border);border-radius:12px;
+      font-family:var(--ff);font-size:14px;color:var(--text);
+      background:var(--bg);transition:border-color .2s,box-shadow .2s;
+    }
+    .fg input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(124,58,237,.15);}
+    .fg-icon{position:absolute;right:14px;bottom:0;height:48px;pointer-events:none;display:flex;align-items:center;color:var(--text3);}
+
+    /* channel tabs */
+    .channel-tabs{display:flex;background:#F1F5F9;border-radius:12px;padding:4px;gap:4px;margin-bottom:24px;}
+    .ch-tab{
+      flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;
+      font-family:var(--ff);font-size:13px;font-weight:700;color:var(--text3);
+      background:transparent;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;
+    }
+    .ch-tab.active{background:var(--white);color:var(--blue);box-shadow:0 2px 8px rgba(124,58,237,.12);}
+
+    /* phone input with prefix */
+    .phone-row{display:flex;gap:8px;}
+    .phone-prefix{
+      height:48px;padding:0 14px;border:1.5px solid var(--border);border-radius:12px;
+      font-family:var(--ff);font-size:14px;font-weight:700;color:var(--text3);
+      background:var(--white);white-space:nowrap;display:flex;align-items:center;flex-shrink:0;
+    }
+
+    /* ── OTP ── */
+    .otp-inputs{display:flex;gap:8px;justify-content:center;margin:20px 0 8px;}
+    .otp-inputs input{
+      width:44px;height:52px;border:2px solid var(--border);border-radius:10px;
+      text-align:center;font-family:var(--ff);font-size:22px;font-weight:800;
+      color:var(--text);background:var(--bg);transition:all .2s;
+    }
+    .otp-inputs input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(124,58,237,.15);outline:none;}
+    .otp-inputs input.filled{border-color:var(--blue);background:var(--blue-pale);color:var(--blue-dark);}
+
+    /* timer */
+    .timer-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+    .timer-badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:5px 14px;border-radius:100px;background:var(--blue-pale);color:var(--blue-dark);}
+    .timer-badge.expired{background:#FEF2F2;color:var(--red);}
+    .resend-btn{background:none;border:none;font-family:var(--ff);font-size:13px;font-weight:700;color:var(--blue);cursor:pointer;}
+    .resend-btn:disabled{color:var(--text3);cursor:default;}
+
+    /* ── MAIN BUTTON ── */
+    .btn-primary{
+      width:100%;height:52px;border-radius:12px;border:none;cursor:pointer;
+      background:linear-gradient(135deg,#5B21B6,#7C3AED);color:#fff;
+      font-family:var(--ff);font-size:16px;font-weight:800;
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      box-shadow:0 6px 20px rgba(124,58,237,.40);
+      transition:transform .18s,box-shadow .18s;
+    }
+    .btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 28px rgba(124,58,237,.55);}
+    .btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+    .spinner{width:20px;height:20px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;display:none;animation:spin .7s linear infinite;}
+    .btn-primary.loading .spinner{display:block;}.btn-primary.loading .btn-label{display:none;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .form-foot{text-align:center;font-size:14px;color:var(--text3);margin-top:20px;}
+    .form-foot a{color:var(--blue);font-weight:700;text-decoration:none;}
+    .form-foot a:hover{text-decoration:underline;}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px){
+      body{flex-direction:column;overflow:auto;}
+      .brand{flex:none;padding:32px 24px 24px;}
+      .brand-stats{max-width:400px;}
+      .form-side{padding:24px 16px 40px;}
+      .form-box{padding:28px 20px;}
+    }
+    @media(max-width:480px){
+      .brand-h1{font-size:34px;}
+      .brand{padding:28px 18px 20px;}
+      .form-box{border-radius:20px;padding:24px 18px;}
+      .otp-inputs input{width:36px;height:46px;font-size:18px;}
+      .otp-inputs{gap:6px;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BRAND PANEL -->
+  <div class="brand">
+    <div class="brand-logo">
+      <img src="logo-07.svg" class="brand-logo-img" alt="طالب عون">
+      <div class="brand-logo-name">طالب<span> عون</span></div>
+    </div>
+
+    <div>
+      <h1 class="brand-h1">
+        <span>اعثر على عمل جزئي</span>
+        <span>بالقرب منك</span>
+      </h1>
+      <div class="brand-underline"></div>
+      <p class="brand-sub">منصة جزائرية تربط الطلبة بفرص العمل الجزئي لدى المقاهي، المتاجر، والمشاريع المحلية</p>
+    </div>
+
+    <div class="brand-stats">
+      <div class="bstat">
+        <div class="bstat-num">مجاناً</div>
+        <div class="bstat-lbl">التسجيل والاستخدام</div>
+      </div>
+      <div class="bstat">
+        <div class="bstat-num">محلية</div>
+        <div class="bstat-lbl">وظائف قريبة من جامعتك</div>
+      </div>
+      <div class="bstat">
+        <div class="bstat-num">مرونة</div>
+        <div class="bstat-lbl">ساعات تناسب دراستك</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM PANEL -->
+  <div class="form-side">
+    <div class="form-box">
+
+      <!-- STEP DOTS -->
+      <div class="step-indicator">
+        <div class="step-dot active" id="dot1">1</div>
+        <div class="step-line" id="line1"></div>
+        <div class="step-dot pending" id="dot2">2</div>
+      </div>
+
+      <div id="alertBox" class="alert"></div>
+
+      <!-- ══ STEP 1: enter contact ══ -->
+      <div id="step1">
+        <h2 class="form-title">الدخول برمز OTP</h2>
+        <p class="form-sub" style="margin-bottom:20px;">سنرسل رمزاً مؤقتاً - لا حاجة لكلمة مرور</p>
+
+        <!-- channel picker -->
+        <div class="channel-tabs">
+          <button class="ch-tab active" id="tabEmail" onclick="switchChannel('email')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            البريد الإلكتروني
+          </button>
+          <button class="ch-tab" id="tabPhone" onclick="switchChannel('phone')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+            رقم الهاتف
+          </button>
+        </div>
+
+        <!-- email input -->
+        <div id="emailInput" class="fg">
+          <label>البريد الإلكتروني</label>
+          <span class="fg-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </span>
+          <input type="email" id="emailVal" placeholder="you@example.com" autocomplete="email">
+        </div>
+
+        <!-- phone input -->
+        <div id="phoneInput" class="fg" style="display:none">
+          <label>رقم الهاتف</label>
+          <div class="phone-row">
+            <div class="phone-prefix">+213</div>
+            <input type="tel" id="phoneVal" placeholder="6XX XXX XXX" style="flex:1;padding:0 16px;" autocomplete="tel">
+          </div>
+        </div>
+
+        <button class="btn-primary" id="sendBtn" onclick="doSend()">
+          <div class="spinner"></div>
+          <span class="btn-label">إرسال الرمز</span>
+        </button>
+
+        <div class="form-foot">
+          <a href="login.html">الدخول بكلمة المرور</a>
+        </div>
+      </div>
+
+      <!-- ══ STEP 2: enter OTP ══ -->
+      <div id="step2" style="display:none">
+        <h2 class="form-title">أدخل الرمز</h2>
+        <p class="form-sub">أرسلنا رمزاً من 6 أرقام إلى<br><strong id="contactDisplay"></strong></p>
+
+        <div class="otp-inputs" id="otpInputs">
+          <input type="text" id="otpSingle" maxlength="6" inputmode="numeric"
+                 placeholder="• • • • • •" autocomplete="one-time-code"
+                 style="direction:ltr;text-align:center;letter-spacing:10px;font-size:26px;font-weight:800;width:100%;height:64px;padding:0 16px;border:2px solid var(--border);border-radius:14px;background:var(--bg);font-family:'DM Mono',monospace;outline:none;transition:border-color .2s,box-shadow .2s;"
+                 oninput="this.value=this.value.replace(/\D/g,'').slice(0,6);this.classList.toggle('filled',this.value.length===6);">
+        </div>
+
+        <div class="timer-row">
+          <div class="timer-badge" id="timerBadge">ينتهي خلال <span id="countdown">2:00</span></div>
+          <button class="resend-btn" id="resendBtn" onclick="doSend(true)" disabled>إعادة الإرسال</button>
+        </div>
+
+        <button class="btn-primary" id="verifyBtn" onclick="doVerify()">
+          <div class="spinner"></div>
+          <span class="btn-label">تأكيد الدخول</span>
+        </button>
+
+        <div class="form-foot">
+          <a href="#" onclick="backToStep1()">تعديل رقم التواصل</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module">
+    import { supabase, redirectByRole, showAlert, setLoading } from './supabase.js';
+
+    let channel = 'email';
+    let contactValue = '';
+    let countdownInterval = null;
+
+    // redirect if already logged in
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      const { data: p } = await supabase.from('users').select('role').eq('auth_id', session.user.id).single();
+      redirectByRole(p?.role);
+    }
+
+    /* ── channel switch ── */
+    window.switchChannel = (ch) => {
+      channel = ch;
+      document.getElementById('tabEmail').classList.toggle('active', ch === 'email');
+      document.getElementById('tabPhone').classList.toggle('active', ch === 'phone');
+      document.getElementById('emailInput').style.display = ch === 'email' ? '' : 'none';
+      document.getElementById('phoneInput').style.display = ch === 'phone' ? '' : 'none';
+      clearAlert();
+    };
+
+    function clearAlert() {
+      const a = document.getElementById('alertBox');
+      a.className = 'alert'; a.textContent = '';
+    }
+
+    /* ── send OTP ── */
+    window.doSend = async (resend = false) => {
+      if (!resend) {
+        if (channel === 'email') {
+          contactValue = document.getElementById('emailVal').value.trim();
+          if (!contactValue) { showAlert('alertBox', 'يرجى إدخال البريد الإلكتروني.'); return; }
+        } else {
+          const raw = document.getElementById('phoneVal').value.trim().replace(/\s/g, '');
+          if (!raw) { showAlert('alertBox', 'يرجى إدخال رقم الهاتف.'); return; }
+          contactValue = '+213' + raw;
+        }
+      }
+
+      setLoading('sendBtn', true);
+      clearAlert();
+
+      let error;
+      if (channel === 'email') {
+        const res = await supabase.auth.signInWithOtp({ email: contactValue });
+        error = res.error;
+      } else {
+        const res = await supabase.auth.signInWithOtp({ phone: contactValue });
+        error = res.error;
+      }
+
+      setLoading('sendBtn', false);
+
+      if (error) { showAlert('alertBox', error.message); return; }
+
+      // transition to step 2
+      document.getElementById('step1').style.display = 'none';
+      document.getElementById('step2').style.display = '';
+      document.getElementById('contactDisplay').textContent = contactValue;
+      setDot(2);
+      setupOtp();
+      startCountdown();
+    };
+
+    /* ── OTP setup ── */
+    function setupOtp() {
+      const inp = document.getElementById('otpSingle');
+      if (inp) { inp.value = ''; inp.classList.remove('filled'); setTimeout(() => inp.focus(), 50); }
+    }
+
+    function getOtp() {
+      const inp = document.getElementById('otpSingle');
+      return inp ? inp.value.replace(/\D/g, '').slice(0, 6) : '';
+    }
+
+    /* ── countdown ── */
+    function startCountdown() {
+      let s = 120;
+      const badge  = document.getElementById('timerBadge');
+      const count  = document.getElementById('countdown');
+      const resend = document.getElementById('resendBtn');
+      resend.disabled = true;
+      badge.className = 'timer-badge';
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        s--;
+        count.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+        if (s <= 0) {
+          clearInterval(countdownInterval);
+          badge.className = 'timer-badge expired';
+          badge.textContent = 'انتهت صلاحية الرمز';
+          resend.disabled = false;
+        }
+      }, 1000);
+    }
+
+    /* ── verify OTP ── */
+    window.doVerify = async () => {
+      const token = getOtp();
+      if (token.length < 6) { showAlert('alertBox', 'أدخل جميع أرقام الرمز.'); return; }
+
+      setLoading('verifyBtn', true);
+      clearAlert();
+
+      let error, data;
+      if (channel === 'email') {
+        const res = await supabase.auth.verifyOtp({ email: contactValue, token, type: 'magiclink' });
+        error = res.error; data = res.data;
+      } else {
+        const res = await supabase.auth.verifyOtp({ phone: contactValue, token, type: 'sms' });
+        error = res.error; data = res.data;
+      }
+
+      setLoading('verifyBtn', false);
+
+      if (error) {
+        showAlert('alertBox', error.message.includes('expired') ? 'انتهت صلاحية الرمز — اطلب رمزاً جديداً.' : 'الرمز غير صحيح.');
+        return;
+      }
+
+      clearInterval(countdownInterval);
+      setDot(2, true);
+
+      const a = document.getElementById('alertBox');
+      a.className = 'alert success show';
+      a.textContent = 'تم التحقق! جاري الدخول…';
+
+      const { data: profile } = await supabase.from('users').select('role, grade').eq('auth_id', data.user.id).single();
+      redirectByRole(profile);
+    };
+
+    /* ── back to step 1 ── */
+    window.backToStep1 = () => {
+      clearInterval(countdownInterval);
+      document.getElementById('step2').style.display = 'none';
+      document.getElementById('step1').style.display = '';
+      clearAlert();
+      setDot(1);
+    };
+
+    /* ── step dots ── */
+    function setDot(active, allDone = false) {
+      const d1 = document.getElementById('dot1');
+      const d2 = document.getElementById('dot2');
+      const l1 = document.getElementById('line1');
+      if (allDone) {
+        d1.className = 'step-dot done'; d1.textContent = '✓';
+        d2.className = 'step-dot done'; d2.textContent = '✓';
+        l1.className = 'step-line done';
+      } else if (active === 2) {
+        d1.className = 'step-dot done'; d1.textContent = '✓';
+        d2.className = 'step-dot active'; d2.textContent = '2';
+        l1.className = 'step-line done';
+      } else {
+        d1.className = 'step-dot active'; d1.textContent = '1';
+        d2.className = 'step-dot pending'; d2.textContent = '2';
+        l1.className = 'step-line';
+      }
+    }
+  </script>
+</body>
+</html>

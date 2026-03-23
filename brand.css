@@ -1,0 +1,464 @@
+/* ═══════════════════════════════════════════════════════════════
+   TALIB-AWN  ·  طالب عون  —  BRAND PALETTE  v5
+   ─────────────────────────────────────────────────────────────
+   Brand:    Violet + Amber
+   Earnings: Emerald + Mint
+   Danger:   Red
+   Dark BG:  Deep Plum Navy
+   ═══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  /* ── VIOLET — primary brand / action ── */
+  --violet:          #7C3AED;
+  --violet-dark:     #5B21B6;
+  --violet-deeper:   #3B0F8C;
+  --violet-light:    #A78BFA;
+  --violet-pale:     #EDE9FE;
+  --violet-mid:      #8B5CF6;
+
+  /* ── AMBER — accent / highlights / CTAs on dark ── */
+  --amber:           #D97706;
+  --amber-dark:      #92400E;
+  --amber-deeper:    #78350F;
+  --amber-light:     #FCD34D;
+  --amber-pale:      #FEF3C7;
+  --amber-mid:       #F59E0B;
+
+  /* ── EMERALD — earnings / success / money ── */
+  --emerald:         #059669;
+  --emerald-dark:    #065F46;
+  --emerald-deeper:  #064E3B;
+  --emerald-light:   #34D399;
+  --emerald-pale:    #D1FAE5;
+  --emerald-mid:     #10B981;
+
+  /* ── MINT — earnings secondary / positive / balance ── */
+  --mint:            #6EE7B7;
+  --mint-dark:       #047857;
+  --mint-pale:       #ECFDF5;
+
+  /* ── RED — danger / ban / error ── */
+  --red:             #DC2626;
+  --red-dark:        #991B1B;
+  --red-pale:        #FEF2F2;
+
+  /* ── DARK SURFACES (plum-navy) ── */
+  --dark-bg:         #0F0A1E;
+  --dark-surface:    #1A1130;
+  --dark-surface2:   #261940;
+
+  /* ── LIGHT SURFACES ── */
+  --bg:              #F9F8FF;
+  --white:           #FFFFFF;
+  --surface:         #FFFFFF;
+  --surface2:        #F3F0FF;
+
+  /* ── TEXT ── */
+  --text:            #1A0A2E;
+  --text2:           #3B2A6E;
+  --text3:           #6D5B9E;
+  --text-inv:        #F9F8FF;
+
+  /* ── BORDERS ── */
+  --border:          rgba(124,58,237,0.15);
+  --border2:         rgba(124,58,237,0.28);
+
+  /* ── SHADOWS ── */
+  --shadow-sm:    0 1px 4px rgba(26,10,46,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow:       0 4px 18px rgba(26,10,46,0.12), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg:    0 12px 44px rgba(26,10,46,0.20), 0 4px 12px rgba(0,0,0,0.08);
+
+  /* ── SHAPE / TYPE ── */
+  --radius:       14px;
+  --radius-sm:    8px;
+  --radius-lg:    22px;
+  --radius-full:  999px;
+  --ff:           'Cairo', sans-serif;
+  --font-display: 'Cairo', sans-serif;
+  --font-body:    'Cairo', sans-serif;
+  --font-mono:    'DM Mono', 'Courier New', monospace;
+  --transition:   0.22s cubic-bezier(0.4,0,0.2,1);
+
+  /* ── Aliases for shared-dash / style.css compat ── */
+  --blue:         var(--violet);
+  --blue-dark:    var(--violet-dark);
+  --blue-mid:     var(--violet-mid);
+  --blue-light:   var(--violet-light);
+  --blue-pale:    var(--violet-pale);
+  --navy:         var(--dark-bg);
+  --gold:         var(--amber-mid);
+  --gold-pale:    var(--amber-pale);
+  --gold-light:   var(--amber-light);
+  --gold-deep:    var(--amber-dark);
+  --green:        var(--emerald-mid);
+  --green-dark:   var(--emerald-dark);
+  --green-pale:   var(--emerald-pale);
+  --green-mid:    var(--mint);
+
+  /* style.css compat */
+  --blue-deep:    var(--violet-deeper);
+  --navy-mid:     var(--dark-surface);
+  --bg2:          #EDE9FE;
+  --bg3:          #DDD6FE;
+  --surface2:     #F3F0FF;
+  --sage:         var(--violet);
+  --sage-light:   var(--violet-light);
+  --sage-deep:    var(--violet-dark);
+  --sand:         #F3F0FF;
+  --sand-deep:    #C4B5FD;
+  --silver:       #A78BFA;
+  --silver-light: #EDE9FE;
+  --clay:         #6D5B9E;
+}
+
+/* ── DARK MODE ── */
+[data-theme="dark"] {
+  --bg:       #0F0A1E;
+  --bg2:      #1A1130;
+  --bg3:      #261940;
+  --surface:  #160D28;
+  --surface2: #1A1130;
+  --border:   rgba(167,139,250,0.14);
+  --border2:  rgba(167,139,250,0.25);
+  --text:     #F5F0FF;
+  --text2:    #C4B5FD;
+  --text3:    #7C6FAA;
+  --text-inv: #0F0A1E;
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.5);
+  --shadow:    0 4px 18px rgba(0,0,0,0.6);
+  --shadow-lg: 0 12px 44px rgba(0,0,0,0.7);
+  --violet-pale: rgba(124,58,237,0.18);
+  --amber-pale:  rgba(245,158,11,0.14);
+  --emerald-pale:rgba(16,185,129,0.14);
+  --mint-pale:   rgba(110,231,183,0.10);
+  --red-pale:    rgba(220,38,38,0.14);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   GLOBAL ELEMENT OVERRIDES
+   ───────────────────────────────────────────────────────────── */
+body {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  font-family: var(--ff) !important;
+}
+
+/* ── Navbar ── */
+nav, .navbar, .topbar {
+  background: rgba(249,248,255,0.96) !important;
+  border-color: rgba(124,58,237,0.14) !important;
+}
+.nav-name, .sb-logo-name { color: var(--dark-bg) !important; }
+.nav-name span, .sb-logo-name span { color: var(--violet) !important; }
+.nav-link:hover, .nav-links a:hover {
+  background: var(--violet-pale) !important;
+  color: var(--violet-dark) !important;
+}
+.nav-link.active {
+  color: var(--violet-dark) !important;
+  border-bottom-color: var(--violet) !important;
+}
+
+/* ── Sidebar (dark plum-navy bg) ── */
+.sidebar {
+  background: var(--dark-bg) !important;
+  border-color: rgba(167,139,250,0.12) !important;
+}
+.sb-hdr { border-color: rgba(167,139,250,0.12) !important; }
+.sb-logo-name { color: #F5F0FF !important; }
+.sb-logo-name span { color: var(--violet-light) !important; }
+.nav-section-label { color: rgba(167,139,250,0.45) !important; }
+.nav-item { color: rgba(245,240,255,0.68) !important; }
+.nav-item:hover {
+  background: rgba(124,58,237,0.14) !important;
+  color: #F5F0FF !important;
+}
+.nav-item:hover .nav-icon svg { stroke: var(--violet-light) !important; }
+.nav-icon svg { stroke: rgba(167,139,250,0.55) !important; }
+.nav-item.active {
+  background: rgba(124,58,237,0.22) !important;
+  color: var(--violet-light) !important;
+}
+.nav-item.active .nav-icon svg { stroke: var(--violet-light) !important; }
+.nav-badge { background: var(--amber-mid) !important; color: var(--dark-bg) !important; }
+.sb-foot { border-color: rgba(167,139,250,0.12) !important; }
+.sb-user-name { color: #F5F0FF !important; }
+.sb-user-role { color: rgba(245,240,255,0.45) !important; }
+.sb-logout { color: rgba(245,240,255,0.55) !important; }
+.sb-logout:hover {
+  background: rgba(220,38,38,0.15) !important;
+  color: #FCA5A5 !important;
+}
+
+/* ── Admin badge ── */
+.admin-badge {
+  background: rgba(245,158,11,0.18) !important;
+  color: var(--amber-mid) !important;
+}
+
+/* ── Hero / dark sections ── */
+.welcome, .welcome-banner, .brand, .brand-side,
+.ph, .profile-hero, .offer-bg, .app-bg, .cta-sec {
+  background: linear-gradient(135deg, var(--dark-bg) 0%, var(--dark-surface) 55%, var(--dark-surface2) 100%) !important;
+}
+/* ── Wallet / balance card gets EMERALD ── */
+.balance-card, .wallet {
+  background: linear-gradient(135deg, var(--emerald-deeper) 0%, var(--emerald-dark) 50%, var(--emerald) 100%) !important;
+}
+.hero { background: var(--dark-bg) !important; }
+
+/* ── PRIMARY BUTTONS — violet ── */
+.btn-primary, .btn-green, .btn-p, .btn-submit,
+.btn-hp, .btn-signup, .fab {
+  background: linear-gradient(135deg, var(--violet-dark), var(--violet)) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 18px rgba(124,58,237,0.40) !important;
+  border: none !important;
+}
+.btn-primary:hover, .btn-green:hover, .btn-p:hover,
+.btn-submit:hover, .btn-hp:hover {
+  box-shadow: 0 8px 28px rgba(124,58,237,0.55) !important;
+  filter: brightness(1.08);
+}
+
+/* Deposit button — EMERALD (money coming in) */
+.btn-deposit {
+  background: linear-gradient(135deg, var(--emerald-dark), var(--emerald)) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 18px rgba(5,150,105,0.40) !important;
+  border: none !important;
+}
+.btn-deposit:hover {
+  box-shadow: 0 8px 28px rgba(5,150,105,0.55) !important;
+}
+
+/* White buttons on dark backgrounds */
+.btn-white, .balance-actions .btn-white {
+  background: rgba(255,255,255,0.95) !important;
+  color: var(--dark-bg) !important;
+  font-weight: 700 !important;
+}
+.btn-white:hover { background: var(--mint-pale) !important; color: var(--emerald-dark) !important; }
+
+/* ── OUTLINE / SECONDARY ── */
+.btn-outline, .btn-ho, .btn-secondary,
+.btn-wb-outline, .btn-white-outline, .btn-skip {
+  border-color: rgba(124,58,237,0.40) !important;
+  color: var(--text) !important;
+}
+.btn-outline:hover, .btn-ho:hover {
+  border-color: var(--violet) !important;
+  background: var(--violet-pale) !important;
+  color: var(--violet-dark) !important;
+}
+.btn-white-outline, .btn-wb-outline {
+  background: rgba(255,255,255,0.12) !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,0.35) !important;
+}
+.btn-white-outline:hover, .btn-wb-outline:hover {
+  background: rgba(255,255,255,0.22) !important;
+}
+.btn-login {
+  color: var(--text) !important;
+  border-color: rgba(124,58,237,0.30) !important;
+}
+.btn-login:hover {
+  border-color: var(--violet) !important;
+  background: var(--violet-pale) !important;
+  color: var(--violet-dark) !important;
+}
+
+/* ── CARDS ── */
+.card, .card-sm, .section-card, .stat-card, .tc,
+.job-card, .rev-card, .review-card, .filter-box,
+.form-box, .modal, .balance-card-white {
+  background: var(--white) !important;
+  border-color: rgba(124,58,237,0.14) !important;
+}
+.card:hover, .job-card:hover {
+  border-color: rgba(124,58,237,0.35) !important;
+  box-shadow: 0 4px 20px rgba(124,58,237,0.12) !important;
+}
+
+/* ── STAT ICONS ── */
+.stat-icon, .ov-ico { background: var(--violet) !important; }
+/* Earnings stat icons get emerald */
+.stat-icon.earn, .ov-ico.earn { background: var(--emerald) !important; }
+
+/* ── BADGES ── */
+.badge-open,  .b-open  { background: var(--emerald-pale) !important; color: var(--emerald-dark)  !important; }
+.badge-pending,.b-pend  { background: var(--amber-pale)   !important; color: var(--amber-dark)    !important; }
+.badge-closed, .b-rej   { background: var(--red-pale)      !important; color: var(--red)           !important; }
+.badge-part,   .b-part  { background: var(--violet-pale)   !important; color: var(--violet-dark)   !important; }
+.job-badge.badge-open    { background: var(--emerald-pale) !important; color: var(--emerald-dark)  !important; }
+.job-badge.badge-pending { background: var(--amber-pale)   !important; color: var(--amber-dark)    !important; }
+
+/* ── INPUTS ── */
+input:focus, select:focus, textarea:focus,
+.fg input:focus, .fg select:focus, .form-input:focus, .ci-input:focus {
+  border-color: var(--violet) !important;
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.15) !important;
+}
+
+/* ── LINKS ── */
+.sec-link, .btn-link, .form-foot a, .forgot,
+.form-footer a, .resend-btn {
+  color: var(--violet-dark) !important;
+}
+
+/* ── NOTIFICATIONS ── */
+.notif-dot, .notif-red, .notif-badge { background: var(--red) !important; }
+.notif-panel { border-color: rgba(124,58,237,0.18) !important; }
+.notif-item.unread { background: var(--violet-pale) !important; }
+
+/* ── HERO PILL / EYEBROW — amber accent ── */
+.hero-pill, .brand-eyebrow, .abadge {
+  background: rgba(245,158,11,0.15) !important;
+  border-color: rgba(245,158,11,0.35) !important;
+  color: var(--amber-mid) !important;
+}
+.hero h1 em, .ah2 em, .ctah em { color: var(--amber-mid) !important; }
+
+/* ── STEP DOTS ── */
+.step-dot.active {
+  background: var(--violet) !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 4px rgba(124,58,237,0.18) !important;
+}
+.step-dot.done  { background: var(--emerald) !important; }
+.step-line.done { background: var(--emerald) !important; }
+
+/* ── ROLE CARDS ── */
+.role-card.selected {
+  border-color: var(--violet) !important;
+  box-shadow: 0 0 0 4px rgba(124,58,237,0.18) !important;
+}
+
+/* ── OTP / TIMER ── */
+.otp-inputs input:focus {
+  border-color: var(--violet) !important;
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.15) !important;
+}
+.otp-inputs input.filled {
+  border-color: var(--violet) !important;
+  background: var(--violet-pale) !important;
+  color: var(--dark-bg) !important;
+}
+.timer-badge {
+  background: var(--violet-pale) !important;
+  color: var(--violet-dark) !important;
+  border-color: rgba(124,58,237,0.25) !important;
+}
+
+/* ── AVATARS ── */
+.sb-avatar, .nav-av, .drawer-av, .review-avatar, .rev-av {
+  background: var(--violet-pale) !important;
+  color: var(--violet-dark) !important;
+}
+
+/* ── PROFILE TAGS ── */
+.ph-tag, .profile-tag, .skill-tag {
+  background: rgba(124,58,237,0.12) !important;
+  border-color: rgba(124,58,237,0.22) !important;
+  color: var(--violet-dark) !important;
+}
+
+/* ── PRICES — emerald for money ── */
+.jc-price, .job-price, .wl-amt, .balance-amount, .pb-amt {
+  color: var(--emerald-light) !important;
+}
+/* Price on light bg */
+.jc-price { color: var(--emerald-dark) !important; }
+
+/* ── TRANSACTIONS ── */
+.tx-amount.credit, .in { color: var(--emerald) !important; }
+.tx-amount.debit,  .out { color: var(--red) !important; }
+
+/* ── TRUST CARDS ── */
+.tc::after {
+  background: linear-gradient(90deg, var(--dark-bg), var(--violet-pale), var(--violet)) !important;
+}
+
+/* ── TABS ── */
+.itab.active, .role-tab.active, .msb-tab.active {
+  background: var(--violet-pale) !important;
+  color: var(--violet-dark) !important;
+  box-shadow: 0 2px 8px rgba(124,58,237,0.18) !important;
+}
+
+/* ── PROGRESS ── */
+.prog-fill, .mf-wallet-fill {
+  background: linear-gradient(90deg, var(--emerald-dark), var(--emerald-light)) !important;
+}
+
+/* ── SETTINGS ── */
+.settings-link:hover .settings-link-title { color: var(--violet-dark) !important; }
+.settings-link:hover .settings-link-arrow { stroke: var(--violet) !important; }
+
+/* ── ESCROW / WITHDRAWAL ── */
+.escrow-status.held  { background: var(--amber-pale) !important; color: var(--amber-dark) !important; }
+.wd-status.pending   { background: var(--amber-pale) !important; color: var(--amber-dark) !important; }
+
+/* ── ADMIN WARNING ── */
+.admin-badge { background: rgba(245,158,11,0.16) !important; color: var(--amber-mid) !important; }
+.tahdir-1    { background: var(--amber-pale) !important; border-color: var(--amber-mid) !important; }
+.nav-badge   { background: var(--amber-mid)  !important; color: var(--dark-bg) !important; }
+
+/* ── CHAT BUBBLES ── */
+.bwrap.mine .bubble, .msg-mine .mb {
+  background: linear-gradient(135deg, var(--dark-bg), var(--dark-surface2)) !important;
+  color: #F5F0FF !important;
+}
+
+/* ── FAB ── */
+.fab {
+  background: linear-gradient(135deg, var(--violet-dark), var(--violet)) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 20px rgba(124,58,237,0.50) !important;
+}
+
+/* ── DRAWER ── */
+.drawer { background: var(--white) !important; }
+.drawer-link.active {
+  background: var(--violet-pale) !important;
+  color: var(--violet-dark) !important;
+  border-right-color: var(--violet) !important;
+}
+.drawer-link:hover {
+  color: var(--violet-dark) !important;
+  border-right-color: rgba(124,58,237,0.35) !important;
+}
+.drawer-av {
+  background: linear-gradient(135deg, var(--violet-dark), var(--violet)) !important;
+  color: #fff !important;
+}
+
+/* ── FOOTER / NAV ── */
+footer { background: var(--white) !important; border-color: rgba(124,58,237,0.14) !important; }
+.nav-name span, .logo span { color: var(--violet) !important; }
+
+/* ── WALLET-SPECIFIC EMERALD THEMING ── */
+.stat-pill.approved-pill .sv { color: var(--emerald-dark) !important; }
+.stat-pill.total-pill .sv    { color: var(--emerald) !important; }
+.tx-type-pill.green  { background: var(--emerald-pale) !important; color: var(--emerald-dark) !important; }
+.tx-type-pill.amber  { background: var(--amber-pale) !important;   color: var(--amber-dark) !important; }
+.tx-type-pill.blue   { background: var(--violet-pale) !important;  color: var(--violet-dark) !important; }
+.tx-amount.credit::before { content: '+'; }
+.tx-amount.debit::before  { content: '−'; }
+
+/* ── STARS = AMBER ── */
+.star { color: var(--amber-mid) !important; }
+.stars { color: var(--amber-mid) !important; }
+[data-theme="dark"] .star, [data-theme="dark"] .stars { color: var(--amber-light) !important; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: var(--violet-pale); }
+::-webkit-scrollbar-thumb  { background: var(--violet-light); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--violet); }
+
+/* ── SELECTION ── */
+::selection { background: var(--violet-pale); color: var(--dark-bg); }

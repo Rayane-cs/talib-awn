@@ -42,7 +42,7 @@ export async function requireProfile() {
       .from('users')
       .select('*')
       .eq('auth_id', user.id)
-      .maybeSingle();                  // maybeSingle never throws on 0 rows
+      .maybeSingle();
 
     if (data) return data;
     if (error) { console.error('requireProfile error:', error); break; }
@@ -60,15 +60,29 @@ export async function redirectIfLoggedIn() {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) return;
   const { data } = await supabase
-    .from('users').select('role').eq('auth_id', session.user.id).maybeSingle();
-  if (data) redirectByRole(data.role);
+    .from('users').select('role, grade').eq('auth_id', session.user.id).maybeSingle();
+  if (data) redirectByRole(data);
 }
 
-/** Redirect to the correct dashboard based on role */
-export function redirectByRole(role) {
-  const r = (role || '').toLowerCase();
-  if (r === 'admin')    window.location.href = 'admin-panel.html';
-  else                  window.location.href = 'student-dashboard.html';
+/**
+ * Redirect to the correct dashboard based on role & grade.
+ * Accepts either a role string or a full profile object.
+ */
+export function redirectByRole(roleOrProfile) {
+  let role = '', grade = '';
+  if (roleOrProfile && typeof roleOrProfile === 'object') {
+    role  = roleOrProfile.role  ?? '';
+    grade = roleOrProfile.grade ?? '';
+  } else {
+    role = roleOrProfile ?? '';
+  }
+  const r = role.toLowerCase();
+  const g = grade.toLowerCase();
+  if (r === 'admin') { window.location.href = 'admin-panel.html'; return; }
+  if (g.includes('company') || g.includes('manager') || g.includes('employer')) {
+    window.location.href = 'employer.html'; return;
+  }
+  window.location.href = 'student.html';
 }
 
 /** Sign out and go to login */

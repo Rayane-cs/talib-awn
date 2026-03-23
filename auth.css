@@ -1,39 +1,63 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap');
+/* Fonts loaded via brand.css */
+
+/* ─── TALIB-AWN BRAND DESIGN SYSTEM ─── */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --blue:        #1a6ef5;
-  --blue-mid:    #2980f5;
-  --blue-light:  #5ba3f8;
-  --blue-pale:   #e8f0fe;
-  --navy:        #0d1b3e;
-  --navy-mid:    #142254;
-  --gold:        #f5a623;
-  --gold-pale:   #fef3dc;
-  --red:         #e53935;
-  --red-pale:    #fdecea;
-  --bg:          #f0f4ff;
+  /* ── Primary Blue ── */
+  --blue:        #7C3AED;
+  --blue-mid:    #A78BFA;
+  --blue-light:  #DDD6FE;
+  --blue-pale:   #EDE9FE;
+
+  /* ── Brand Dark (replaces navy) ── */
+  --navy:        #10202d;
+  --navy-mid:    #1a2f40;
+
+  /* ── Accent Green (success / earnings / wallet) ── */
+  --green:       #5a9e6f;
+  --green-dark:  #3d7a52;
+  --green-pale:  #e4f2e8;
+  --green-mid:   #b8ddc4;
+
+  /* ── Gold kept for eyebrow pill / highlights ── */
+  --gold:        #D97706;
+  --gold-pale:   #FEF3C7;
+
+  /* ── Semantic ── */
+  --red:         #EF4444;
+  --red-pale:    #FEF2F2;
+
+  /* ── Neutrals ── */
+  --bg:          #f7f7f7;
   --white:       #ffffff;
-  --border:      #dbe3f5;
-  --text:        #0d1b3e;
-  --text2:       #3a4a6b;
-  --text3:       #7a8aaa;
-  --shadow:      0 8px 40px rgba(26,110,245,0.08);
-  --shadow-lg:   0 20px 60px rgba(13,27,62,0.14);
+  --border:      rgba(124,58,237,0.20);
+  --text:        #10202d;
+  --text2:       #2a3d4d;
+  --text3:       #6b7c8a;
+
+  /* ── Shadows ── */
+  --shadow:      0 8px 40px rgba(16,32,45,0.10);
+  --shadow-lg:   0 20px 60px rgba(16,32,45,0.18);
+
+  /* ── Shape ── */
   --radius:      20px;
   --radius-sm:   12px;
   --radius-full: 999px;
-  --font-head:   'Syne', sans-serif;
-  --font-body:   'DM Sans', sans-serif;
+
+  /* ── Typography ── */
+  --font-head:   'Cairo', sans-serif;
+  --font-body:   'Cairo', sans-serif;
   --font-mono:   'DM Mono', monospace;
-  --ease:        cubic-bezier(0.4, 0, 0.2, 1);
+
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: var(--font-body);
+  font-family: var(--ff);
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -49,7 +73,7 @@ body {
 
 /* ── BRAND SIDE ── */
 .brand-side {
-  background: linear-gradient(155deg, var(--navy) 0%, #1a3a8f 55%, var(--blue-mid) 100%);
+  background: linear-gradient(155deg, #10202d 0%, #1a2f40 60%, #243d52 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -78,9 +102,9 @@ body {
 /* Subtle grid lines */
 .brand-side::before {
   background-image:
-    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
-    radial-gradient(ellipse 60% 50% at 70% 30%, rgba(91,163,248,0.15), transparent);
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
+    radial-gradient(ellipse 60% 50% at 70% 30%, rgba(147,197,253,0.18), transparent);
   background-size: 60px 60px, 60px 60px, 100% 100%;
   width: 100%; height: 100%;
   top: 0; right: 0; left: 0; bottom: 0;
@@ -98,10 +122,10 @@ body {
 .brand-logo-icon {
   width: 52px; height: 52px;
   border-radius: 14px;
-  background: linear-gradient(135deg, var(--blue), var(--blue-mid));
+  background: linear-gradient(135deg, #5B21B6, #7C3AED);
   border: 2px solid rgba(255,255,255,0.2);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 20px rgba(26,110,245,0.4);
+  box-shadow: 0 4px 20px rgba(124,58,237,0.4);
   flex-shrink: 0;
 }
 .brand-logo-icon svg { width: 30px; height: 30px; }
@@ -111,7 +135,7 @@ body {
   gap: 2px;
 }
 .brand-logo-name {
-  font-family: var(--font-head);
+  font-family: var(--ff);
   font-size: 22px;
   font-weight: 800;
   color: #fff;
@@ -123,7 +147,7 @@ body {
   color: rgba(255,255,255,0.65);
   font-weight: 400;
   line-height: 1;
-  font-family: var(--font-body);
+  font-family: var(--ff);
 }
 
 .brand-headline { position: relative; z-index: 1; }
@@ -141,10 +165,10 @@ body {
   padding: 5px 14px;
   border-radius: var(--radius-full);
   margin-bottom: 24px;
-  font-family: var(--font-mono);
+  font-family: 'DM Mono', monospace;
 }
 .brand-headline h1 {
-  font-family: var(--font-head);
+  font-family: var(--ff);
   font-size: clamp(30px, 3.5vw, 46px);
   font-weight: 800;
   color: #fff;
@@ -170,7 +194,7 @@ body {
   z-index: 1;
 }
 .b-stat-num {
-  font-family: var(--font-head);
+  font-family: var(--ff);
   font-size: 28px;
   font-weight: 700;
   color: #fff;
@@ -180,7 +204,7 @@ body {
   font-size: 12px;
   color: rgba(255,255,255,0.45);
   margin-top: 4px;
-  font-family: var(--font-mono);
+  font-family: 'DM Mono', monospace;
   letter-spacing: 0.06em;
 }
 
@@ -200,7 +224,7 @@ body {
 }
 .form-header { margin-bottom: 32px; }
 .form-header h2 {
-  font-family: var(--font-head);
+  font-family: var(--ff);
   font-size: 28px;
   font-weight: 800;
   color: var(--text);
@@ -219,7 +243,7 @@ body {
   margin-bottom: 7px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  font-family: var(--font-mono);
+  font-family: 'DM Mono', monospace;
 }
 .form-group input,
 .form-group select,
@@ -228,7 +252,7 @@ body {
   padding: 13px 16px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
-  font-family: var(--font-body);
+  font-family: var(--ff);
   font-size: 15px;
   color: var(--text);
   background: #f8faff;
@@ -239,9 +263,9 @@ body {
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-  border-color: var(--blue);
+  border-color: #7C3AED;
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(26,110,245,0.1);
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
 }
 .form-group input.prefilled {
   background: var(--blue-pale);
@@ -264,17 +288,17 @@ body {
 .btn-submit {
   width: 100%;
   padding: 15px;
-  background: linear-gradient(135deg, var(--navy), var(--blue));
+  background: linear-gradient(135deg, #5B21B6, #7C3AED);
   color: #fff;
   border: none;
   border-radius: var(--radius-sm);
-  font-family: var(--font-head);
+  font-family: var(--ff);
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.02em;
   cursor: pointer;
   transition: all 0.22s var(--ease);
-  box-shadow: 0 4px 20px rgba(26,110,245,0.3);
+  box-shadow: 0 4px 20px rgba(124,58,237,0.30);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -291,7 +315,7 @@ body {
   transition: opacity 0.2s;
 }
 .btn-submit:hover::before { opacity: 1; }
-.btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(26,110,245,0.4); }
+.btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(124,58,237,0.40); }
 .btn-submit:active { transform: translateY(0); }
 .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 .btn-submit .spinner {
@@ -317,7 +341,7 @@ body {
   color: var(--blue);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
-  font-family: var(--font-body);
+  font-family: var(--ff);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -327,13 +351,13 @@ body {
   justify-content: center;
   gap: 8px;
 }
-.btn-secondary:hover { border-color: var(--blue); background: var(--blue-pale); }
+.btn-secondary:hover { border-color: #7C3AED; background: var(--blue-pale); }
 
 /* ── TABS ── */
 .role-tabs {
   display: flex;
   gap: 0;
-  background: #f0f4ff;
+  background: var(--bg);
   padding: 5px;
   border-radius: var(--radius-full);
   margin-bottom: 28px;
@@ -342,7 +366,7 @@ body {
   flex: 1;
   padding: 10px;
   border-radius: var(--radius-full);
-  font-family: var(--font-body);
+  font-family: var(--ff);
   font-size: 13px;
   font-weight: 600;
   color: var(--text3);
@@ -353,8 +377,8 @@ body {
 }
 .role-tab.active {
   background: var(--white);
-  color: var(--blue);
-  box-shadow: 0 2px 10px rgba(26,110,245,0.12);
+  color: #5B21B6;
+  box-shadow: 0 2px 10px rgba(124,58,237,0.12);
 }
 
 /* ── ALERTS ── */
@@ -370,9 +394,9 @@ body {
   line-height: 1.5;
 }
 .alert.show { display: flex; }
-.alert.error   { background: var(--red-pale);   color: var(--red);    border: 1px solid rgba(229,57,53,0.2); }
-.alert.success { background: var(--blue-pale);  color: var(--blue);   border: 1px solid rgba(26,110,245,0.25); }
-.alert.warning { background: var(--gold-pale);  color: #b07a10;       border: 1px solid rgba(245,166,35,0.35); }
+.alert.error   { background: var(--red-pale);    color: var(--red);         border: 1px solid rgba(239,68,68,0.25); }
+.alert.success { background: var(--green-pale);  color: var(--green-dark);  border: 1px solid rgba(34,197,94,0.35); }
+.alert.warning { background: var(--gold-pale);   color: #92400E;            border: 1px solid rgba(245,158,11,0.35); }
 
 /* ── OTP ── */
 .otp-inputs {
@@ -386,24 +410,24 @@ body {
   text-align: center;
   font-size: 28px;
   font-weight: 700;
-  font-family: var(--font-mono);
-  border: 2px dashed #3b82f6; /* Matching email template */
-  border-radius: 14px; /* Matching email template */
-  background: #0b1220; /* Matching email template */
-  color: #3b82f6; /* Matching email template */
+  font-family: 'DM Mono', monospace;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg);
+  color: var(--text);
   outline: none;
   transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s;
 }
 .otp-inputs input:focus {
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
-  background: #111827; /* Slightly lighter on focus */
+  border-color: #7C3AED;
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+  background: var(--white);
 }
 .otp-inputs input.filled {
-  border-style: solid; /* Solid border when filled */
-  border-color: #2563eb;
-  background: #1e3a8a; /* Dark blue background when filled */
-  color: #ffffff;      /* White text when filled */
+  border-style: solid;
+  border-color: #7C3AED;
+  background: var(--blue-pale);
+  color: var(--navy);
 }
 
 /* ── TIMER ── */
@@ -411,24 +435,24 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(59,130,246,0.1); /* Matching warning box background */
-  border: 1px solid rgba(59,130,246,0.3); /* Matching warning box border */
-  color: #93c5fd; /* Matching warning box text */
+  background: #EDE9FE;
+  border: 1px solid rgba(124,58,237,0.30);
+  color: #10202d;
   padding: 8px 14px;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 8px;
-  font-family: var(--font-mono);
+  font-family: 'DM Mono', monospace;
 }
 .timer-badge.expired {
-  background: rgba(229,57,53,0.1);
-  border-color: rgba(229,57,53,0.3);
+  background: var(--red-pale);
+  border-color: rgba(239,68,68,0.3);
   color: var(--red);
 }
 .resend-btn {
   background: none; border: none;
-  font-family: var(--font-body);
+  font-family: var(--ff);
   font-size: 14px; font-weight: 600;
   color: var(--blue); cursor: pointer;
   padding: 6px 0; transition: opacity 0.15s;
@@ -449,27 +473,27 @@ body {
   display: flex; align-items: center; justify-content: center;
   font-size: 12px; font-weight: 700;
   transition: all 0.3s var(--ease);
-  font-family: var(--font-mono);
+  font-family: 'DM Mono', monospace;
 }
-.step-dot.done   { background: var(--blue);  color: #fff; }
-.step-dot.active { background: var(--blue);  color: #fff; box-shadow: 0 0 0 4px rgba(26,110,245,0.2); }
-.step-dot.pending{ background: #e5ebf8; color: var(--text3); }
+.step-dot.done   { background: var(--green);  color: #fff; }
+.step-dot.active { background: var(--blue);   color: #fff; box-shadow: 0 0 0 4px rgba(124,58,237,0.18); }
+.step-dot.pending{ background: var(--border); color: var(--text3); }
 .step-label {
   font-size: 12px;
   font-weight: 600;
-  font-family: var(--font-mono);
+  font-family: 'DM Mono', monospace;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
-.step-label.active { color: var(--blue); }
-.step-label.done   { color: var(--text3); }
-.step-label.pending{ color: var(--text3); }
+.step-label.active  { color: var(--blue); }
+.step-label.done    { color: var(--green-dark); }
+.step-label.pending { color: var(--text3); }
 .step-line {
   flex: 1; height: 2px;
-  background: #e5ebf8;
+  background: var(--border);
   border-radius: 1px; overflow: hidden;
 }
-.step-line.done { background: var(--blue); }
+.step-line.done { background: var(--green); }
 
 /* ── PASSWORD TOGGLE ── */
 .password-toggle {
@@ -511,11 +535,11 @@ body {
   text-align: center;
   cursor: pointer;
   transition: all 0.2s var(--ease);
-  background: #f8faff;
+  background: var(--bg);
   position: relative;
 }
 .card-upload-area:hover, .card-upload-area.drag-over {
-  border-color: var(--blue);
+  border-color: #7C3AED;
   background: var(--blue-pale);
 }
 .card-upload-area input[type="file"] {
@@ -543,20 +567,20 @@ body {
   gap: 12px;
   padding: 14px 16px;
   background: var(--blue-pale);
-  border: 1px solid rgba(26,110,245,0.2);
+  border: 1px solid rgba(124,58,237,0.20);
   border-radius: var(--radius-sm);
   margin-top: 14px;
 }
 .scan-status.show { display: flex; }
 .scan-spinner {
   width: 18px; height: 18px;
-  border: 2px solid rgba(26,110,245,0.25);
+  border: 2px solid rgba(124,58,237,0.25);
   border-top-color: var(--blue);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
   flex-shrink: 0;
 }
-.scan-text { font-size: 13px; font-weight: 600; color: var(--blue); }
+.scan-text { font-size: 13px; font-weight: 600; color: var(--navy); }
 
 /* ── PREFILL BADGE ── */
 .prefill-notice {
@@ -564,11 +588,12 @@ body {
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
-  background: rgba(26,110,245,0.07);
+  background: var(--green-pale);
+  border: 1px solid rgba(34,197,94,0.30);
   border-radius: var(--radius-sm);
   font-size: 13px;
-  color: var(--blue);
-  font-weight: 500;
+  color: var(--green-dark);
+  font-weight: 600;
   margin-bottom: 18px;
 }
 .prefill-notice.show { display: flex; }
@@ -585,13 +610,13 @@ body {
   align-items: center;
   gap: 8px;
   padding: 8px 14px;
-  background: #f8faff;
+  background: var(--bg);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: 600;
   color: var(--text2);
-  font-family: var(--font-mono);
+  font-family: 'DM Mono', monospace;
 }
 .pay-chip-icon { font-size: 18px; }
 
