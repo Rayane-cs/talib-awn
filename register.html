@@ -234,7 +234,7 @@
       </div>
       <div class="card-preview" id="cardPreview"><img id="cardImg" src="" alt=""></div>
       <div class="scan-status" id="scanStatus"><div class="scan-spinner"></div><span>جاري المسح بالذكاء الاصطناعي…</span></div>
-      <div class="prefill-notice" id="prefillNotice">تمت قراءة البطاقة — راجع بياناتك في الخطوة التالية</div>
+      <div class="prefill-notice" id="prefillNotice"></div>
       <!-- <div class="privacy-notice">
         <div>
           <strong>بياناتك محمية بتشفير كامل</strong>
@@ -268,18 +268,36 @@
       <!-- MODE A: scan succeeded -->
       <div id="sS2-scanned" style="display:none">
         <h2 class="card-title">تحقق من بياناتك</h2>
-        <p class="card-sub">راجع المعلومات المستخرجة تلقائياً وأكمل باقي الحقول</p>
+        <p class="card-sub">راجع المعلومات المستخرجة تلقائياً — يمكنك تعديل أي حقل</p>
         <div class="sec-divider">البيانات المستخرجة من البطاقة</div>
-        <div class="verified-fields">
-          <div class="vf"><div class="vf-badge">✓</div><div class="vf-label">الاسم</div><div class="vf-value" id="vf_fn">—</div></div>
-          <div class="vf"><div class="vf-badge">✓</div><div class="vf-label">اللقب</div><div class="vf-value" id="vf_ln">—</div></div>
-          <div class="vf"><div class="vf-badge">✓</div><div class="vf-label">الجامعة</div><div class="vf-value" id="vf_uni">—</div></div>
-          <div class="vf"><div class="vf-badge">✓</div><div class="vf-label">التخصص</div><div class="vf-value" id="vf_field">—</div></div>
+        <div class="form-grid-2" style="margin-bottom:14px;">
+          <div class="fg" style="margin-bottom:0;">
+            <label>الاسم *</label>
+            <input type="text" id="s_fn" class="prefilled" placeholder="الاسم">
+          </div>
+          <div class="fg" style="margin-bottom:0;">
+            <label>اللقب *</label>
+            <input type="text" id="s_ln" class="prefilled" placeholder="اللقب">
+          </div>
         </div>
-        <input type="hidden" id="s_fn"><input type="hidden" id="s_ln">
-        <input type="hidden" id="s_uni"><input type="hidden" id="s_field"><input type="hidden" id="s_sid">
+        <div class="form-grid-2" style="margin-bottom:14px;">
+          <div class="fg" style="margin-bottom:0;">
+            <label>الجامعة *</label>
+            <input type="text" id="s_uni" class="prefilled" placeholder="اسم الجامعة">
+          </div>
+          <div class="fg" style="margin-bottom:0;">
+            <label>التخصص *</label>
+            <input type="text" id="s_field" class="prefilled" placeholder="الميدان أو التخصص">
+          </div>
+        </div>
+        <div class="fg">
+          <label>رقم بطاقة الطالب <span class="opt">(اختياري)</span></label>
+          <input type="text" id="s_sid" class="prefilled" placeholder="مثال: 2024-USTHB-XXXXX">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--green-dark);margin-bottom:8px;margin-top:-6px;">
+          <span>✓</span><span>تم التحقق من البطاقة — الحقول قابلة للتعديل</span>
+        </div>
       </div>
-
       <!-- MODE B: manual entry (scan failed) -->
       <div id="sS2-manual" style="display:none">
         <h2 class="card-title">أدخل بياناتك</h2>
@@ -384,6 +402,8 @@
           <div class="upload-box-hint">تأكد من وضوح النص</div>
         </div>
       </div>
+      <div class="scan-status" id="scanStatus"><div class="scan-spinner"></div><span>جاري المسح بالذكاء الاصطناعي…</span></div>
+      <div class="prefill-notice" id="prefillNotice"></div>
       <!-- <div class="privacy-notice">
         <div>
           <strong>بياناتك محمية بتشفير كامل</strong>
@@ -501,10 +521,11 @@
   let role = null;
   let pendingEmail = '', pendingMeta = {};
   let sCountdownInterval = null, eCountdownInterval = null;
-  const GEMINI_KEY   = 'YOUR_GEMINI_API_KEY_HERE';
-  const GEMINI_MODEL = 'gemini-2.0-flash';
+  const GROQ_KEY   = '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';
+  const GROQ_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
   let cardData = { fn:'', ln:'', uni:'', field:'', sid:'' };
   let cardScanFailed = false;
+  let cardScanned = false;
 
   const S_STEPS = [{id:'sS1',label:'البطاقة'},{id:'sS2',label:'البيانات'},{id:'sS3',label:'التفعيل'}];
   const E_STEPS = [{id:'sE1',label:'الهوية'},{id:'sE2',label:'معلوماتي'},{id:'sE3',label:'الحساب'},{id:'sE4',label:'التفعيل'}];
@@ -553,78 +574,98 @@
   };
 
   /* ── STUDENT: card scan ── */
-  window.handleCard=async(e)=>{
-    const file=e.target.files[0]; if(!file) return;
-    const reader=new FileReader();
-    reader.onload=async(ev)=>{
-      const base64=ev.target.result.split(',')[1];
-      document.getElementById('cardImg').src=ev.target.result;
-      document.getElementById('cardPreview').classList.add('show');
-      document.getElementById('scanStatus').classList.add('show');
-      document.getElementById('prefillNotice').classList.remove('show');
-      document.getElementById('s1NextBtn').disabled=true;
-      clearAlert();
-      try{
-        const resp=await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_KEY}`,
-          {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-            contents:[{parts:[
-              {text:'Algerian university student card. Return ONLY raw JSON no markdown. Keys: {"full_name_latin":"","id_number":"","institution":"","field_of_study":""}'},
-              {inline_data:{mime_type:file.type,data:base64}}
-            ]}],
-            generationConfig:{temperature:0,maxOutputTokens:300,responseMimeType:'application/json'}
-          })}
-        );
-        const d=await resp.json();
-        if(d.error) throw new Error(d.error.message);
-        const raw=(d.candidates?.[0]?.content?.parts?.[0]?.text||'').trim();
-        const m=raw.match(/\{[\s\S]*\}/); if(!m) throw new Error('no data');
-        const info=JSON.parse(m[0]);
-        const cap=s=>s?s.charAt(0).toUpperCase()+s.slice(1).toLowerCase():'';
-        if(info.full_name_latin){
-          const parts=info.full_name_latin.trim().split(/\s+/);
-          cardData.ln=cap(parts[0]);
-          cardData.fn=parts.slice(1).map(cap).join(' ')||cap(parts[0]);
-        }
-        cardData.uni=info.institution||''; cardData.field=info.field_of_study||''; cardData.sid=info.id_number||'';
-        cardScanFailed=false;
-        document.getElementById('prefillNotice').classList.add('show');
-      }catch(err){
-        console.error(err);
-        cardScanFailed=true;
-        const notice=document.getElementById('prefillNotice');
-        notice.textContent='لم نتمكن من قراءة البطاقة — ستُدخل بياناتك يدوياً في الخطوة التالية.';
-        notice.style.background='#FEF2F2'; notice.style.borderColor='#FECACA'; notice.style.color='#991B1B';
-        notice.classList.add('show');
-      }finally{
-        document.getElementById('scanStatus').classList.remove('show');
-        document.getElementById('s1NextBtn').disabled=false;
-      }
-    };
-    reader.readAsDataURL(file);
-  };
+  window.handleCard = async (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    const base64 = ev.target.result.split(',')[1];
+    document.getElementById('cardImg').src = ev.target.result;
+    document.getElementById('cardPreview').classList.add('show');
+    document.getElementById('scanStatus').classList.add('show');
+    document.getElementById('prefillNotice').classList.remove('show');
+    document.getElementById('s1NextBtn').disabled = true;
+    clearAlert();
+    try {
+      const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}` },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          temperature: 0,
+          max_tokens: 300,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'text', text: 'Look at this image. First determine if this is an Algerian university student card (بطاقة الطالب الجامعي). If it is NOT a student card, return exactly: {"is_student_card": false}. If it IS a student card, return ONLY raw JSON no markdown: {"is_student_card": true, "full_name_latin": "", "id_number": "", "institution": "", "field_of_study": ""}' },
+              { type: 'image_url', image_url: { url: `data:${file.type};base64,${base64}` } }
+            ]
+          }]
+        })
+      });
+      const d = await resp.json();
+      if (d.error) throw new Error(d.error.message);
+      const raw = (d.choices?.[0]?.message?.content || '').trim();
+      const m = raw.match(/\{[\s\S]*\}/); if (!m) throw new Error('no data');
+      const info = JSON.parse(m[0]);
 
-  window.goToS2=function(){
-    if(cardScanFailed){
-      document.getElementById('sS2-scanned').style.display='none';
-      document.getElementById('sS2-manual').style.display='';
-      document.getElementById('scanFailBanner').classList.add('show');
-    } else {
-      document.getElementById('sS2-manual').style.display='none';
-      document.getElementById('sS2-scanned').style.display='';
-      document.getElementById('scanFailBanner').classList.remove('show');
-      document.getElementById('vf_fn').textContent    = cardData.fn||'—';
-      document.getElementById('vf_ln').textContent    = cardData.ln||'—';
-      document.getElementById('vf_uni').textContent   = cardData.uni||'—';
-      document.getElementById('vf_field').textContent = cardData.field||'—';
-      document.getElementById('s_fn').value    = cardData.fn;
-      document.getElementById('s_ln').value    = cardData.ln;
-      document.getElementById('s_uni').value   = cardData.uni;
-      document.getElementById('s_field').value = cardData.field;
-      document.getElementById('s_sid').value   = cardData.sid;
+      // ← NEW: reject if not a student card
+      if (!info.is_student_card) {
+        document.getElementById('cardPreview').classList.remove('show');
+        e.target.value = '';
+        showAlert('alertBox', 'هذه ليست بطاقة طالب جامعي. يرجى رفع بطاقة الطالب الرسمية.');
+        document.getElementById('s1NextBtn').disabled = true;
+        return;
+      }
+
+      const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '';
+      if (info.full_name_latin) {
+        const parts = info.full_name_latin.trim().split(/\s+/);
+        cardData.ln = cap(parts[0]);
+        cardData.fn = parts.slice(1).map(cap).join(' ') || cap(parts[0]);
+      }
+      cardData.uni = info.institution || '';
+      cardData.field = info.field_of_study || '';
+      cardData.sid = info.id_number || '';
+      cardScanFailed = false;
+      cardScanned = true;
+      document.getElementById('prefillNotice').classList.add('show');
+    } catch (err) {
+      console.error(err);
+      cardScanFailed = true;
+      cardScanned = false;
+      const notice = document.getElementById('prefillNotice');
+      notice.textContent = 'لم نتمكن من قراءة البطاقة — ستُدخل بياناتك يدوياً في الخطوة التالية.';
+      notice.style.background = '#FEF2F2'; notice.style.borderColor = '#FECACA'; notice.style.color = '#991B1B';
+      notice.classList.add('show');
+    } finally {
+      document.getElementById('scanStatus').classList.remove('show');
+      document.getElementById('s1NextBtn').disabled = false;
     }
-    goTo('sS2');
   };
+  reader.readAsDataURL(file);
+};
+  window.goToS2 = function(){
+  if (!cardScanned) {
+    showAlert('alertBox', 'يجب رفع بطاقة الطالب الجامعية للمتابعة.');
+    return;
+  }
+  if (cardScanFailed) {
+    document.getElementById('sS2-scanned').style.display = 'none';
+    document.getElementById('sS2-manual').style.display  = '';
+    document.getElementById('scanFailBanner')?.classList.add('show');
+  } else {
+    document.getElementById('sS2-manual').style.display   = 'none';
+    document.getElementById('sS2-scanned').style.display  = '';
+    document.getElementById('scanFailBanner')?.classList.remove('show');
+    // fill editable fields
+    document.getElementById('s_fn').value    = cardData.fn;
+    document.getElementById('s_ln').value    = cardData.ln;
+    document.getElementById('s_uni').value   = cardData.uni;
+    document.getElementById('s_field').value = cardData.field;
+    document.getElementById('s_sid').value   = cardData.sid;
+  }
+  goTo('sS2');
+};
 
   window.doStudentRegister=async()=>{
     const email=document.getElementById('s_email').value.trim();
@@ -697,8 +738,61 @@
   };
 
   /* ── EMPLOYER ── */
-  window.handleEmployerID=async(e)=>{ /* optional */ };
+  let employerIdData = { fn: '', ln: '' };
 
+window.handleEmployerID = async (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    const base64 = ev.target.result.split(',')[1];
+    // show a scan status in E1 card
+    const scanEl = document.getElementById('eScanStatus');
+    if (scanEl) scanEl.classList.add('show');
+    try {
+      const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}` },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          temperature: 0,
+          max_tokens: 200,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'text', text: 'This is an Algerian national ID card (بطاقة التعريف الوطنية). Extract the person\'s name. Return ONLY raw JSON no markdown: {"first_name": "", "last_name": ""}' },
+              { type: 'image_url', image_url: { url: `data:${file.type};base64,${base64}` } }
+            ]
+          }]
+        })
+      });
+      const d = await resp.json();
+      if (d.error) throw new Error(d.error.message);
+      const raw = (d.choices?.[0]?.message?.content || '').trim();
+      const m = raw.match(/\{[\s\S]*\}/); if (!m) throw new Error('no data');
+      const info = JSON.parse(m[0]);
+      const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '';
+      employerIdData.fn = cap(info.first_name || '');
+      employerIdData.ln = cap(info.last_name || '');
+
+      // prefill E2 fields if they exist
+      const fnEl = document.getElementById('e_fn');
+      const lnEl = document.getElementById('e_ln');
+      if (fnEl && employerIdData.fn) { fnEl.value = employerIdData.fn; fnEl.classList.add('prefilled'); }
+      if (lnEl && employerIdData.ln) { lnEl.value = employerIdData.ln; lnEl.classList.add('prefilled'); }
+
+      // show success notice
+      const notice = document.getElementById('eIdNotice');
+      if (notice) { notice.textContent = 'تمت قراءة الهوية — سيتم ملء بياناتك تلقائياً في الخطوة التالية.'; notice.classList.add('show'); }
+    } catch (err) {
+      console.error(err);
+      const notice = document.getElementById('eIdNotice');
+      if (notice) { notice.textContent = 'لم نتمكن من قراءة الهوية — يمكنك المتابعة وإدخال البيانات يدوياً.'; notice.style.background = '#FEF2F2'; notice.style.borderColor = '#FECACA'; notice.style.color = '#991B1B'; notice.classList.add('show'); }
+    } finally {
+      if (scanEl) scanEl.classList.remove('show');
+    }
+  };
+  reader.readAsDataURL(file);
+};
   window.doEmployerStep2=function(){
     const fn=document.getElementById('e_fn').value.trim();
     const ln=document.getElementById('e_ln').value.trim();
